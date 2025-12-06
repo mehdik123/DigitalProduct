@@ -104,6 +104,9 @@ function App() {
       }
 
       if (data.user) {
+        // Immediately sign out to force manual login
+        await supabase.auth.signOut();
+
         setGeneratedCredentials({
           username: signupForm.email,
           password: password,
@@ -352,7 +355,7 @@ function App() {
             </div>
 
             <p className="text-gray-300 mb-6">
-              <span className="text-green-400 font-bold">You are now logged in!</span> Save these credentials for your next visit:
+              Your personalized workout program is ready! Save these credentials and use the link below to access your program:
             </p>
 
             {/* Unique Login Link */}
@@ -404,10 +407,14 @@ function App() {
             </div>
 
             <button
-              onClick={() => setShowModal(false)}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all"
+              onClick={() => {
+                if (generatedCredentials.uniqueLink) {
+                  window.location.href = generatedCredentials.uniqueLink;
+                }
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all"
             >
-              Start Training Now! 🚀
+              Go to Login Page →
             </button>
           </div>
         </div>
