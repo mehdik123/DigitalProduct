@@ -34,7 +34,7 @@ export default function ExerciseCard({
               href={`https://www.youtube.com/watch?v=${videoId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative w-full h-48 md:h-full bg-black block group/video"
+              className="relative w-full h-40 md:h-full bg-black block group/video"
             >
               <img
                 src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
@@ -43,8 +43,8 @@ export default function ExerciseCard({
               />
               {/* Play button overlay */}
               <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover/video:bg-black/50 transition-colors">
-                <div className="w-14 h-14 md:w-20 md:h-20 bg-red-600 rounded-full flex items-center justify-center group-hover/video:scale-110 transition-transform shadow-lg">
-                  <svg className="w-7 h-7 md:w-10 md:h-10 text-white ml-0.5 md:ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-red-600 rounded-full flex items-center justify-center group-hover/video:scale-110 transition-transform shadow-lg">
+                  <svg className="w-6 h-6 md:w-10 md:h-10 text-white ml-0.5 md:ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
@@ -54,14 +54,14 @@ export default function ExerciseCard({
         </div>
 
         {/* Exercise Details - Mobile optimized */}
-        <div className="w-full md:w-3/5 p-4 md:p-6 lg:p-8 flex flex-col justify-between">
+        <div className="w-full md:w-3/5 p-3 md:p-6 lg:p-8 flex flex-col justify-between">
           <div>
-            <div className="flex items-start justify-between gap-3 md:gap-4 mb-3 md:mb-4">
+            <div className="flex items-start justify-between gap-3 md:gap-4 mb-2 md:mb-4">
               <div className="flex-1">
-                <div className="text-xs md:text-sm font-bold text-gray-500 uppercase tracking-widest mb-1 md:mb-2">
+                <div className="text-[10px] md:text-sm font-bold text-gray-500 uppercase tracking-widest mb-1 md:mb-2">
                   Exercise {index} • {isBodybuilding ? 'Bodybuilding' : 'Calisthenics'}
                 </div>
-                <h3 className="text-lg md:text-xl lg:text-2xl font-black text-white leading-tight">
+                <h3 className="text-base md:text-xl lg:text-2xl font-black text-white leading-tight">
                   {exercise.name}
                 </h3>
               </div>
