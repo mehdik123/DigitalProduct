@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import WorkoutCard from './components/WorkoutCard';
 import WorkoutPage from './components/WorkoutPage';
@@ -9,6 +10,7 @@ import { X, Copy, Check } from 'lucide-react';
 import { supabase } from './lib/supabaseClient';
 
 function App() {
+  const navigate = useNavigate();
   const [currentWeek, setCurrentWeek] = useState(1);
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutDay | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -207,7 +209,7 @@ function App() {
                   Create My Own Copy
                 </button>
                 <button
-                  onClick={() => window.location.href = '/#/login/returning'}
+                  onClick={() => navigate('/login/returning')}
                   className="w-full sm:w-auto bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-xl hover:shadow-lg hover:scale-105 active:scale-95 transition-all whitespace-nowrap border border-slate-600"
                 >
                   Already Have Account?
@@ -407,11 +409,7 @@ function App() {
             </div>
 
             <button
-              onClick={() => {
-                if (generatedCredentials.uniqueLink) {
-                  window.location.href = generatedCredentials.uniqueLink;
-                }
-              }}
+              onClick={() => navigate('/login/returning')}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all"
             >
               Go to Login Page →
