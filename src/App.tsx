@@ -108,7 +108,7 @@ function App() {
           username: signupForm.email,
           password: password,
           name: signupForm.fullName,
-          uniqueLink: `${window.location.origin}/login/returning`
+          uniqueLink: `${window.location.origin}/#/login/returning`
         });
         setShowSignupForm(false);
         setShowModal(true);
@@ -204,7 +204,7 @@ function App() {
                   Create My Own Copy
                 </button>
                 <button
-                  onClick={() => window.location.href = '/login/returning'}
+                  onClick={() => window.location.href = '/#/login/returning'}
                   className="w-full sm:w-auto bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-xl hover:shadow-lg hover:scale-105 active:scale-95 transition-all whitespace-nowrap border border-slate-600"
                 >
                   Already Have Account?
