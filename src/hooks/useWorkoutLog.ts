@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
-import { WorkoutLog, ExerciseLog, ExerciseSet, PreviousWorkoutData, PersonalRecord } from '../types/workout';
+import { WorkoutLog, ExerciseSet, PreviousWorkoutData, PersonalRecord } from '../types/workout';
 
 export const useWorkoutLog = (workoutDayId: number, weekNumber: number) => {
     const { user } = useAuth();

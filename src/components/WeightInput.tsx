@@ -14,8 +14,6 @@ interface WeightInputProps {
 }
 
 export default function WeightInput({
-    exerciseId,
-    exerciseName,
     setNumber,
     previousWeight,
     previousReps,
@@ -90,8 +88,8 @@ export default function WeightInput({
 
     return (
         <div className={`p-4 rounded-xl border-2 transition-all ${completed
-                ? 'bg-green-500/10 border-green-500/50'
-                : 'bg-slate-800/30 border-slate-700/50'
+            ? 'bg-green-500/10 border-green-500/50'
+            : 'bg-slate-800/30 border-slate-700/50'
             } ${isPersonalRecord ? 'ring-2 ring-yellow-500/50' : ''}`}>
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">

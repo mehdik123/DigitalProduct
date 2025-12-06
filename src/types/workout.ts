@@ -11,8 +11,8 @@ export interface Exercise {
 
 export interface WorkoutDay {
   id: number;
-  title: string;
-  subtitle: string;
+  name: string;
+  description: string;
   focus: string;
   difficulty: 'Intermediate' | 'Advanced';
   duration: string;
@@ -30,7 +30,7 @@ export interface WorkoutProgress {
 
 // New types for 8-week program
 
-export type TrainingPhase = 
+export type TrainingPhase =
   | 'Anatomical Adaptation'
   | 'Hypertrophy Focus'
   | 'Strength & Power'

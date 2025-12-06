@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { ChevronLeft, Clock, TrendingUp, Zap, Target, Save } from 'lucide-react';
 import { WorkoutDay } from '../types/workout';
 import ExerciseCard from './ExerciseCard';
-import { getWeekProgression } from '../data/progressionRules';
 import { supabase } from '../lib/supabaseClient';
 
 interface WorkoutPageProps {
@@ -25,7 +24,7 @@ export default function WorkoutPage({ workout, weekNumber, onBack, session, user
     Target: Target,
   }[workout.icon] || Zap;
 
-  const weekProgression = getWeekProgression(weekNumber);
+
 
   // Save workout to database
   const handleSaveWorkout = async () => {

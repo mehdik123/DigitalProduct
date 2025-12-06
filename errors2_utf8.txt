@@ -1,0 +1,13 @@
+﻿
+> vite-react-typescript-starter@0.0.0 typecheck
+> tsc --noEmit -p tsconfig.app.json
+
+src/components/WorkoutCard.tsx(36,24): error TS2339: Property 'title' does not exist on type 'WorkoutDay'.
+src/components/WorkoutCard.tsx(39,24): error TS2339: Property 'subtitle' does not exist on type 'WorkoutDay'.
+src/components/WorkoutDetail.tsx(36,22): error TS2339: Property 'title' does not exist on type 'WorkoutDay'.
+src/components/WorkoutDetail.tsx(38,74): error TS2339: Property 'subtitle' does not exist on type 'WorkoutDay'.
+src/data/workoutData.ts(4,3): error TS2741: Property 'difficulty' is missing in type '{ id: number; name: string; description: string; focus: string; duration: string; icon: string; color: string; exercises: ({ id: string; name: string; sets: number; reps: string; rest: string; type: "bodybuilding"; notes: string; } | { ...; })[]; }' but required in type 'WorkoutDay'.
+src/data/workoutData.ts(87,3): error TS2741: Property 'difficulty' is missing in type '{ id: number; name: string; description: string; focus: string; duration: string; icon: string; color: string; exercises: { id: string; name: string; sets: number; reps: string; rest: string; type: "bodybuilding"; notes: string; }[]; }' but required in type 'WorkoutDay'.
+src/data/workoutData.ts(170,3): error TS2741: Property 'difficulty' is missing in type '{ id: number; name: string; description: string; focus: string; duration: string; icon: string; color: string; exercises: ({ id: string; name: string; sets: number; reps: string; rest: string; type: "bodybuilding"; notes: string; } | { ...; })[]; }' but required in type 'WorkoutDay'.
+src/data/workoutData.ts(253,3): error TS2741: Property 'difficulty' is missing in type '{ id: number; name: string; description: string; focus: string; duration: string; icon: string; color: string; exercises: ({ id: string; name: string; sets: number; reps: string; rest: string; type: "bodybuilding"; notes: string; } | { ...; })[]; }' but required in type 'WorkoutDay'.
+src/data/workoutData.ts(336,3): error TS2741: Property 'difficulty' is missing in type '{ id: number; name: string; description: string; focus: string; duration: string; icon: string; color: string; exercises: ({ id: string; name: string; sets: number; reps: string; rest: string; type: "bodybuilding"; notes: string; } | { ...; })[]; }' but required in type 'WorkoutDay'.

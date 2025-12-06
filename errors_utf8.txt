@@ -1,0 +1,15 @@
+﻿
+> vite-react-typescript-starter@0.0.0 typecheck
+> tsc --noEmit -p tsconfig.app.json
+
+src/components/WeightInput.tsx(17,5): error TS6133: 'exerciseId' is declared but its value is never read.
+src/components/WeightInput.tsx(18,5): error TS6133: 'exerciseName' is declared but its value is never read.
+src/components/WorkoutPage.tsx(28,9): error TS6133: 'weekProgression' is declared but its value is never read.
+src/components/WorkoutPage.tsx(133,107): error TS2339: Property 'name' does not exist on type 'WorkoutDay'.
+src/components/WorkoutPage.tsx(135,26): error TS2339: Property 'description' does not exist on type 'WorkoutDay'.
+src/data/workoutData.ts(6,5): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type 'WorkoutDay'.
+src/data/workoutData.ts(89,5): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type 'WorkoutDay'.
+src/data/workoutData.ts(172,5): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type 'WorkoutDay'.
+src/data/workoutData.ts(255,5): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type 'WorkoutDay'.
+src/data/workoutData.ts(338,5): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type 'WorkoutDay'.
+src/hooks/useWorkoutLog.ts(4,22): error TS6133: 'ExerciseLog' is declared but its value is never read.

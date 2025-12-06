@@ -33,9 +33,9 @@ export default function WorkoutDetail({
             Day {workout.id} • {workout.difficulty}
           </div>
           <h2 className="text-5xl font-black text-white mb-2 tracking-tight">
-            {workout.title}
+            {workout.name}
           </h2>
-          <p className="text-white/90 text-lg font-medium mb-6">{workout.subtitle}</p>
+          <p className="text-white/90 text-lg font-medium mb-6">{workout.description}</p>
 
           <div className="flex flex-wrap gap-4">
             <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2 flex items-center gap-2">
@@ -68,18 +68,16 @@ export default function WorkoutDetail({
                 <div
                   key={exercise.id}
                   onClick={() => onToggleExercise(exercise.id)}
-                  className={`group relative border-2 rounded-2xl p-5 transition-all duration-300 cursor-pointer ${
-                    isCompleted
+                  className={`group relative border-2 rounded-2xl p-5 transition-all duration-300 cursor-pointer ${isCompleted
                       ? 'border-green-400 bg-green-50 hover:border-green-500'
                       : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg transition-colors ${
-                      isCompleted
+                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg transition-colors ${isCompleted
                         ? 'bg-green-500 text-white'
                         : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700'
-                    }`}>
+                      }`}>
                       {isCompleted ? '✓' : index + 1}
                     </div>
 
@@ -89,11 +87,10 @@ export default function WorkoutDetail({
                           <h4 className={`text-lg font-bold mb-1 ${isCompleted ? 'text-green-900' : 'text-gray-900'}`}>
                             {exercise.name}
                           </h4>
-                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                            exercise.type === 'calisthenics'
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${exercise.type === 'calisthenics'
                               ? 'bg-blue-100 text-blue-700'
                               : 'bg-orange-100 text-orange-700'
-                          }`}>
+                            }`}>
                             {exercise.type === 'calisthenics' ? '🤸 Calisthenics' : '🏋️ Bodybuilding'}
                           </span>
                         </div>
@@ -102,11 +99,10 @@ export default function WorkoutDetail({
                             e.stopPropagation();
                             onToggleExercise(exercise.id);
                           }}
-                          className={`flex-shrink-0 transition-all duration-300 ${
-                            isCompleted
+                          className={`flex-shrink-0 transition-all duration-300 ${isCompleted
                               ? 'text-green-500 scale-110'
                               : 'text-gray-300 hover:text-gray-400 group-hover:scale-110'
-                          }`}
+                            }`}
                         >
                           {isCompleted ? (
                             <CheckCircle2 className="w-7 h-7" strokeWidth={2.5} />
@@ -154,11 +150,10 @@ export default function WorkoutDetail({
           <button
             onClick={onCompleteWorkout}
             disabled={!allCompleted}
-            className={`mt-8 w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
-              allCompleted
+            className={`mt-8 w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${allCompleted
                 ? `bg-gradient-to-br ${workout.color} text-white hover:shadow-xl hover:scale-[1.02]`
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
+              }`}
           >
             {allCompleted ? 'Complete Workout 🎉' : 'Complete All Exercises to Finish'}
           </button>

@@ -33,10 +33,10 @@ export default function WorkoutCard({ workout, onClick }: WorkoutCardProps) {
               Day {workout.id}
             </div>
             <h3 className="text-4xl font-black text-white mb-1 tracking-tight">
-              {workout.title}
+              {workout.name}
             </h3>
             <p className="text-white/90 text-sm font-medium tracking-wide">
-              {workout.subtitle}
+              {workout.description}
             </p>
           </div>
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 group-hover:scale-110 transition-transform duration-300">
