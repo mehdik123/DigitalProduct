@@ -355,7 +355,7 @@ function App() {
             </div>
 
             <p className="text-gray-300 mb-6">
-              Your personalized workout program is ready! Save these credentials and use the link below to access your program:
+              <span className="text-amber-400 font-bold">Action Required:</span> Please copy your credentials below. You will need to manually enter them on the next screen to access your program.
             </p>
 
             {/* Unique Login Link */}

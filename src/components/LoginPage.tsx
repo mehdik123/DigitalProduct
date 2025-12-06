@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { Lock, ShieldCheck } from 'lucide-react';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -42,15 +43,18 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black flex items-center justify-center p-4">
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
             <div className="max-w-md w-full">
-                <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-slate-700">
+                <div className="bg-slate-900 rounded-2xl p-8 shadow-2xl border border-slate-800">
                     <div className="text-center mb-8">
-                        <h1 className="text-4xl font-black text-white mb-2">
-                            Welcome Back! 💪
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/10 mb-4">
+                            <Lock className="w-8 h-8 text-blue-500" />
+                        </div>
+                        <h1 className="text-3xl font-bold text-white mb-2">
+                            Secure Login
                         </h1>
-                        <p className="text-gray-400">
-                            Login with your email and password to continue your journey
+                        <p className="text-slate-400 text-sm">
+                            Enter your credentials to access your program
                         </p>
                     </div>
 
@@ -94,15 +98,23 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
-                            {loading ? 'Logging in...' : 'Login to My Program'}
+                            {loading ? 'Verifying...' : (
+                                <>
+                                    <ShieldCheck className="w-5 h-5" />
+                                    Access Program
+                                </>
+                            )}
                         </button>
                     </form>
 
-                    <div className="mt-6 text-center">
-                        <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
-                            ← Back to Public Program
+                    <div className="mt-8 pt-6 border-t border-slate-800 text-center">
+                        <p className="text-xs text-slate-500 mb-4">
+                            Secure connection • 256-bit encryption
+                        </p>
+                        <a href="/" className="text-sm text-slate-400 hover:text-white transition-colors">
+                            ← Return to Home
                         </a>
                     </div>
                 </div>
