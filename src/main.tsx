@@ -10,6 +10,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/login/returning" element={<LoginPage />} />
         <Route path="/login/:userId" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
