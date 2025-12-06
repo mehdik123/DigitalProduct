@@ -352,7 +352,7 @@ function App() {
             </div>
 
             <p className="text-gray-300 mb-6">
-              Your personalized workout program is ready! Save these credentials and use the link below to access your program:
+              <span className="text-green-400 font-bold">You are now logged in!</span> Save these credentials for your next visit:
             </p>
 
             {/* Unique Login Link */}
@@ -404,14 +404,10 @@ function App() {
             </div>
 
             <button
-              onClick={() => {
-                if (generatedCredentials.uniqueLink) {
-                  window.location.href = generatedCredentials.uniqueLink;
-                }
-              }}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all"
+              onClick={() => setShowModal(false)}
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all"
             >
-              Go to Login Page →
+              Start Training Now! 🚀
             </button>
           </div>
         </div>
