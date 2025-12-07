@@ -1,84 +1,76 @@
-import { useState, useEffect } from 'react';
+import { Dumbbell, Repeat, Activity } from 'lucide-react';
+import { ExerciseSet } from '../types/workout';
 
 interface SimpleWeightInputProps {
-    exerciseId: string;
-    exerciseName: string;
     setNumber: number;
-    userData: any;
-    weekNumber: number;
-    workoutDayId: number;
-    onDataChange?: () => void;
+    data: ExerciseSet;
+    onChange: (field: keyof ExerciseSet, value: any) => void;
+    targetReps?: string;
 }
 
 export default function SimpleWeightInput({
-    exerciseId,
     setNumber,
-    userData,
-    weekNumber,
-    workoutDayId,
-    onDataChange
+    data,
+    onChange,
+    targetReps
 }: SimpleWeightInputProps) {
-    const [weight, setWeight] = useState('');
-    const [reps, setReps] = useState('');
-    const [completed, setCompleted] = useState(false);
-
-    // Load saved data from temporary localStorage
-    useEffect(() => {
-        if (userData) {
-            const logKey = `workout_${workoutDayId}-${weekNumber}-${exerciseId}-${setNumber}`;
-            const saved = localStorage.getItem(logKey);
-            if (saved) {
-                const data = JSON.parse(saved);
-                setWeight(data.weight || '');
-                setReps(data.reps || '');
-                setCompleted(data.completed || false);
-            }
-        }
-    }, [userData, workoutDayId, weekNumber, exerciseId, setNumber]);
-
-    // Save data to temporary localStorage and notify parent
-    useEffect(() => {
-        if (userData && (weight || reps || completed)) {
-            const logKey = `workout_${workoutDayId}-${weekNumber}-${exerciseId}-${setNumber}`;
-            const data = { weight, reps, completed };
-            localStorage.setItem(logKey, JSON.stringify(data));
-
-            if (onDataChange) {
-                onDataChange();
-            }
-        }
-    }, [weight, reps, completed, userData, workoutDayId, weekNumber, exerciseId, setNumber, onDataChange]);
-
-    if (!userData) {
-        return null;
-    }
-
     return (
-        <div className="flex items-center gap-1.5 md:gap-2 flex-1">
-            <input
-                type="number"
-                placeholder="Weight"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                className="w-16 md:w-20 px-2 md:px-3 py-1.5 md:py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-blue-500 focus:outline-none text-xs md:text-sm"
-            />
-            <span className="text-gray-400 text-xs md:text-sm">lbs ×</span>
-            <input
-                type="number"
-                placeholder="Reps"
-                value={reps}
-                onChange={(e) => setReps(e.target.value)}
-                className="w-12 md:w-16 px-2 md:px-3 py-1.5 md:py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-blue-500 focus:outline-none text-xs md:text-sm"
-            />
-            <label className="flex items-center gap-1 md:gap-2 cursor-pointer ml-auto">
-                <input
-                    type="checkbox"
-                    checked={completed}
-                    onChange={(e) => setCompleted(e.target.checked)}
-                    className="w-4 h-4 md:w-5 md:h-5 rounded border-slate-600 text-blue-500 focus:ring-blue-500 focus:ring-offset-slate-800"
-                />
-                <span className="text-xs md:text-sm text-gray-400 whitespace-nowrap">Done</span>
-            </label>
+        <div className="flex-1 flex flex-col gap-2">
+
+            {/* Inputs Row */}
+            <div className="grid grid-cols-12 gap-2">
+                {/* Weight Input */}
+                <div className="col-span-4">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1 pl-1">
+                        Weight
+                    </label>
+                    <div className="relative group/input">
+                        <Dumbbell className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 group-focus-within/input:text-blue-500 transition-colors" />
+                        <input
+                            type="number"
+                            value={data.weight || ''}
+                            onChange={(e) => onChange('weight', parseFloat(e.target.value))}
+                            placeholder="0"
+                            className="w-full pl-7 pr-2 py-2 bg-slate-950/50 border border-slate-700 rounded-lg text-white text-sm font-bold focus:outline-none focus:border-blue-500 focus:bg-blue-500/10 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-slate-700"
+                        />
+                    </div>
+                </div>
+
+                {/* Reps Input */}
+                <div className="col-span-4">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1 pl-1">
+                        Reps
+                    </label>
+                    <div className="relative group/input">
+                        <Repeat className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 group-focus-within/input:text-purple-500 transition-colors" />
+                        <input
+                            type="number"
+                            value={data.reps || ''}
+                            onChange={(e) => onChange('reps', parseInt(e.target.value))}
+                            placeholder={targetReps || "0"}
+                            className="w-full pl-7 pr-2 py-2 bg-slate-950/50 border border-slate-700 rounded-lg text-white text-sm font-bold focus:outline-none focus:border-purple-500 focus:bg-purple-500/10 focus:ring-1 focus:ring-purple-500 transition-all placeholder:text-slate-700"
+                        />
+                    </div>
+                </div>
+
+                {/* RPE Input */}
+                <div className="col-span-4">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1 pl-1">
+                        RPE (1-10)
+                    </label>
+                    <div className="relative group/input">
+                        <Activity className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 group-focus-within/input:text-orange-500 transition-colors" />
+                        <input
+                            type="number"
+                            value={data.rpe || 7}
+                            onChange={(e) => onChange('rpe', parseInt(e.target.value))}
+                            min="1"
+                            max="10"
+                            className="w-full pl-7 pr-2 py-2 bg-slate-950/50 border border-slate-700 rounded-lg text-white text-sm font-bold focus:outline-none focus:border-orange-500 focus:bg-orange-500/10 focus:ring-1 focus:ring-orange-500 transition-all text-center"
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

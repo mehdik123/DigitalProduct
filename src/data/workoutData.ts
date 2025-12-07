@@ -10,6 +10,7 @@ export const workoutSplit: WorkoutDay[] = [
     duration: '75-90 min',
     icon: 'Dumbbell',
     color: 'from-blue-500 to-cyan-500',
+    backgroundImage: '/images/welcome_bg.jpg',
     exercises: [
       {
         id: 'incline-barbell-bench-smith',
@@ -94,6 +95,7 @@ export const workoutSplit: WorkoutDay[] = [
     duration: '80-95 min',
     icon: 'Activity',
     color: 'from-orange-500 to-red-500',
+    backgroundImage: '/images/lower_body_1.jpg',
     exercises: [
       {
         id: 'high-bar-back-squats',
@@ -178,6 +180,7 @@ export const workoutSplit: WorkoutDay[] = [
     duration: '70-85 min',
     icon: 'Zap',
     color: 'from-purple-500 to-pink-500',
+    backgroundImage: '/images/upper_body_2.jpg',
     exercises: [
       {
         id: 'flat-barbell-bench',
@@ -262,6 +265,7 @@ export const workoutSplit: WorkoutDay[] = [
     duration: '80-95 min',
     icon: 'Flame',
     color: 'from-green-500 to-emerald-500',
+    backgroundImage: '/images/lower_body_2.jpg',
     exercises: [
       {
         id: 'front-squats-smith-day4',
@@ -346,6 +350,7 @@ export const workoutSplit: WorkoutDay[] = [
     duration: '65-80 min',
     icon: 'Target',
     color: 'from-yellow-500 to-orange-500',
+    backgroundImage: '/images/upper_body_3.jpg',
     exercises: [
       {
         id: 'incline-db-bench',

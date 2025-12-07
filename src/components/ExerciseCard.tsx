@@ -1,5 +1,6 @@
-import { Repeat, TrendingUp, Timer } from 'lucide-react';
-import { Exercise } from '../types/workout';
+import { useState, useEffect } from 'react';
+import { Repeat, TrendingUp, Timer, Save, Check } from 'lucide-react';
+import { Exercise, ExerciseSet } from '../types/workout';
 import { exerciseVideos } from '../data/exerciseVideos';
 import SimpleWeightInput from './SimpleWeightInput';
 
@@ -10,7 +11,8 @@ interface ExerciseCardProps {
   userData?: any;
   weekNumber?: number;
   workoutDayId?: number;
-  onDataChange?: () => void;
+  onSaveBatch?: (exerciseId: string, exerciseName: string, setsData: ExerciseSet[]) => Promise<void>;
+  savedData?: ExerciseSet[];
 }
 
 export default function ExerciseCard({
@@ -19,10 +21,85 @@ export default function ExerciseCard({
   userData,
   weekNumber = 1,
   workoutDayId = 1,
-  onDataChange
+  onSaveBatch,
+  savedData = []
 }: ExerciseCardProps) {
   const videoId = exerciseVideos[exercise.id];
   const isBodybuilding = exercise.type === 'bodybuilding';
+
+  // Initialize sets state from savedData or default
+  const [sets, setSets] = useState<ExerciseSet[]>(() => {
+    // Create default sets
+    const defaultSets = Array.from({ length: exercise.sets }, (_, i) => ({
+      setNumber: i + 1,
+      weight: 0,
+      reps: 0,
+      rpe: 7,
+      completed: false
+    }));
+
+    // Merge with saved data if available
+    if (savedData && savedData.length > 0) {
+      return defaultSets.map(set => {
+        const savedSet = savedData.find(s => s.setNumber === set.setNumber);
+        return savedSet ? { ...set, ...savedSet } : set;
+      });
+    }
+
+    return defaultSets;
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  // Update sets when savedData changes (e.g. after initial load)
+  useEffect(() => {
+    if (savedData && savedData.length > 0) {
+      setSets(prev => prev.map(set => {
+        const savedSet = savedData.find(s => s.setNumber === set.setNumber);
+        return savedSet ? { ...set, ...savedSet } : set;
+      }));
+      setIsSaved(true);
+    }
+  }, [savedData]);
+
+  // Parse target reps for initialization (only if no saved data)
+  useEffect(() => {
+    if (savedData && savedData.length > 0) return;
+
+    const match = exercise.reps.match(/(\d+)/);
+    const targetReps = match ? parseInt(match[0]) : 0;
+
+    setSets(prev => prev.map(set => ({
+      ...set,
+      reps: set.reps || targetReps
+    })));
+  }, [exercise.reps, savedData]);
+
+  const handleSetChange = (setIndex: number, field: keyof ExerciseSet, value: any) => {
+    setSets(prev => prev.map((set, i) =>
+      i === setIndex ? { ...set, [field]: value } : set
+    ));
+    setIsSaved(false);
+  };
+
+  const handleSaveExercise = async () => {
+    if (!onSaveBatch) return;
+
+    setIsSaving(true);
+    try {
+      // Mark all sets as completed when saving
+      const completedSets = sets.map(set => ({ ...set, completed: true }));
+      setSets(completedSets);
+
+      await onSaveBatch(exercise.id, exercise.name, completedSets);
+      setIsSaved(true);
+    } catch (error) {
+      console.error('Error saving exercise:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="group bg-slate-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-700 hover:border-slate-600">
@@ -96,21 +173,44 @@ export default function ExerciseCard({
             {userData && (
               <div className="mb-3 md:mb-4 bg-slate-900/50 rounded-lg md:rounded-xl p-3 md:p-4 border border-slate-600">
                 <h4 className="text-xs md:text-sm font-bold text-white mb-2 md:mb-3">Log Your Sets:</h4>
-                <div className="space-y-2">
-                  {Array.from({ length: exercise.sets }, (_, i) => (
+                <div className="space-y-4">
+                  {sets.map((set, i) => (
                     <div key={i} className="flex items-center gap-2">
                       <span className="text-xs md:text-sm font-bold text-gray-400 w-10 md:w-12">Set {i + 1}:</span>
                       <SimpleWeightInput
-                        exerciseId={exercise.id}
-                        exerciseName={exercise.name}
                         setNumber={i + 1}
-                        userData={userData}
-                        weekNumber={weekNumber}
-                        workoutDayId={workoutDayId}
-                        onDataChange={onDataChange}
+                        data={set}
+                        onChange={(field, value) => handleSetChange(i, field, value)}
+                        targetReps={exercise.reps}
                       />
                     </div>
                   ))}
+
+                  {/* Batch Save Button */}
+                  <button
+                    onClick={handleSaveExercise}
+                    disabled={isSaving}
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-sm uppercase tracking-wider transition-all duration-300 transform active:scale-[0.98] ${isSaved
+                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                      : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                      }`}
+                  >
+                    {isSaved ? (
+                      <>
+                        <Check className="w-5 h-5" />
+                        <span>Exercise Saved</span>
+                      </>
+                    ) : (
+                      <>
+                        {isSaving ? (
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <Save className="w-5 h-5" />
+                        )}
+                        <span>{isSaving ? 'Saving...' : 'Save Exercise'}</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             )}

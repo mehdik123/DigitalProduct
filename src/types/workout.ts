@@ -19,6 +19,7 @@ export interface WorkoutDay {
   exercises: Exercise[];
   color: string;
   icon: string;
+  backgroundImage?: string;
 }
 
 export interface WorkoutProgress {

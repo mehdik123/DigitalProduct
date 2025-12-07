@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { ChevronLeft, Clock, TrendingUp, Zap, Target, Save } from 'lucide-react';
+import { ChevronLeft, Clock, TrendingUp, Zap, Target } from 'lucide-react';
 import { WorkoutDay } from '../types/workout';
 import ExerciseCard from './ExerciseCard';
-import { supabase } from '../lib/supabaseClient';
+import { useWorkoutLog } from '../hooks/useWorkoutLog';
 
 interface WorkoutPageProps {
   workout: WorkoutDay;
@@ -13,8 +12,12 @@ interface WorkoutPageProps {
 }
 
 export default function WorkoutPage({ workout, weekNumber, onBack, session, userProfile }: WorkoutPageProps) {
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const {
+    currentWorkoutLog,
+    saveExerciseBatch,
+    completeWorkout,
+    saving: isSaving
+  } = useWorkoutLog(workout.id, weekNumber);
 
   const Icon = {
     Dumbbell: Zap,
@@ -24,180 +27,104 @@ export default function WorkoutPage({ workout, weekNumber, onBack, session, user
     Target: Target,
   }[workout.icon] || Zap;
 
-
-
-  // Save workout to database
-  const handleSaveWorkout = async () => {
-    if (!session?.user) {
-      alert('Please login to save workouts');
-      return;
-    }
-
-    setIsSaving(true);
-
+  const handleFinishWorkout = async () => {
     try {
-      // Get all exercise logs from localStorage (temporary storage)
-      const exerciseLogs: any[] = [];
-
-      workout.exercises.forEach((exercise) => {
-        for (let setNum = 1; setNum <= exercise.sets; setNum++) {
-          const logKey = `workout_${workout.id}-${weekNumber}-${exercise.id}-${setNum}`;
-          const saved = localStorage.getItem(logKey);
-
-          if (saved) {
-            const data = JSON.parse(saved);
-            if (data.weight || data.reps || data.completed) {
-              exerciseLogs.push({
-                exercise_id: exercise.id,
-                exercise_name: exercise.name,
-                set_number: setNum,
-                weight: data.weight ? parseFloat(data.weight) : null,
-                reps: data.reps ? parseInt(data.reps) : null,
-                completed: data.completed || false
-              });
-            }
-          }
-        }
-      });
-
-      if (exerciseLogs.length === 0) {
-        alert('No workout data to save. Please log some weights first!');
-        setIsSaving(false);
-        return;
-      }
-
-      // Insert workout log
-      const { data: workoutLog, error: workoutError } = await supabase
-        .from('workout_logs')
-        .insert({
-          user_id: session.user.id,
-          workout_day_id: workout.id,
-          week_number: weekNumber,
-        })
-        .select()
-        .single();
-
-      if (workoutError) throw workoutError;
-
-      // Add workout_log_id to exercise logs
-      const exerciseLogsWithWorkoutId = exerciseLogs.map(log => ({
-        ...log,
-        workout_log_id: workoutLog.id
-      }));
-
-      // Insert exercise logs
-      const { error: exerciseError } = await supabase
-        .from('exercise_logs')
-        .insert(exerciseLogsWithWorkoutId);
-
-      if (exerciseError) throw exerciseError;
-
-      // Clear temporary localStorage data
-      workout.exercises.forEach((exercise) => {
-        for (let setNum = 1; setNum <= exercise.sets; setNum++) {
-          const logKey = `workout_${workout.id}-${weekNumber}-${exercise.id}-${setNum}`;
-          localStorage.removeItem(logKey);
-        }
-      });
-
-      setHasUnsavedChanges(false);
-      alert('✅ Workout saved successfully!');
-    } catch (error: any) {
-      console.error('Error saving workout:', error);
-      alert(`Error saving workout: ${error.message}`);
-    } finally {
-      setIsSaving(false);
+      await completeWorkout();
+      onBack();
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      alert('Error saving workout. Please try again.');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black">
-      <div className="max-w-7xl mx-auto p-3 md:p-6 lg:p-8">
-        {/* Back Button - Smaller on mobile */}
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 md:gap-2 text-gray-400 hover:text-white transition-colors mb-3 md:mb-6 group"
-        >
-          <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm md:text-base font-semibold">Back to Workouts</span>
-        </button>
+    <div className="min-h-screen bg-slate-950 pb-20 md:pb-0">
+      {/* Header */}
+      <div className={`relative h-48 md:h-64 overflow-hidden ${workout.color}`}>
+        {workout.backgroundImage ? (
+          <div className="absolute inset-0">
+            <img
+              src={workout.backgroundImage}
+              alt={workout.name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 bg-black/30" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
 
-        {/* Workout Header - Much more compact on mobile */}
-        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 md:p-6 lg:p-8 mb-4 md:mb-6 lg:mb-8 border border-slate-700/50 shadow-2xl">
-          <div className="flex items-start gap-2 md:gap-4 lg:gap-6">
-            <div className={`p-2 md:p-4 lg:p-5 rounded-lg md:rounded-2xl bg-gradient-to-br ${workout.color} shadow-lg flex-shrink-0`}>
-              <Icon className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-white" strokeWidth={2.5} />
+        <div className="absolute top-4 left-4 z-10">
+          <button
+            onClick={onBack}
+            className="p-2 bg-black/20 backdrop-blur-sm rounded-full text-white hover:bg-black/40 transition-colors"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
+          <div className="flex items-center gap-2 text-white/80 text-sm font-bold uppercase tracking-wider mb-2">
+            <Icon className="w-4 h-4" />
+            <span>Week {weekNumber}</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black text-white mb-2 uppercase italic tracking-tighter">
+            {workout.name}
+          </h1>
+          <div className="flex items-center gap-4 text-white/90 text-sm font-medium">
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>{workout.duration}</span>
             </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl md:text-3xl lg:text-5xl font-black text-white mb-2 md:mb-4">{workout.name}</h1>
-              <p className="text-xs md:text-base lg:text-lg text-gray-300 leading-relaxed mb-3 md:mb-6">
-                {workout.description}
-              </p>
-
-              {/* Workout Stats - Compact on mobile */}
-              <div className="grid grid-cols-3 gap-2 md:gap-3 lg:gap-4">
-                <div className="bg-slate-900/50 rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 border border-slate-700">
-                  <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
-                    <Zap className="w-3 h-3 md:w-4 md:h-4 text-yellow-400" />
-                    <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase">Exercises</span>
-                  </div>
-                  <p className="text-base md:text-xl lg:text-2xl font-black text-white">{workout.exercises.length}</p>
-                </div>
-                <div className="bg-slate-900/50 rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 border border-slate-700">
-                  <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
-                    <Clock className="w-3 h-3 md:w-4 md:h-4 text-blue-400" />
-                    <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase">Duration</span>
-                  </div>
-                  <p className="text-sm md:text-xl lg:text-2xl font-black text-white">{workout.duration}</p>
-                </div>
-                <div className="bg-slate-900/50 rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 border border-slate-700">
-                  <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
-                    <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-green-400" />
-                    <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase">Focus</span>
-                  </div>
-                  <p className="text-sm md:text-base lg:text-lg font-bold text-white">{workout.focus}</p>
-                </div>
-              </div>
+            <div className="px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold">
+              {workout.difficulty}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Save Reminder (if logged in and has changes) - Compact on mobile */}
-        {userProfile && hasUnsavedChanges && (
-          <div className="mb-3 md:mb-6 bg-amber-500/20 border-l-4 border-amber-500 p-2.5 md:p-4 rounded-lg">
-            <p className="text-xs md:text-sm text-amber-200">
-              <span className="font-bold">⚠️ Reminder:</span> Don't forget to save your workout after logging your weights!
-            </p>
-          </div>
-        )}
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-4 py-6 md:py-8 space-y-6">
+        <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+          <h3 className="text-lg font-bold text-white mb-2">Workout Focus</h3>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            {workout.description}
+          </p>
+        </div>
 
-        {/* Save Button (if logged in) - Compact on mobile */}
-        {userProfile && (
-          <div className="mb-4 md:mb-6">
-            <button
-              onClick={handleSaveWorkout}
-              disabled={isSaving}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 md:py-4 rounded-xl hover:shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
-            >
-              <Save className="w-4 h-4 md:w-5 md:h-5" />
-              {isSaving ? 'Saving Workout...' : '💾 Save Workout'}
-            </button>
-          </div>
-        )}
+        <div className="space-y-4 md:space-y-6">
+          {workout.exercises.map((exercise, index) => {
+            // Find logs for this exercise
+            const exerciseLog = currentWorkoutLog?.exercises?.find(
+              log => log.exerciseId === exercise.id
+            );
+            const savedSets = exerciseLog?.sets || [];
 
-        {/* Exercises - Smaller spacing on mobile */}
-        <div className="space-y-4 md:space-y-8">
-          {workout.exercises.map((exercise, index) => (
-            <ExerciseCard
-              key={exercise.id}
-              exercise={exercise}
-              index={index + 1}
-              userData={userProfile}
-              weekNumber={weekNumber}
-              workoutDayId={workout.id}
-              onDataChange={() => setHasUnsavedChanges(true)}
-            />
-          ))}
+            return (
+              <ExerciseCard
+                key={exercise.id}
+                exercise={exercise}
+                index={index + 1}
+                userData={session?.user}
+                weekNumber={weekNumber}
+                workoutDayId={workout.id}
+                onSaveBatch={saveExerciseBatch}
+                savedData={savedSets}
+              />
+            );
+          })}
+        </div>
+
+        {/* Finish Workout Button */}
+        <div className="pt-4 pb-8">
+          <button
+            onClick={handleFinishWorkout}
+            disabled={isSaving}
+            className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-black text-white uppercase tracking-wider shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSaving ? 'Saving...' : 'Finish Workout'}
+          </button>
         </div>
       </div>
     </div>
