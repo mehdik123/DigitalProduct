@@ -81,7 +81,7 @@ function App() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(signupForm.email)) {
-      alert('Please enter a valid email address');
+      alert('Please enter a valid email-address');
       return;
     }
 
