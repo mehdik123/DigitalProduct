@@ -21,6 +21,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@nutrition/*": [
+        "./src/nutrition/*"
+      ]
+    },
     "forceConsistentCasingInFileNames": true
   },
   "include": [
