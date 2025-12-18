@@ -119,7 +119,7 @@ export const weeklyProgressions: WeeklyProgression[] = [
     {
         weekNumber: 8,
         phase: 'Peak Performance',
-        volumeMultiplier: 0.85,
+        volumeMultiplier: 0.8, // Reduced to ensure 3 sets -> 2 sets
         intensityTarget: 92,
         rpeRange: [9, 10],
         restMultiplier: 1.5,

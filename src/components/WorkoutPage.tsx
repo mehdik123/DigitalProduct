@@ -1,4 +1,4 @@
-import { ChevronLeft, Clock, TrendingUp, Zap, Target } from 'lucide-react';
+import { ChevronLeft, Clock, TrendingUp, Zap, Target, Info } from 'lucide-react';
 import { WorkoutDay } from '../types/workout';
 import ExerciseCard from './ExerciseCard';
 import { useWorkoutLog } from '../hooks/useWorkoutLog';
@@ -12,6 +12,8 @@ interface WorkoutPageProps {
 }
 
 export default function WorkoutPage({ workout, weekNumber, onBack, session, userProfile }: WorkoutPageProps) {
+  // Use workout directly without modification
+
   const {
     currentWorkoutLog,
     saveExerciseBatch,

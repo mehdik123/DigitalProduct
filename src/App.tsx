@@ -8,6 +8,7 @@ import { workoutSplit } from './data/workoutData';
 import { WorkoutDay } from './types/workout';
 import { X, Copy, Check } from 'lucide-react';
 import { supabase } from './lib/supabaseClient';
+import { ProgressChart } from './components/ProgressChart';
 
 function App() {
   const navigate = useNavigate();
@@ -169,27 +170,33 @@ function App() {
       <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
         <Header />
 
+
         {/* User Info Banner (if logged in) */}
         {userProfile && (
-          <div className="mb-6 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-2 border-green-500/50 rounded-2xl p-4 md:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl md:text-2xl font-black text-white mb-1">
-                  Welcome, {userProfile.full_name}! 💪
-                </h3>
-                <p className="text-sm text-gray-300">
-                  Your progress is being tracked. Keep crushing it!
-                </p>
+          <div className="space-y-6 mb-8">
+            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-2 border-green-500/50 rounded-2xl p-4 md:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl md:text-2xl font-black text-white mb-1">
+                    Welcome, {userProfile.full_name}! 💪
+                  </h3>
+                  <p className="text-sm text-gray-300">
+                    Your progress is being tracked. Keep crushing it!
+                  </p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm text-gray-400 hover:text-white underline"
+                >
+                  Logout
+                </button>
               </div>
-              <button
-                onClick={handleLogout}
-                className="text-sm text-gray-400 hover:text-white underline"
-              >
-                Logout
-              </button>
             </div>
+
+
           </div>
         )}
+
 
         {/* Create My Own Copy Button (if not logged in) */}
         {!userProfile && (

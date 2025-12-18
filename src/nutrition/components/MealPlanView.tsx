@@ -3,7 +3,8 @@ import { Button } from "@nutrition/components/ui/button";
 import { MealCard } from "@nutrition/components/MealCard";
 import { MealSwapDialog } from "@nutrition/components/MealSwapDialog";
 import { FiberTracker } from "@nutrition/components/FiberTracker";
-import { ArrowLeft, Eye, EyeOff, Download, Flame, Zap } from "lucide-react";
+import { ShoppingList } from "@nutrition/components/ShoppingList";
+import { ArrowLeft, Eye, EyeOff, Download, Flame, Zap, ShoppingCart } from "lucide-react";
 import { getMealPlan } from "@nutrition/data/mealPlans";
 import { exportMealPlanToPDF } from "@nutrition/utils/pdfExport";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ interface MealPlanViewProps {
 export const MealPlanView = ({ calorieTarget, onBack }: MealPlanViewProps) => {
   const [showMacros, setShowMacros] = useState(true);
   const [swapDialogOpen, setSwapDialogOpen] = useState(false);
+  const [shoppingListOpen, setShoppingListOpen] = useState(false);
   const [selectedMealForSwap, setSelectedMealForSwap] = useState<Meal | null>(null);
   const [selectedMealIndex, setSelectedMealIndex] = useState<number | null>(null);
   const [meals, setMeals] = useState<Meal[]>(() => getMealPlan(calorieTarget).meals);
@@ -124,6 +126,15 @@ export const MealPlanView = ({ calorieTarget, onBack }: MealPlanViewProps) => {
                 </Button>
 
                 <Button
+                  variant="outline"
+                  onClick={() => setShoppingListOpen(true)}
+                  className="border-border/50 hover:border-primary/50 hover:bg-primary/5"
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Shopping List
+                </Button>
+
+                <Button
                   onClick={handleExportPDF}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow-sm hover:shadow-glow transition-shadow"
                 >
@@ -182,6 +193,13 @@ export const MealPlanView = ({ calorieTarget, onBack }: MealPlanViewProps) => {
             open={swapDialogOpen}
             onClose={() => setSwapDialogOpen(false)}
             onSwap={handleSwapMeal}
+          />
+
+          {/* Shopping List Dialog */}
+          <ShoppingList
+            mealPlan={mealPlan}
+            isOpen={shoppingListOpen}
+            onClose={() => setShoppingListOpen(false)}
           />
         </div>
       </div>
