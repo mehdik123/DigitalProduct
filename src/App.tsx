@@ -8,6 +8,7 @@ import { workoutSplit } from './data/workoutData';
 import { WorkoutDay } from './types/workout';
 import { X, Copy, Check, ArrowRight } from 'lucide-react';
 import { supabase } from './lib/supabaseClient';
+import WelcomePortal from './components/WelcomePortal';
 
 function App() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function App() {
   const [generatedCredentials, setGeneratedCredentials] = useState<{ username: string, password: string, name?: string, uniqueLink?: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [signupForm, setSignupForm] = useState({ fullName: '', email: '' });
+  const [view, setView] = useState<'welcome' | 'workouts'>('welcome');
 
   // Load session and user profile from Supabase
   useEffect(() => {
@@ -148,7 +150,18 @@ function App() {
     await supabase.auth.signOut();
     setUserProfile(null);
     setSession(null);
+    setView('welcome');
   };
+
+  // Show welcome portal first
+  if (view === 'welcome' && !selectedWorkout) {
+    return (
+      <WelcomePortal
+        onSelectTraining={() => setView('workouts')}
+        userName={userProfile?.full_name?.split(' ')[0]}
+      />
+    );
+  }
 
   // Show workout detail page
   if (selectedWorkout) {
@@ -169,7 +182,7 @@ function App() {
       <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
         {/* Back to Portal (Only visible if in workouts view) */}
         <button
-          onClick={() => navigate('/')}
+          onClick={() => setView('welcome')}
           className="mb-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
         >
           <ArrowRight className="w-4 h-4 rotate-180" />
