@@ -261,7 +261,7 @@ function App() {
         {/* Workout Selection */}
         <div className="mb-6 md:mb-8">
           <h2 className="text-2xl md:text-3xl font-black text-white mb-2">
-            5-Day Training Split{userProfile ? ` - Week ${currentWeek}` : ''}
+            5-Day Training Split v1.1{userProfile ? ` - Week ${currentWeek}` : ''}
           </h2>
           <p className="text-sm md:text-lg text-gray-400">
             {userProfile ? 'Select a workout to log your weights' : 'Select a workout to view exercises'}
