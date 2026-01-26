@@ -51,9 +51,32 @@ export default function WorkoutPage({ workout, weekNumber, onBack, profile, isGu
         created_at: new Date().toISOString()
       };
 
-      const { error } = await supabase
+      // Check if log already exists
+      const { data: existingLog, error: fetchError } = await supabase
         .from('workout_logs')
-        .upsert(logEntry, { onConflict: 'user_id,week_number,workout_id,exercise_id' });
+        .select('id')
+        .eq('user_id', profile.id)
+        .eq('week_number', weekNumber)
+        .eq('workout_id', workout.id)
+        .eq('exercise_id', exerciseId)
+        .single();
+
+      let error;
+
+      if (existingLog) {
+        // Update existing log
+        const { error: updateError } = await supabase
+          .from('workout_logs')
+          .update(logEntry)
+          .eq('id', existingLog.id);
+        error = updateError;
+      } else {
+        // Insert new log
+        const { error: insertError } = await supabase
+          .from('workout_logs')
+          .insert(logEntry);
+        error = insertError;
+      }
 
       if (error) throw error;
 
