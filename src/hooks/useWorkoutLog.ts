@@ -261,6 +261,13 @@ export const useWorkoutLog = (workoutDayId: number, weekNumber: number) => {
 
         setSaving(true);
         try {
+            // Ensure session is fresh before batch operation
+            const { data: { session: freshSession }, error: sessionError } = await supabase.auth.getSession();
+            if (sessionError || !freshSession) {
+                console.error('Session invalid or expired during save:', sessionError);
+                throw new Error('Authentication expired. Please log in again.');
+            }
+
             // Create or get current workout log
             let workoutLogId = currentWorkoutLog?.id;
 

@@ -68,6 +68,7 @@ export interface UserProfile {
   id: string;
   email?: string;
   username?: string;
+  fullName?: string;
   createdAt: Date;
   currentWeek: number;
   programStartDate: Date;

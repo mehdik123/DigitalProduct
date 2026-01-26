@@ -1,133 +1,170 @@
-import { ChevronLeft, Clock, TrendingUp, Zap, Target, Info } from 'lucide-react';
-import { WorkoutDay } from '../types/workout';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Send, History } from 'lucide-react';
 import ExerciseCard from './ExerciseCard';
-import { useWorkoutLog } from '../hooks/useWorkoutLog';
+import { WorkoutDay, ExerciseSet } from '../types/workout';
+import { supabase } from '../lib/supabaseClient';
 
 interface WorkoutPageProps {
   workout: WorkoutDay;
   weekNumber: number;
   onBack: () => void;
-  session?: any;
-  userProfile?: any;
+  profile: any;
+  onSignup: () => void;
+  isGuest?: boolean;
 }
 
-export default function WorkoutPage({ workout, weekNumber, onBack, session, userProfile }: WorkoutPageProps) {
-  // Use workout directly without modification
+export default function WorkoutPage({ workout, weekNumber, onBack, profile, isGuest = false }: WorkoutPageProps) {
+  const [completedExercises, setCompletedExercises] = useState<string[]>([]);
+  const [isFinishing, setIsFinishing] = useState(false);
 
-  const {
-    currentWorkoutLog,
-    saveExerciseBatch,
-    completeWorkout,
-    saving: isSaving
-  } = useWorkoutLog(workout.id, weekNumber);
+  // Load existing logs for this workout/week
+  useEffect(() => {
+    const loadLogs = async () => {
+      if (!profile) return;
 
-  const Icon = {
-    Dumbbell: Zap,
-    Activity: Target,
-    Zap: TrendingUp,
-    Flame: Zap,
-    Target: Target,
-  }[workout.icon] || Zap;
+      const { data } = await supabase
+        .from('workout_logs')
+        .select('exercise_id')
+        .eq('user_id', profile.id)
+        .eq('week_number', weekNumber)
+        .eq('workout_id', workout.id);
 
-  const handleFinishWorkout = async () => {
+      if (data) {
+        setCompletedExercises(data.map(log => log.exercise_id));
+      }
+    };
+
+    loadLogs();
+  }, [profile, weekNumber, workout.id]);
+
+  const handleSaveBatch = async (exerciseId: string, exerciseName: string, setsData: ExerciseSet[]) => {
+    if (!profile) return;
+
     try {
-      await completeWorkout();
-      onBack();
+      const logEntry = {
+        user_id: profile.id,
+        week_number: weekNumber,
+        workout_id: workout.id,
+        exercise_id: exerciseId,
+        exercise_name: exerciseName,
+        sets: setsData,
+        created_at: new Date().toISOString()
+      };
+
+      const { error } = await supabase
+        .from('workout_logs')
+        .upsert(logEntry, { onConflict: 'user_id,week_number,workout_id,exercise_id' });
+
+      if (error) throw error;
+
+      setCompletedExercises(prev =>
+        prev.includes(exerciseId) ? prev : [...prev, exerciseId]
+      );
     } catch (error) {
-      console.error('Error completing workout:', error);
-      alert('Error saving workout. Please try again.');
+      console.error('Error saving workout log:', error);
+      alert('Failed to save progress. Please try again.');
     }
   };
 
+  const handleFinishWorkout = async () => {
+    setIsFinishing(true);
+    // Logic to mark workout as fully complete if needed
+    setTimeout(() => {
+      setIsFinishing(false);
+      onBack();
+    }, 1500);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 pb-20 md:pb-0">
-      {/* Header */}
-      <div className={`relative h-48 md:h-64 overflow-hidden ${workout.color}`}>
-        {workout.backgroundImage ? (
-          <div className="absolute inset-0">
-            <img
-              src={workout.backgroundImage}
-              alt={workout.name}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/40" />
-          </div>
-        ) : (
-          <div className="absolute inset-0 bg-black/30" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
-
-        <div className="absolute top-4 left-4 z-10">
-          <button
-            onClick={onBack}
-            className="p-2 bg-black/20 backdrop-blur-sm rounded-full text-white hover:bg-black/40 transition-colors"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
-          <div className="flex items-center gap-2 text-white/80 text-sm font-bold uppercase tracking-wider mb-2">
-            <Icon className="w-4 h-4" />
-            <span>Week {weekNumber}</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black text-white mb-2 uppercase italic tracking-tighter">
-            {workout.name}
-          </h1>
-          <div className="flex items-center gap-4 text-white/90 text-sm font-medium">
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              <span>{workout.duration}</span>
-            </div>
-            <div className="px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold">
-              {workout.difficulty}
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-black text-white selection:bg-red-500/30">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-red-600/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[30%] h-[30%] bg-red-600/5 rounded-full blur-[100px]" />
       </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-6 md:py-8 space-y-6">
-        <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
-          <h3 className="text-lg font-bold text-white mb-2">Workout Focus</h3>
-          <p className="text-slate-400 text-sm leading-relaxed">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 pb-32">
+        {/* Header Navigation */}
+        <div className="flex items-center justify-between mb-10 md:mb-12">
+          <button
+            onClick={onBack}
+            className="group flex items-center gap-3 text-neutral-500 hover:text-white transition-all bg-white/5 px-5 py-3 rounded-2xl border border-white/5 hover:border-white/10"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] hidden sm:block">Exit Session</span>
+          </button>
+
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.3em]">Week {weekNumber}</p>
+              <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Active Program</p>
+            </div>
+            <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-900/20">
+              <History className="w-5 h-5 text-white" />
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Section */}
+        <div className="space-y-6 mb-12 md:mb-20 text-center sm:text-left">
+          <div className="space-y-2">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black italic uppercase tracking-tighter leading-none">
+              {workout.name}
+            </h1>
+            <p className="text-red-500 font-extrabold uppercase tracking-[0.5em] text-[10px] md:text-xs">
+              {workout.focus} • {workout.duration}
+            </p>
+          </div>
+          <p className="text-neutral-500 text-lg md:text-xl font-medium leading-relaxed max-w-2xl mx-auto sm:mx-0">
             {workout.description}
           </p>
         </div>
 
-        <div className="space-y-4 md:space-y-6">
-          {workout.exercises.map((exercise, index) => {
-            // Find logs for this exercise
-            const exerciseLog = currentWorkoutLog?.exercises?.find(
-              log => log.exerciseId === exercise.id
-            );
-            const savedSets = exerciseLog?.sets || [];
-
-            return (
-              <ExerciseCard
-                key={exercise.id}
-                exercise={exercise}
-                index={index + 1}
-                userData={session?.user}
-                weekNumber={weekNumber}
-                workoutDayId={workout.id}
-                onSaveBatch={saveExerciseBatch}
-                savedData={savedSets}
-              />
-            );
-          })}
+        {/* Exercise List */}
+        <div className="space-y-6 md:space-y-10">
+          {workout.exercises.map((exercise, index) => (
+            <ExerciseCard
+              key={exercise.id}
+              exercise={exercise}
+              index={index + 1}
+              weekNumber={weekNumber}
+              workoutDayId={workout.id}
+              userData={profile}
+              isGuest={isGuest}
+              onSaveBatch={handleSaveBatch}
+            />
+          ))}
         </div>
 
-        {/* Finish Workout Button */}
-        <div className="pt-4 pb-8">
-          <button
-            onClick={handleFinishWorkout}
-            disabled={isSaving}
-            className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-black text-white uppercase tracking-wider shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSaving ? 'Saving...' : 'Finish Workout'}
-          </button>
-        </div>
+        {/* Completion Footer - Only for authenticated users */}
+        {!isGuest && (
+          <div className="mt-20 pt-12 border-t border-white/5 text-center px-4">
+            <div className="max-w-md mx-auto space-y-8">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black uppercase italic tracking-tight">Session Alpha Complete</h3>
+                <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em]">Verify all sets and metrics before saving.</p>
+              </div>
+
+              <button
+                onClick={handleFinishWorkout}
+                disabled={isFinishing}
+                className="w-full py-6 bg-red-600 text-white text-[11px] font-black rounded-[2rem] uppercase tracking-[0.4em] shadow-2xl shadow-red-900/40 hover:scale-[1.03] active:scale-[0.97] transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+              >
+                {isFinishing ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    <span>Archiving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    <span>Sync Performance</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Activity, Dumbbell, Flame, Target, Zap, ChevronRight } from 'lucide-react';
+import { Dumbbell, Clock, Zap, ArrowRight } from 'lucide-react';
 import { WorkoutDay } from '../types/workout';
 
 interface WorkoutCardProps {
@@ -6,73 +6,53 @@ interface WorkoutCardProps {
   onClick: () => void;
 }
 
-const iconMap = {
-  Dumbbell,
-  Activity,
-  Zap,
-  Flame,
-  Target,
-};
-
 export default function WorkoutCard({ workout, onClick }: WorkoutCardProps) {
-  const Icon = iconMap[workout.icon as keyof typeof iconMap];
-
   return (
     <div
       onClick={onClick}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
-      style={{
-        backgroundImage: `linear-gradient(135deg, var(--tw-gradient-stops))`,
-      }}
+      className="group relative bg-[#09090b] rounded-[1.25rem] border border-white/5 overflow-hidden transition-all duration-500 hover:border-red-600/30 hover:shadow-[0_0_30px_rgba(220,30,58,0.1)] cursor-pointer active:scale-[0.98]"
     >
-      <div className={`bg-gradient-to-br ${workout.color} p-5 md:p-8 relative`}>
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-transparent opacity-50" />
+      <div className="absolute -right-10 -top-10 w-24 h-24 bg-red-600/5 rounded-full blur-[40px] group-hover:bg-red-600/10 transition-all duration-700" />
 
-        <div className="flex items-start justify-between mb-3 md:mb-6">
-          <div>
-            <div className="text-white/80 text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-1 md:mb-2">
-              Day {workout.id}
+      <div className="p-5 space-y-5 relative z-10">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-black text-red-600 uppercase tracking-[0.2em]">
+                Series {workout.id % 2 === 0 ? 'B' : 'A'}
+              </span>
+              <div className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[8px] font-bold text-neutral-500 uppercase tracking-tighter">
+                {workout.difficulty}
+              </div>
             </div>
-            <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight">
+            <h3 className="text-xl font-black italic uppercase tracking-tighter text-white group-hover:text-red-500 transition-colors leading-[1.1]">
               {workout.name}
             </h3>
-            <p className="text-white/90 text-xs md:text-sm font-medium tracking-wide leading-snug">
-              {workout.description}
-            </p>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-xl md:rounded-2xl p-2.5 md:p-4 group-hover:scale-110 transition-transform duration-300">
-            <Icon className="w-5 h-5 md:w-8 md:h-8 text-white" strokeWidth={2.5} />
+          <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-red-600 shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+            <Dumbbell className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>
-            <span className="text-white/90 text-xs md:text-sm font-medium">{workout.focus}</span>
-          </div>
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="flex items-center gap-1.5 md:gap-2">
-              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white/70 rounded-full"></div>
-              <span className="text-white/80 text-[10px] md:text-xs font-medium">{workout.duration}</span>
+        <div className="flex items-center justify-between pt-2 border-t border-white/5">
+          <div className="flex items-center gap-4 text-neutral-500">
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-red-600" />
+              <span className="text-[10px] font-bold uppercase tracking-tighter">{workout.duration}</span>
             </div>
-            <div className="flex items-center gap-1.5 md:gap-2">
-              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white/70 rounded-full"></div>
-              <span className="text-white/80 text-[10px] md:text-xs font-medium">{workout.exercises.length} Exercises</span>
+            <div className="flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-red-600" />
+              <span className="text-[10px] font-bold uppercase tracking-tighter">{workout.exercises.length} Drills</span>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-white/20">
-          <span className="text-white/80 text-[10px] md:text-xs font-bold tracking-wider uppercase">
-            {workout.difficulty}
-          </span>
-          <div className="flex items-center gap-1.5 md:gap-2 text-white group-hover:translate-x-1 transition-transform duration-300">
-            <span className="text-xs md:text-sm font-semibold">View Details</span>
-            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+          <div className="flex items-center gap-2 text-red-600 group/link">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] group-hover:mr-1 transition-all">Open</span>
+            <ArrowRight className="w-3.5 h-3.5 animate-pulse" />
           </div>
         </div>
-
-        <div className="absolute -bottom-8 -right-8 w-24 h-24 md:w-32 md:h-32 bg-white/10 rounded-full blur-2xl"></div>
-        <div className="absolute -top-8 -left-8 w-24 h-24 md:w-32 md:h-32 bg-black/10 rounded-full blur-2xl"></div>
       </div>
     </div>
   );

@@ -1,33 +1,61 @@
-export default function Header() {
+import { useNavigate } from 'react-router-dom';
+import { Dumbbell, Home, Utensils, LogOut } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import LanguageToggle from './LanguageToggle';
+
+interface HeaderProps {
+  onSignup: () => void;
+  showAuthButtons?: boolean;
+}
+
+export default function Header({ showAuthButtons = true }: HeaderProps) {
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-3xl p-8 mb-8 shadow-2xl group">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="/images/welcome_bg.jpg" 
-          alt="Background" 
-          className="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/80 to-transparent" />
+    <div className="w-full flex items-center justify-between px-4 md:px-8 py-3 md:py-6 bg-black/40 backdrop-blur-xl border-b border-white/5 sticky top-0 z-[60]">
+      {/* Brand Identity */}
+      <div
+        onClick={() => navigate('/')}
+        className="flex items-center gap-2 md:gap-3 cursor-pointer group"
+      >
+        <div className="w-8 h-8 md:w-12 md:h-12 bg-red-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(220,30,58,0.4)] group-hover:rotate-12 transition-all">
+          <Dumbbell className="w-5 h-5 md:w-7 md:h-7 text-white" />
+        </div>
+        <div className="flex flex-col">
+          <h1 className="text-sm md:text-2xl font-black italic uppercase tracking-tighter leading-none text-white">
+            Hybrid Athlete
+          </h1>
+          <span className="text-[6px] md:text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em]">Program v1.1</span>
+        </div>
       </div>
 
-      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-
-      <div className="relative z-10">
-        <div>
-          <h1 className="text-5xl font-black tracking-tight mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            The Hybrid Athlete Blueprint
-          </h1>
-          <p className="text-gray-400 text-lg font-medium">
-            Combine Calisthenics & Bodybuilding • Hack the Game
-          </p>
+      {/* Action Zone */}
+      <div className="flex items-center gap-2 md:gap-6">
+        {/* Quick Nav - Desktop Hidden */}
+        <div className="flex md:hidden items-center gap-1 bg-white/5 rounded-full p-1 border border-white/10">
+          <button onClick={() => navigate('/')} className="p-1.5 text-neutral-400 hover:text-white transition-colors">
+            <Home className="w-3.5 h-3.5" />
+          </button>
+          <button onClick={() => navigate('/nutrition')} className="p-1.5 text-neutral-400 hover:text-white transition-colors">
+            <Utensils className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        <div className="mt-6">
-          <p className="text-gray-300 text-base leading-relaxed max-w-2xl">
-            Master the art of hybrid training by combining the functional strength and body control of calisthenics with the targeted muscle development of bodybuilding. This 5-day split is designed for the athlete who refuses to choose between disciplines.
-          </p>
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="scale-75 md:scale-100">
+            <LanguageToggle />
+          </div>
+
+          {user && (
+            <button
+              onClick={() => signOut()}
+              className="flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-lg md:rounded-xl border border-red-500/20 hover:border-red-600 transition-all font-black uppercase tracking-widest text-[8px] md:text-[10px] shadow-lg shadow-red-600/5 group"
+            >
+              <LogOut className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:translate-x-0.5 transition-transform" />
+              <span className="hidden xs:inline">Log Out</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

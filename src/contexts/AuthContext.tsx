@@ -8,7 +8,7 @@ interface AuthContextType {
     profile: UserProfile | null;
     session: Session | null;
     loading: boolean;
-    signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+    signUp: (email: string, password: string, metadata?: any) => Promise<{ data: any; error: AuthError | null }>;
     signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
     signInWithGoogle: () => Promise<{ error: AuthError | null }>;
     signOut: () => Promise<void>;
@@ -35,8 +35,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // Fetch user profile from database
-    const fetchProfile = async (userId: string) => {
+    // Fetch user profile from database with recreation fallback
+    const fetchProfile = async (userId: string, userEmail?: string, metadata?: any) => {
         try {
             const { data, error } = await supabase
                 .from('profiles')
@@ -44,17 +44,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 .eq('id', userId)
                 .single();
 
-            if (error) throw error;
-
             if (data) {
                 setProfile({
                     id: data.id,
                     email: data.email,
                     username: data.username,
+                    fullName: data.full_name,
                     createdAt: new Date(data.created_at),
                     currentWeek: data.current_week,
-                    programStartDate: new Date(data.program_start_date)
+                    programStartDate: new Date(data.program_start_date || data.created_at)
                 });
+            } else if (error && error.code === 'PGRST116') { // Record not found
+                // Profile missing, recreate it (logic from App.tsx)
+                console.log('Profile missing in AuthContext, creating new profile...');
+                const newProfileData = {
+                    id: userId,
+                    email: userEmail,
+                    full_name: metadata?.full_name || userEmail?.split('@')[0],
+                    current_week: 1,
+                    created_at: new Date().toISOString()
+                };
+
+                const { data: inserted, error: insertError } = await supabase
+                    .from('profiles')
+                    .insert([newProfileData])
+                    .select()
+                    .single();
+
+                if (inserted) {
+                    setProfile({
+                        id: inserted.id,
+                        email: inserted.email,
+                        username: inserted.username,
+                        fullName: inserted.full_name,
+                        createdAt: new Date(inserted.created_at),
+                        currentWeek: inserted.current_week,
+                        programStartDate: new Date(inserted.created_at)
+                    });
+                } else if (insertError) {
+                    console.error('Error creating missing profile in AuthContext:', insertError);
+                }
+            } else if (error) {
+                throw error;
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
@@ -68,7 +99,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setSession(session);
             setUser(session?.user ?? null);
             if (session?.user) {
-                fetchProfile(session.user.id);
+                fetchProfile(session.user.id, session.user.email, session.user.user_metadata);
             }
             setLoading(false);
         });
@@ -80,7 +111,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setSession(session);
             setUser(session?.user ?? null);
             if (session?.user) {
-                fetchProfile(session.user.id);
+                fetchProfile(session.user.id, session.user.email, session.user.user_metadata);
             } else {
                 setProfile(null);
             }
@@ -91,12 +122,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }, []);
 
     // Sign up with email and password
-    const signUp = async (email: string, password: string) => {
-        const { error } = await supabase.auth.signUp({
+    const signUp = async (email: string, password: string, metadata?: any) => {
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
+            options: {
+                data: metadata || {}
+            }
         });
-        return { error };
+        return { data, error };
     };
 
     // Sign in with email and password
@@ -119,13 +153,53 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { error };
     };
 
+
+
     // Sign out
     const signOut = async () => {
-        await supabase.auth.signOut();
-        setUser(null);
-        setProfile(null);
-        setSession(null);
+        try {
+            console.log('Starting logout process...');
+
+            // Clear local state immediately
+            setUser(null);
+            setProfile(null);
+            setSession(null);
+
+            // Call signOut but don't wait for it (it might hang)
+            supabase.auth.signOut().then(({ error }) => {
+                if (error) {
+                    console.error('Supabase signOut error:', error);
+                }
+            }).catch(err => {
+                console.error('SignOut promise error:', err);
+            });
+
+            // Manually clear all Supabase auth tokens from localStorage immediately
+            setTimeout(() => {
+                const keys = Object.keys(localStorage);
+                keys.forEach(key => {
+                    if (key.startsWith('sb-') || key.includes('supabase')) {
+                        localStorage.removeItem(key);
+                        console.log('Removed localStorage key:', key);
+                    }
+                });
+
+                console.log('Logout complete, reloading page...');
+
+                // Force reload to clear all state
+                window.location.href = '/';
+            }, 300);
+
+        } catch (error) {
+            console.error('Error signing out:', error);
+            // Force reload anyway to clear state
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 300);
+        }
     };
+
+
 
     // Update user profile
     const updateProfile = async (updates: Partial<UserProfile>) => {

@@ -1,72 +1,80 @@
-import { Dumbbell, Repeat, Activity } from 'lucide-react';
 import { ExerciseSet } from '../types/workout';
+import { Dumbbell, Repeat } from 'lucide-react';
+import Tooltip from './Tooltip';
 
 interface SimpleWeightInputProps {
-    setNumber: number;
+    setNumber?: number;
     data: ExerciseSet;
     onChange: (field: keyof ExerciseSet, value: any) => void;
-    targetReps?: string;
+    targetReps: string;
 }
 
-export default function SimpleWeightInput({
-    setNumber,
-    data,
-    onChange,
-    targetReps
-}: SimpleWeightInputProps) {
+export default function SimpleWeightInput({ setNumber, data, onChange, targetReps }: SimpleWeightInputProps) {
+    if (!data) return null;
+
     return (
-        <div className="flex-1 flex flex-col gap-2">
-
-            {/* Inputs Row */}
-            <div className="grid grid-cols-12 gap-2">
-                {/* Weight Input */}
-                <div className="col-span-4">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1 pl-1">
-                        Weight
-                    </label>
-                    <div className="relative group/input">
-                        <Dumbbell className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 group-focus-within/input:text-blue-500 transition-colors" />
-                        <input
-                            type="number"
-                            value={data.weight || ''}
-                            onChange={(e) => onChange('weight', parseFloat(e.target.value))}
-                            placeholder="0"
-                            className="w-full pl-7 pr-2 py-2 bg-slate-950/50 border border-slate-700 rounded-lg text-white text-sm font-bold focus:outline-none focus:border-blue-500 focus:bg-blue-500/10 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-slate-700"
+        <div className="space-y-2">
+            {/* Column Headers - Only show for first set */}
+            {setNumber === 1 && (
+                <div className="grid grid-cols-2 gap-2 px-1 mb-1">
+                    <div className="flex items-center gap-1.5">
+                        <Repeat className="w-3.5 h-3.5 text-green-500" />
+                        <span className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-wider">
+                            Reps
+                        </span>
+                        <Tooltip
+                            title="Reps (Repetitions)"
+                            content="The number of times you perform the movement. For example, lifting a dumbbell up and down 8 times = 8 reps."
+                        />
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <Dumbbell className="w-3.5 h-3.5 text-red-500" />
+                        <span className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-wider">
+                            Weight (kg)
+                        </span>
+                        <Tooltip
+                            title="Weight"
+                            content="The amount of resistance you're using. Start light to master form, then gradually increase as you get stronger."
                         />
                     </div>
                 </div>
+            )}
 
-                {/* Reps Input */}
-                <div className="col-span-4">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1 pl-1">
-                        Reps
-                    </label>
-                    <div className="relative group/input">
-                        <Repeat className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 group-focus-within/input:text-purple-500 transition-colors" />
+            {/* Input Row */}
+            <div className="flex items-center gap-2">
+                {/* Set Number Badge */}
+                <div className="flex items-center gap-2 min-w-[60px]">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-600 to-red-700 border border-red-500/50 flex items-center justify-center text-xs font-black text-white shadow-lg shadow-red-900/30">
+                        {data.setNumber}
+                    </div>
+                    <div className="hidden sm:block">
+                        <p className="text-[8px] font-black text-neutral-600 uppercase tracking-widest">Target</p>
+                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-tighter">{targetReps}</p>
+                    </div>
+                </div>
+
+                {/* Inputs Grid */}
+                <div className="grid grid-cols-2 gap-2 flex-1">
+                    {/* Reps Input */}
+                    <div className="relative">
                         <input
                             type="number"
+                            placeholder="e.g., 8"
+                            className="w-full bg-slate-900/50 border border-white/10 px-3 py-3 rounded-xl text-white text-sm font-black outline-none focus:border-red-600/50 focus:ring-2 focus:ring-red-600/20 transition-all placeholder:text-neutral-700 placeholder:text-xs"
                             value={data.reps || ''}
-                            onChange={(e) => onChange('reps', parseInt(e.target.value))}
-                            placeholder={targetReps || "0"}
-                            className="w-full pl-7 pr-2 py-2 bg-slate-950/50 border border-slate-700 rounded-lg text-white text-sm font-bold focus:outline-none focus:border-purple-500 focus:bg-purple-500/10 focus:ring-1 focus:ring-purple-500 transition-all placeholder:text-slate-700"
+                            onChange={(e) => onChange('reps', e.target.value)}
                         />
                     </div>
-                </div>
 
-                {/* RPE Input */}
-                <div className="col-span-4">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1 pl-1">
-                        RPE (1-10)
-                    </label>
-                    <div className="relative group/input">
-                        <Activity className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 group-focus-within/input:text-orange-500 transition-colors" />
+                    {/* Weight Input */}
+                    <div className="relative">
                         <input
                             type="number"
-                            value={data.rpe || 7}
-                            onChange={(e) => onChange('rpe', parseInt(e.target.value))}
-                            min="1"
-                            max="10"
-                            className="w-full pl-7 pr-2 py-2 bg-slate-950/50 border border-slate-700 rounded-lg text-white text-sm font-bold focus:outline-none focus:border-orange-500 focus:bg-orange-500/10 focus:ring-1 focus:ring-orange-500 transition-all text-center"
+                            step="0.5"
+                            placeholder="e.g., 20"
+                            className="w-full bg-slate-900/50 border border-white/10 px-3 py-3 rounded-xl text-white text-sm font-black outline-none focus:border-red-600/50 focus:ring-2 focus:ring-red-600/20 transition-all placeholder:text-neutral-700 placeholder:text-xs"
+                            value={data.weight || ''}
+                            onChange={(e) => onChange('weight', e.target.value)}
                         />
                     </div>
                 </div>
