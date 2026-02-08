@@ -22,20 +22,20 @@ export default function WeekSelector({ currentWeek, onWeekSelect, completedWeeks
     };
 
     return (
-        <div className="relative w-full overflow-hidden">
+        <div className="relative w-full">
             {/* Left Arrow */}
             <button
                 onClick={() => scroll('left')}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center bg-black/60 backdrop-blur-md hover:bg-red-600 rounded-xl border border-white/10 hover:border-red-500 transition-all group shadow-2xl"
+                className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center bg-black/40 backdrop-blur-xl hover:bg-red-600 rounded-full border border-white/10 hover:border-red-500 transition-all group shadow-2xl active:scale-90"
                 aria-label="Scroll left"
             >
-                <ChevronLeft className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                <ChevronLeft className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
             </button>
 
             {/* Swipeable Week Bar */}
             <div
                 ref={scrollRef}
-                className="flex gap-2 md:gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory py-4 px-4 md:px-12"
+                className="flex gap-3 md:gap-5 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory py-6 px-4 md:px-0 mask-linear-fade"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {weeks.map((week) => {
@@ -48,38 +48,38 @@ export default function WeekSelector({ currentWeek, onWeekSelect, completedWeeks
                             onClick={() => onWeekSelect(week)}
                             className={`
                                 relative flex-shrink-0 snap-center
-                                w-16 h-16 md:w-20 md:h-20
-                                rounded-2xl md:rounded-[1.5rem]
+                                w-16 h-20 md:w-20 md:h-24
+                                rounded-2xl
                                 flex flex-col items-center justify-center
                                 transition-all duration-500
                                 ${isActive
-                                    ? 'bg-red-600 shadow-[0_10px_40px_rgba(220,30,58,0.4)] scale-110 border-2 border-red-400 z-10'
+                                    ? 'bg-gradient-to-b from-red-600 to-red-700 shadow-[0_0_30px_rgba(220,38,38,0.4)] scale-110 border border-white/20 z-10 translate-y-[-4px]'
                                     : isCompleted
-                                        ? 'bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20'
-                                        : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-red-500/30'
+                                        ? 'bg-emerald-900/20 border border-emerald-500/20 hover:bg-emerald-900/40'
+                                        : 'bg-zinc-900/40 backdrop-blur-md border border-white/5 hover:bg-zinc-800/60 hover:border-white/10'
                                 }
                                 active:scale-95
                             `}
                         >
                             {/* Week Number */}
                             <span className={`
-                                text-xl md:text-3xl font-black italic
-                                ${isActive ? 'text-white' : isCompleted ? 'text-emerald-400' : 'text-neutral-500'}
+                                text-2xl md:text-3xl font-black italic mb-1
+                                ${isActive ? 'text-white drop-shadow-md' : isCompleted ? 'text-emerald-500' : 'text-zinc-600'}
                             `}>
                                 {week}
                             </span>
 
                             {/* Week Label */}
                             <span className={`
-                                text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em]
-                                ${isActive ? 'text-white/80' : isCompleted ? 'text-emerald-400/80' : 'text-neutral-700'}
+                                text-[8px] font-black uppercase tracking-[0.2em]
+                                ${isActive ? 'text-white/90' : isCompleted ? 'text-emerald-500/80' : 'text-zinc-700'}
                             `}>
                                 WEEK
                             </span>
 
-                            {/* Active Indicator Bar */}
+                            {/* Active Indicator Glow */}
                             {isActive && (
-                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-white rounded-full" />
+                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
                             )}
                         </button>
                     );
@@ -89,15 +89,11 @@ export default function WeekSelector({ currentWeek, onWeekSelect, completedWeeks
             {/* Right Arrow */}
             <button
                 onClick={() => scroll('right')}
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center bg-black/60 backdrop-blur-md hover:bg-red-600 rounded-xl border border-white/10 hover:border-red-500 transition-all group shadow-2xl"
+                className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center bg-black/40 backdrop-blur-xl hover:bg-red-600 rounded-full border border-white/10 hover:border-red-500 transition-all group shadow-2xl active:scale-90"
                 aria-label="Scroll right"
             >
-                <ChevronRight className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                <ChevronRight className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
             </button>
-
-            {/* Scroll Fades */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-black to-transparent pointer-events-none z-10 md:hidden" />
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black to-transparent pointer-events-none z-10 md:hidden" />
         </div>
     );
 }

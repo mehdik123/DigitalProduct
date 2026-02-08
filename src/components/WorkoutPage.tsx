@@ -3,6 +3,7 @@ import { ArrowLeft, Send, History } from 'lucide-react';
 import ExerciseCard from './ExerciseCard';
 import { WorkoutDay, ExerciseSet } from '../types/workout';
 import { supabase } from '../lib/supabaseClient';
+import { saveWorkoutLog } from '../services/workoutService';
 
 interface WorkoutPageProps {
   workout: WorkoutDay;
@@ -15,6 +16,7 @@ interface WorkoutPageProps {
 
 export default function WorkoutPage({ workout, weekNumber, onBack, profile, isGuest = false }: WorkoutPageProps) {
   const [completedExercises, setCompletedExercises] = useState<string[]>([]);
+  const [exerciseLogs, setExerciseLogs] = useState<ExerciseSet[]>([]); // Store full set data
   const [isFinishing, setIsFinishing] = useState(false);
 
   // Load existing logs for this workout/week
@@ -22,70 +24,115 @@ export default function WorkoutPage({ workout, weekNumber, onBack, profile, isGu
     const loadLogs = async () => {
       if (!profile) return;
 
-      const { data } = await supabase
-        .from('workout_logs')
-        .select('exercise_id')
-        .eq('user_id', profile.id)
-        .eq('week_number', weekNumber)
-        .eq('workout_id', workout.id);
+      try {
+        // First get the workout session ID (V2)
+        const { data: session, error: sessionError } = await supabase
+          .from('workout_sessions') // V2 Table
+          .select('id')
+          .eq('user_id', profile.id)
+          .eq('week_number', weekNumber)
+          .eq('workout_day_id', workout.id)
+          .maybeSingle(); // Use maybeSingle to handle case where no session exists
 
-      if (data) {
-        setCompletedExercises(data.map(log => log.exercise_id));
+        if (sessionError && sessionError.code !== 'PGRST116') {
+          // PGRST116 is "not found" which is fine, but other errors should be logged
+          console.error('Error loading session:', sessionError);
+        }
+
+        if (session) {
+          // Then get ALL sets for this session
+          const { data: sets, error: setsError } = await supabase
+            .from('workout_sets') // V2 Table
+            .select('*')
+            .eq('session_id', session.id)
+            .order('exercise_id')
+            .order('set_number');
+
+          if (setsError) {
+            console.error('Error loading sets:', setsError);
+          } else if (sets && sets.length > 0) {
+            // 1. Update Completed IDs
+            const completedIds = Array.from(new Set(sets.map(s => s.exercise_id)));
+            setCompletedExercises(completedIds);
+
+            // 2. Store Full Logs for UI Inputs - ensure proper number conversion
+            const formattedLogs: ExerciseSet[] = sets.map(s => ({
+              setNumber: s.set_number,
+              reps: s.reps ? Number(s.reps) : 0,
+              weight: s.weight ? Number(s.weight) : 0,
+              rpe: s.rpe ? Number(s.rpe) : undefined,
+              completed: s.completed !== false,
+              exerciseId: s.exercise_id // Helper for filtering
+            }));
+            setExerciseLogs(formattedLogs);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading logs:', error);
       }
     };
 
     loadLogs();
   }, [profile, weekNumber, workout.id]);
 
-  const handleSaveBatch = async (exerciseId: string, exerciseName: string, setsData: ExerciseSet[]) => {
-    if (!profile) return;
+  // 🔍 DEBUG: Prefix for logs
+  const TAG = '📋 [WORKOUT-PAGE]';
+
+  const handleSaveBatch = async (
+    exerciseId: string,
+    exerciseName: string,
+    setsData: ExerciseSet[]
+  ) => {
+    console.log(`${TAG} Save requested for: ${exerciseName}`);
+    console.log(`${TAG} Sets data:`, setsData);
+
+    if (!profile) {
+      console.error(`${TAG} No profile available`);
+      alert('Please sign in to save your workout');
+      return;
+    }
 
     try {
-      const logEntry = {
-        user_id: profile.id,
-        week_number: weekNumber,
-        workout_id: workout.id,
-        exercise_id: exerciseId,
-        exercise_name: exerciseName,
-        sets: setsData,
-        created_at: new Date().toISOString()
-      };
+      console.log(`${TAG} Calling saveWorkoutLog...`);
+      const result = await saveWorkoutLog({
+        userId: profile.id,
+        weekNumber,
+        workoutDayId: workout.id,
+        exerciseId,
+        exerciseName,
+        sets: setsData
+      });
 
-      // Check if log already exists
-      const { data: existingLog, error: fetchError } = await supabase
-        .from('workout_logs')
-        .select('id')
-        .eq('user_id', profile.id)
-        .eq('week_number', weekNumber)
-        .eq('workout_id', workout.id)
-        .eq('exercise_id', exerciseId)
-        .single();
+      console.log(`${TAG} Save result:`, result);
 
-      let error;
+      if (result.success) {
+        console.log(`${TAG} ✅ Save successful!`);
 
-      if (existingLog) {
-        // Update existing log
-        const { error: updateError } = await supabase
-          .from('workout_logs')
-          .update(logEntry)
-          .eq('id', existingLog.id);
-        error = updateError;
+        // Optimistic UI Update: Mark as completed
+        setCompletedExercises(prev =>
+          prev.includes(exerciseId) ? prev : [...prev, exerciseId]
+        );
+
+        // Optimistic UI Update: Update local logs so inputs persist without reload
+        setExerciseLogs(prev => {
+          // Remove old logs for this exercise to avoid duplicates
+          const otherLogs = prev.filter(l => (l as any).exerciseId !== exerciseId);
+          // Add new logs with the exerciseId attached
+          const newLogs = setsData.map(s => ({ ...s, exerciseId }));
+          return [...otherLogs, ...newLogs];
+        });
+
       } else {
-        // Insert new log
-        const { error: insertError } = await supabase
-          .from('workout_logs')
-          .insert(logEntry);
-        error = insertError;
+        console.error(`${TAG} ❌ Save failed: ${result.error}`);
+        alert(`Failed to save: ${result.error || 'Unknown error'}`);
+        throw new Error(result.error || 'Save failed');
       }
 
-      if (error) throw error;
-
-      setCompletedExercises(prev =>
-        prev.includes(exerciseId) ? prev : [...prev, exerciseId]
-      );
-    } catch (error) {
-      console.error('Error saving workout log:', error);
-      alert('Failed to save progress. Please try again.');
+    } catch (err: any) {
+      console.error(`${TAG} 💥 UNEXPECTED ERROR:`, err);
+      console.error(`${TAG} Error stack:`, err.stack);
+      alert(`An unexpected error occurred while saving: ${err.message || 'Unknown error'}`);
+      throw err; // Re-throw so ExerciseCard can handle it
     }
   };
 
@@ -155,6 +202,7 @@ export default function WorkoutPage({ workout, weekNumber, onBack, profile, isGu
               userData={profile}
               isGuest={isGuest}
               onSaveBatch={handleSaveBatch}
+              savedData={exerciseLogs.filter((l: any) => l.exerciseId === exercise.id)}
             />
           ))}
         </div>

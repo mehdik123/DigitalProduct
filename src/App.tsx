@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import WorkoutCard from './components/WorkoutCard';
-import WorkoutPage from './components/WorkoutPage';
+import WorkoutPageNew from './components/WorkoutPageNew';
 import WeekSelector from './components/WeekSelector';
 import { workoutSplit } from './data/workoutData';
 import { WorkoutDay } from './types/workout';
-import { X, Info, Lock } from 'lucide-react';
+import { X, Info, Lock, Circle } from 'lucide-react';
 import { supabase } from './lib/supabaseClient';
 import WelcomePortal from './components/WelcomePortal';
 import ProgramIntro from './components/ProgramIntro';
@@ -71,8 +71,8 @@ function App() {
 
     setIsSubmitting(true);
     try {
-      const { data, error } = await signUp(signupForm.email, signupForm.password, {
-        full_name: signupForm.fullName
+      const { data, error } = await signUp(signupForm.email.trim(), signupForm.password, {
+        full_name: signupForm.fullName.trim()
       });
 
       if (error) throw error;
@@ -118,13 +118,11 @@ function App() {
       return null;
     }
     return (
-      <WorkoutPage
+      <WorkoutPageNew
         workout={selectedWorkout}
         weekNumber={currentWeek}
         onBack={() => setSelectedWorkout(null)}
         profile={profile || { id: user.id }}
-        onSignup={() => setShowSignupForm(true)}
-        isGuest={false}
       />
     );
   }
@@ -333,7 +331,7 @@ function App() {
                       onClick={() => setShowHowItWorks(true)}
                       className="flex items-center gap-2 text-[9px] font-black text-neutral-600 hover:text-white uppercase tracking-[0.4em] transition-all"
                     >
-                      <circle className="w-3.5 h-3.5" />
+                      <Circle className="w-3.5 h-3.5" />
                       <Info className="w-3.5 h-3.5" />
                       System Specification
                     </button>

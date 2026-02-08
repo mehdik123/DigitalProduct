@@ -84,25 +84,52 @@ export default function ExerciseCard({
   }, [exercise.reps, savedData]);
 
   const handleSetChange = (setIndex: number, field: keyof ExerciseSet, value: any) => {
-    setSets(prev => prev.map((set, i) =>
-      i === setIndex ? { ...set, [field]: value } : set
-    ));
+    setSets(prev => prev.map((set, i) => {
+      if (i === setIndex) {
+        // Convert string values to numbers for weight and reps
+        let convertedValue = value;
+        if (field === 'weight' || field === 'reps') {
+          convertedValue = value === '' ? 0 : Number(value);
+          // Handle NaN cases
+          if (isNaN(convertedValue)) {
+            convertedValue = 0;
+          }
+        } else if (field === 'rpe') {
+          convertedValue = value === '' ? 7 : Number(value);
+          if (isNaN(convertedValue)) {
+            convertedValue = 7;
+          }
+        }
+        return { ...set, [field]: convertedValue };
+      }
+      return set;
+    }));
     setIsSaved(false);
   };
 
   const handleSaveExercise = async () => {
-    if (!onSaveBatch) return;
+    if (!onSaveBatch) {
+      console.error('ExerciseCard: onSaveBatch not provided');
+      return;
+    }
 
     setIsSaving(true);
-    try {
-      // Mark all sets as completed when saving
-      const completedSets = sets.map(set => ({ ...set, completed: true }));
-      setSets(completedSets);
+    setIsSaved(false);
 
+    // Mark as completed locally for UI feedback
+    const completedSets = sets.map(set => ({ ...set, completed: true }));
+    setSets(completedSets);
+
+    try {
+      console.log('ExerciseCard: Calling onSaveBatch with sets:', completedSets);
       await onSaveBatch(exercise.id, exercise.name, completedSets);
+      console.log('ExerciseCard: Save completed successfully');
       setIsSaved(true);
     } catch (error) {
-      console.error('Error saving exercise:', error);
+      console.error('ExerciseCard: Error saving:', error);
+      setIsSaved(false);
+      // Show error to user
+      alert(`Failed to save exercise: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSaving(false);
     }

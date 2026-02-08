@@ -39,48 +39,66 @@ export default function BottomNav({ activeView, onViewChange }: BottomNavProps) 
     };
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 p-4 z-[100] animate-slide-up flex justify-center pointer-events-none">
-            <div className="glass-panel rounded-[2.5rem] p-2 flex items-center gap-1 shadow-2xl shadow-black/80 border-white/10 pointer-events-auto backdrop-blur-3xl ring-1 ring-white/5">
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] animate-slide-up flex justify-center w-full max-w-sm px-4 pointer-events-none">
+            <div className="w-full bg-zinc-900/80 backdrop-blur-2xl rounded-[2rem] p-2 flex items-center justify-between shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 pointer-events-auto ring-1 ring-white/5 relative overflow-hidden">
+
+                {/* Gloss Reflection */}
+                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
 
                 {/* Home */}
                 <button
                     onClick={() => handleNav('welcome')}
-                    className={`p-4 md:p-5 rounded-[2rem] transition-all duration-300 flex items-center gap-3 ${currentView === 'welcome' ? 'bg-red-600 text-white shadow-xl shadow-red-500/40 px-6 md:px-8' : 'text-neutral-500 hover:text-white hover:bg-white/5'}`}
-                    title="Home"
+                    className={`relative p-4 rounded-[1.5rem] transition-all duration-500 flex items-center gap-2 group overflow-hidden ${currentView === 'welcome' ? 'flex-1 bg-gradient-to-br from-red-600 to-red-700 text-white shadow-lg shadow-red-900/40' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}
                 >
-                    <Target className="w-6 h-6" />
-                    {currentView === 'welcome' && <span className="font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Home</span>}
+                    <div className="relative z-10 flex items-center justify-center w-full gap-2">
+                        <Target className={`w-5 h-5 ${currentView === 'welcome' ? 'animate-pulse' : ''}`} />
+                        {currentView === 'welcome' && (
+                            <span className="font-black text-[10px] uppercase tracking-[0.2em] animate-fade-in whitespace-nowrap">
+                                Home
+                            </span>
+                        )}
+                    </div>
                 </button>
 
                 {/* Training */}
                 <button
                     onClick={() => handleNav('workouts')}
-                    className={`p-4 md:p-5 rounded-[2rem] transition-all duration-300 flex items-center gap-3 ${currentView === 'workouts' || currentView === 'intro' ? 'bg-red-600 text-white shadow-xl shadow-red-500/40 px-6 md:px-8' : 'text-neutral-500 hover:text-white hover:bg-white/5'}`}
-                    title="Training"
+                    className={`relative p-4 rounded-[1.5rem] transition-all duration-500 flex items-center gap-2 group overflow-hidden ${currentView === 'workouts' || currentView === 'intro' ? 'flex-1 bg-gradient-to-br from-red-600 to-red-700 text-white shadow-lg shadow-red-900/40' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}
                 >
-                    <Dumbbell className="w-6 h-6" />
-                    {(currentView === 'workouts' || currentView === 'intro') && <span className="font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Program</span>}
+                    <div className="relative z-10 flex items-center justify-center w-full gap-2">
+                        <Dumbbell className={`w-5 h-5 ${currentView === 'workouts' || currentView === 'intro' ? 'animate-pulse' : ''}`} />
+                        {(currentView === 'workouts' || currentView === 'intro') && (
+                            <span className="font-black text-[10px] uppercase tracking-[0.2em] animate-fade-in whitespace-nowrap">
+                                Train
+                            </span>
+                        )}
+                    </div>
                 </button>
 
                 {/* Nutrition */}
                 <button
                     onClick={() => handleNav('nutrition')}
-                    className={`p-4 md:p-5 rounded-[2rem] transition-all duration-300 flex items-center gap-3 ${currentView === 'nutrition' ? 'bg-red-600 text-white shadow-xl shadow-red-500/40 px-6 md:px-8' : 'text-neutral-500 hover:text-white hover:bg-white/5'}`}
-                    title="Nutrition"
+                    className={`relative p-4 rounded-[1.5rem] transition-all duration-500 flex items-center gap-2 group overflow-hidden ${currentView === 'nutrition' ? 'flex-1 bg-gradient-to-br from-red-600 to-red-700 text-white shadow-lg shadow-red-900/40' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}
                 >
-                    <Utensils className="w-6 h-6" />
-                    {currentView === 'nutrition' && <span className="font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Biology</span>}
+                    <div className="relative z-10 flex items-center justify-center w-full gap-2">
+                        <Utensils className={`w-5 h-5 ${currentView === 'nutrition' ? 'animate-pulse' : ''}`} />
+                        {currentView === 'nutrition' && (
+                            <span className="font-black text-[10px] uppercase tracking-[0.2em] animate-fade-in whitespace-nowrap">
+                                Diet
+                            </span>
+                        )}
+                    </div>
                 </button>
 
                 {user && (
                     <>
-                        <div className="w-px h-8 bg-white/10 mx-2" />
+                        <div className="w-px h-6 bg-white/10 mx-1" />
                         <button
                             onClick={handleLogout}
-                            className="p-4 md:p-5 rounded-[2rem] text-neutral-500 hover:text-red-500 hover:bg-red-500/5 transition-all"
+                            className="p-3 rounded-full text-zinc-600 hover:text-red-500 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20"
                             title="Logout"
                         >
-                            <LogOut className="w-6 h-6" />
+                            <LogOut className="w-5 h-5" />
                         </button>
                     </>
                 )}

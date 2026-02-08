@@ -7,6 +7,7 @@ export interface Exercise {
   rest: string;
   notes?: string;
   videoUrl?: string;
+  imageUrl?: string;
 }
 
 export interface WorkoutDay {

@@ -27,33 +27,38 @@ export const FiberTracker = ({ fiber }: FiberTrackerProps) => {
     const progressPercentage = Math.min((fiber / 50) * 100, 100);
 
     return (
-        <div className={`bg-card border border-border/50 rounded-xl p-4 md:p-5 hover:border-primary/30 transition-colors ${status.track} border-opacity-50`}>
-            <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                    <Leaf className={`w-5 h-5 ${status.color}`} />
-                    <span className={`text-2xl md:text-3xl font-bold ${status.color}`}>{fiber}g</span>
+        <div className={`bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 md:p-5 transition-all duration-300 hover:border-white/10 ${status.track} border-opacity-50 group`}>
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 ${status.color} group-hover:scale-110 transition-transform duration-500`}>
+                        <Leaf className="w-5 h-5 fill-current" />
+                    </div>
+                    <div>
+                        <span className={`text-3xl md:text-4xl font-black italic ${status.color} tracking-tighter`}>{fiber}</span>
+                        <span className="text-xs font-bold text-zinc-500 uppercase ml-1">g</span>
+                    </div>
                 </div>
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
-                            <Info className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors" />
+                            <Info className="w-4 h-4 text-zinc-500 hover:text-white transition-colors" />
                         </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Target: 35-50g per day</p>
-                            <p>Current: {status.label}</p>
+                        <TooltipContent className="bg-black/90 border-white/10 text-white backdrop-blur-xl">
+                            <p className="font-bold">Target: 35-50g per day</p>
+                            <p className="text-zinc-400">Current Status: <span className={status.color}>{status.label}</span></p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
             </div>
 
-            <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-3">
                 <span>Fiber Intake</span>
-                <span className={`font-medium ${status.color}`}>{status.label}</span>
+                <span className={`${status.color}`}>{status.label}</span>
             </div>
 
-            <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
+            <div className="h-3 w-full rounded-full bg-black/40 border border-white/5 overflow-hidden p-0.5">
                 <div
-                    className={`h-full transition-all duration-500 ease-out ${status.bg}`}
+                    className={`h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(255,255,255,0.2)] ${status.bg}`}
                     style={{ width: `${progressPercentage}%` }}
                 />
             </div>
