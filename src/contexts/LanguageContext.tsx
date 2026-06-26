@@ -5,7 +5,7 @@ import { Language, t as translate } from '../i18n/translations';
 interface LanguageContextType {
     language: Language;
     setLanguage: (lang: Language) => void;
-    t: (key: string) => string;
+    t: (key: string, vars?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -26,6 +26,12 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     const [language, setLanguageState] = useState<Language>('en');
     const [userId, setUserId] = useState<string | null>(null);
 
+    // Keep <html dir/lang> in sync so Arabic mirrors the whole layout (RTL).
+    useEffect(() => {
+        document.documentElement.lang = language;
+        document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    }, [language]);
+
     // Load language preference on mount
     useEffect(() => {
         const loadLanguagePreference = async () => {
@@ -37,7 +43,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
 
                 try {
                     // Load from Supabase profile safely
-                    const { data: profileData, error: profileError } = await supabase
+                    const { data: profileData } = await supabase
                         .from('profiles')
                         .select('language_preference')
                         .eq('id', session.user.id)
@@ -67,7 +73,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
 
                 try {
                     // Load language from new user's profile safely
-                    const { data: profileData, error: profileError } = await supabase
+                    const { data: profileData } = await supabase
                         .from('profiles')
                         .select('language_preference')
                         .eq('id', session.user.id)
@@ -102,7 +108,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
         }
     };
 
-    const t = (key: string) => translate(key, language);
+    const t = (key: string, vars?: Record<string, string | number>) => translate(key, language, vars);
 
     return (
         <LanguageContext.Provider value={{ language, setLanguage, t }}>

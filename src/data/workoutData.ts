@@ -15,6 +15,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'incline-barbell-bench-smith',
         name: 'Incline Barbell Bench Press (Smith Machine)',
+        progressionType: 'barbell_upper',
         sets: 3,
         reps: '8',
         rest: '3 min',
@@ -26,6 +27,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'dips',
         name: 'Dips',
+        progressionType: 'calisthenics',
         sets: 3,
         reps: '6',
         rest: '3 min',
@@ -37,6 +39,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'standing-db-lateral-raises',
         name: 'Standing Dumbbell Lateral Raises',
+        progressionType: 'isolation',
         sets: 3,
         reps: '12',
         rest: '2 min',
@@ -48,6 +51,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'pike-push-ups',
         name: 'Pike Push Ups',
+        progressionType: 'calisthenics',
         sets: 3,
         reps: '14',
         rest: '2 min',
@@ -59,6 +63,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'wide-grip-lat-pulldowns',
         name: 'Wide Grip Lat Pulldowns',
+        progressionType: 'machine',
         sets: 3,
         reps: '10',
         rest: '3 min',
@@ -70,6 +75,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'barbell-bent-over-rows',
         name: 'Barbell Bent Over Rows',
+        progressionType: 'barbell_upper',
         sets: 3,
         reps: '10',
         rest: '3 min',
@@ -81,6 +87,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'straight-bar-bicep-curls',
         name: 'Straight Bar Bicep Curls',
+        progressionType: 'isolation',
         sets: 3,
         reps: '10',
         rest: '2 min',
@@ -92,6 +99,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'barbell-skull-crushers',
         name: 'Barbell Skull Crushers',
+        progressionType: 'isolation',
         sets: 4,
         reps: '14',
         rest: '2 min',
@@ -116,6 +124,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'high-bar-back-squats',
         name: 'High Bar Back Squats',
+        progressionType: 'barbell_compound',
         sets: 3,
         reps: '5',
         rest: '3 min',
@@ -127,6 +136,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'front-squats-smith',
         name: 'Front Squats (Smith Machine)',
+        progressionType: 'barbell_compound',
         sets: 3,
         reps: '10',
         rest: '3 min',
@@ -138,6 +148,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'leg-press',
         name: 'Leg Press',
+        progressionType: 'machine',
         sets: 3,
         reps: '12',
         rest: '3 min',
@@ -149,6 +160,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'dumbbell-lunges',
         name: 'Dumbbell Lunges',
+        progressionType: 'dumbbell',
         sets: 3,
         reps: '12',
         rest: '2 min',
@@ -160,6 +172,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'prone-leg-curls',
         name: 'Prone Leg Curls',
+        progressionType: 'machine',
         sets: 3,
         reps: '14',
         rest: '2 min',
@@ -171,6 +184,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'dumbbell-rdl',
         name: 'Dumbbell Romanian Deadlifts',
+        progressionType: 'dumbbell',
         sets: 3,
         reps: '10',
         rest: '3 min',
@@ -182,6 +196,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'calf-raises-in',
         name: 'Machine Standing Calf Raises (Toes In)',
+        progressionType: 'machine',
         sets: 4,
         reps: '8, 10, 12, 14',
         rest: '2 min',
@@ -193,6 +208,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'calf-raises-out',
         name: 'Machine Standing Calf Raises (Toes Out)',
+        progressionType: 'machine',
         sets: 4,
         reps: '8, 10, 12, 14',
         rest: '2 min',
@@ -217,6 +233,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'flat-barbell-bench',
         name: 'Flat Barbell Bench Press',
+        progressionType: 'barbell_upper',
         sets: 3,
         reps: '8',
         rest: '3 min',
@@ -228,6 +245,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'pull-ups',
         name: 'Pull Ups',
+        progressionType: 'calisthenics',
         sets: 3,
         reps: '6',
         rest: '3 min',
@@ -239,6 +257,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'reverse-grip-bent-rows',
         name: 'Reverse Grip Bent Over Rows',
+        progressionType: 'barbell_upper',
         sets: 3,
         reps: '10',
         rest: '3 min',
@@ -250,6 +269,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'seated-lateral-raises',
         name: 'Seated Lateral Raises',
+        progressionType: 'isolation',
         sets: 3,
         reps: '14',
         rest: '2 min',
@@ -261,6 +281,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'db-rear-delt-kickbacks',
         name: 'Dumbbell Rear Delt Kickbacks',
+        progressionType: 'isolation',
         sets: 3,
         reps: '14',
         rest: '2 min',
@@ -272,6 +293,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'chin-ups',
         name: 'Chin Ups',
+        progressionType: 'calisthenics',
         sets: 3,
         reps: '10',
         rest: '3 min',
@@ -283,6 +305,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'overhead-cable-triceps',
         name: 'Overhead Cable Triceps Extensions',
+        progressionType: 'isolation',
         sets: 4,
         reps: '12',
         rest: '2 min',
@@ -294,6 +317,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'diamond-push-ups',
         name: 'Diamond Push Ups',
+        progressionType: 'calisthenics',
         sets: 4,
         reps: '14',
         rest: '2 min',
@@ -318,6 +342,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'front-squats-smith-day4',
         name: 'Front Squats (Smith Machine)',
+        progressionType: 'barbell_compound',
         sets: 3,
         reps: '6',
         rest: '3 min',
@@ -329,6 +354,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'machine-leg-extensions',
         name: 'Machine Leg Extensions',
+        progressionType: 'machine',
         sets: 3,
         reps: '10',
         rest: '2 min',
@@ -340,6 +366,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'jump-squats',
         name: 'Jump Squats',
+        progressionType: 'calisthenics',
         sets: 3,
         reps: '12',
         rest: '3 min',
@@ -351,6 +378,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'deadlifts',
         name: 'Deadlifts',
+        progressionType: 'barbell_compound',
         sets: 3,
         reps: '14',
         rest: '3 min',
@@ -362,6 +390,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'prone-leg-curls-day4',
         name: 'Prone Leg Curls',
+        progressionType: 'machine',
         sets: 3,
         reps: '14',
         rest: '2 min',
@@ -373,6 +402,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'calf-raises-in-day4',
         name: 'Machine Standing Calf Raises (Toes In)',
+        progressionType: 'machine',
         sets: 4,
         reps: '8, 10, 12, 14',
         rest: '2 min',
@@ -384,6 +414,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'calf-raises-out-day4',
         name: 'Machine Standing Calf Raises (Toes Out)',
+        progressionType: 'machine',
         sets: 4,
         reps: '8, 10, 12, 14',
         rest: '2 min',
@@ -395,6 +426,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'adductor-machine',
         name: 'Adductor Machine',
+        progressionType: 'machine',
         sets: 3,
         reps: '12',
         rest: '2 min',
@@ -419,6 +451,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'incline-db-bench',
         name: 'Incline Dumbbell Bench Press',
+        progressionType: 'dumbbell',
         sets: 3,
         reps: '6',
         rest: '3 min',
@@ -430,6 +463,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'push-ups',
         name: 'Push Ups',
+        progressionType: 'calisthenics',
         sets: 3,
         reps: '10',
         rest: '2 min',
@@ -441,6 +475,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'pull-ups-day5',
         name: 'Pull Ups',
+        progressionType: 'calisthenics',
         sets: 3,
         reps: '6',
         rest: '3 min',
@@ -452,6 +487,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'neutral-grip-pull-ups',
         name: 'Neutral Grip Pull Ups',
+        progressionType: 'calisthenics',
         sets: 3,
         reps: '14',
         rest: '3 min',
@@ -463,6 +499,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'standing-db-lateral-raises-day5',
         name: 'Standing Dumbbell Lateral Raises',
+        progressionType: 'isolation',
         sets: 3,
         reps: '14',
         rest: '2 min',
@@ -474,6 +511,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'wide-grip-ez-curls',
         name: 'Wide Grip EZ Bar Curls',
+        progressionType: 'isolation',
         sets: 3,
         reps: '10',
         rest: '2 min',
@@ -485,6 +523,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'db-hammer-curls',
         name: 'Dumbbell Hammer Curls',
+        progressionType: 'isolation',
         sets: 3,
         reps: '10',
         rest: '2 min',
@@ -496,6 +535,7 @@ export const workoutSplit: WorkoutDay[] = [
       {
         id: 'overhead-cable-triceps-day5',
         name: 'Overhead Cable Triceps Extensions',
+        progressionType: 'isolation',
         sets: 3,
         reps: '14',
         rest: '2 min',

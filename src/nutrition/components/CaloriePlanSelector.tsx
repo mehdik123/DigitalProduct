@@ -42,7 +42,7 @@ const plans: CaloriePlan[] = [
     description: "Maintain or grow lean muscle",
     icon: <Flame className="w-6 h-6" />,
     meals: "3 meals + 1 snack",
-    gradient: "from-blue-500/20 via-cyan-500/10 to-transparent",
+    gradient: "from-coral/20 via-brand/10 to-transparent",
     images: [breakfastPancakes, lunchChicken, dinnerSteak, snackShake],
   },
   {

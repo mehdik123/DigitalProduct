@@ -1,7 +1,16 @@
+export type ProgressionType =
+  | 'barbell_compound'
+  | 'barbell_upper'
+  | 'dumbbell'
+  | 'machine'
+  | 'isolation'
+  | 'calisthenics';
+
 export interface Exercise {
   id: string;
   name: string;
   type: 'calisthenics' | 'bodybuilding';
+  progressionType: ProgressionType;
   sets: number;
   reps: string;
   rest: string;
@@ -88,6 +97,8 @@ export interface ExerciseSet {
   weight: number; // in lbs or kg
   rpe?: number; // Rate of Perceived Exertion (1-10)
   completed: boolean;
+  targetReps?: number; // engine-generated target for this set
+  targetWeight?: number; // engine-generated target for this set
 }
 
 export interface ExerciseLog {

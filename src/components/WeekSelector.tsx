@@ -1,98 +1,104 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef } from 'react';
+import { motion } from 'framer-motion';
+import { TOTAL_WEEKS, getPhase } from '../data/programConfig';
+import { WeekStatus } from '../services/workoutService';
+import { useLanguage } from '../contexts/LanguageContext';
+import { LockBadge } from './ui';
+import { cn } from '../lib/utils';
 
 interface WeekSelectorProps {
     currentWeek: number;
+    weeks: Record<number, WeekStatus>;
     onWeekSelect: (week: number) => void;
-    completedWeeks?: number[];
 }
 
-export default function WeekSelector({ currentWeek, onWeekSelect, completedWeeks = [] }: WeekSelectorProps) {
+export default function WeekSelector({ currentWeek, weeks, onWeekSelect }: WeekSelectorProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const weeks = [1, 2, 3, 4, 5, 6, 7, 8];
+    const { t } = useLanguage();
+    const list = Array.from({ length: TOTAL_WEEKS }, (_, i) => i + 1);
 
     const scroll = (direction: 'left' | 'right') => {
-        if (scrollRef.current) {
-            const scrollAmount = 120;
-            scrollRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth'
-            });
-        }
+        scrollRef.current?.scrollBy({
+            left: direction === 'left' ? -160 : 160,
+            behavior: 'smooth',
+        });
     };
+
+    const statusOf = (week: number): WeekStatus => weeks[week] ?? 'locked';
 
     return (
         <div className="relative w-full">
-            {/* Left Arrow */}
             <button
                 onClick={() => scroll('left')}
-                className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center bg-black/40 backdrop-blur-xl hover:bg-red-600 rounded-full border border-white/10 hover:border-red-500 transition-all group shadow-2xl active:scale-90"
+                className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center bg-surface-1/70 backdrop-blur-xl hover:bg-brand rounded-full border border-hair transition-all active:scale-90 rtl:rotate-180"
                 aria-label="Scroll left"
             >
-                <ChevronLeft className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+                <ChevronLeft className="w-5 h-5 text-white" />
             </button>
 
-            {/* Swipeable Week Bar */}
             <div
                 ref={scrollRef}
-                className="flex gap-3 md:gap-5 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory py-6 px-4 md:px-0 mask-linear-fade"
+                className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth snap-x py-4 px-2 md:px-0"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-                {weeks.map((week) => {
-                    const isActive = week === currentWeek;
-                    const isCompleted = completedWeeks.includes(week);
+                {list.map((week) => {
+                    const status = statusOf(week);
+                    const isSelected = week === currentWeek;
+                    const isLocked = status === 'locked';
+                    const phase = getPhase(week);
 
                     return (
-                        <button
+                        <motion.button
                             key={week}
-                            onClick={() => onWeekSelect(week)}
-                            className={`
-                                relative flex-shrink-0 snap-center
-                                w-16 h-20 md:w-20 md:h-24
-                                rounded-2xl
-                                flex flex-col items-center justify-center
-                                transition-all duration-500
-                                ${isActive
-                                    ? 'bg-gradient-to-b from-red-600 to-red-700 shadow-[0_0_30px_rgba(220,38,38,0.4)] scale-110 border border-white/20 z-10 translate-y-[-4px]'
-                                    : isCompleted
-                                        ? 'bg-emerald-900/20 border border-emerald-500/20 hover:bg-emerald-900/40'
-                                        : 'bg-zinc-900/40 backdrop-blur-md border border-white/5 hover:bg-zinc-800/60 hover:border-white/10'
-                                }
-                                active:scale-95
-                            `}
+                            whileTap={isLocked ? undefined : { scale: 0.94 }}
+                            onClick={() => !isLocked && onWeekSelect(week)}
+                            disabled={isLocked}
+                            aria-disabled={isLocked}
+                            className={cn(
+                                'relative flex-shrink-0 snap-center w-[88px] h-28 rounded-3xl border p-2.5',
+                                'flex flex-col items-center justify-between text-center transition-colors duration-300',
+                                isSelected
+                                    ? 'bg-brand border-white/20 shadow-[0_0_28px_rgba(255,45,85,0.4)]'
+                                    : status === 'completed'
+                                        ? 'bg-success/10 border-success/25'
+                                        : isLocked
+                                            ? 'bg-white/[0.03] border-hair cursor-not-allowed opacity-60'
+                                            : 'bg-surface-2 border-hair hover:border-white/25'
+                            )}
                         >
-                            {/* Week Number */}
-                            <span className={`
-                                text-2xl md:text-3xl font-black italic mb-1
-                                ${isActive ? 'text-white drop-shadow-md' : isCompleted ? 'text-emerald-500' : 'text-zinc-600'}
-                            `}>
+                            <div className="self-end rtl:self-start">
+                                <LockBadge state={isSelected ? 'active' : status} size={12} />
+                            </div>
+
+                            <span
+                                className={cn(
+                                    'font-display tabular-nums text-3xl font-black italic leading-none',
+                                    isSelected ? 'text-white' : status === 'completed' ? 'text-success' : isLocked ? 'text-txt-lo' : 'text-white'
+                                )}
+                            >
                                 {week}
                             </span>
 
-                            {/* Week Label */}
-                            <span className={`
-                                text-[8px] font-black uppercase tracking-[0.2em]
-                                ${isActive ? 'text-white/90' : isCompleted ? 'text-emerald-500/80' : 'text-zinc-700'}
-                            `}>
-                                WEEK
+                            <span
+                                className={cn(
+                                    'text-[8px] font-bold uppercase tracking-wider leading-tight line-clamp-2',
+                                    isSelected ? 'text-white/90' : 'text-txt-lo'
+                                )}
+                            >
+                                {t(phase.phaseLabelKey)}
                             </span>
-
-                            {/* Active Indicator Glow */}
-                            {isActive && (
-                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
-                            )}
-                        </button>
+                        </motion.button>
                     );
                 })}
             </div>
 
-            {/* Right Arrow */}
             <button
                 onClick={() => scroll('right')}
-                className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center bg-black/40 backdrop-blur-xl hover:bg-red-600 rounded-full border border-white/10 hover:border-red-500 transition-all group shadow-2xl active:scale-90"
+                className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center bg-surface-1/70 backdrop-blur-xl hover:bg-brand rounded-full border border-hair transition-all active:scale-90 rtl:rotate-180"
                 aria-label="Scroll right"
             >
-                <ChevronRight className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+                <ChevronRight className="w-5 h-5 text-white" />
             </button>
         </div>
     );

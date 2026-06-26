@@ -153,8 +153,8 @@ export const MealPlanView = ({ calorieTarget, onBack }: MealPlanViewProps) => {
                 </div>
                 <div className="text-[10px] font-black uppercase tracking-wider text-zinc-500">Total Calories</div>
               </div>
-              <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 text-center hover:border-blue-500/30 transition-colors">
-                <div className="text-2xl md:text-3xl font-black italic text-blue-400">{totalMacros.protein}g</div>
+              <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 text-center hover:border-coral/30 transition-colors">
+                <div className="text-2xl md:text-3xl font-black italic text-coral">{totalMacros.protein}g</div>
                 <div className="text-[10px] font-black uppercase tracking-wider text-zinc-500">Protein</div>
               </div>
               <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 text-center hover:border-emerald-500/30 transition-colors">

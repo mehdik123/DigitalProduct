@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                     id: userId,
                     email: userEmail,
                     full_name: metadata?.full_name || userEmail?.split('@')[0],
-                    current_week: 1,
+                    current_week: 0,
                     created_at: new Date().toISOString()
                 };
 

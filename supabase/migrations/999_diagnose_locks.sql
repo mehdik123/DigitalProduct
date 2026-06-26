@@ -7,7 +7,7 @@ SELECT
     blocked_activity.usename AS blocked_user,
     blocking_locks.pid AS blocking_pid,
     blocking_activity.usename AS blocking_user,
-    blocked_activity.query AS blocked_statement,
+    blocked_activity.query AS ablocked_statement,
     blocking_activity.query AS current_statement_in_blocking_process,
     blocked_activity.application_name AS blocked_application
 FROM pg_catalog.pg_locks blocked_locks

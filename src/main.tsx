@@ -7,6 +7,7 @@ import LoginPage from './components/LoginPage.tsx';
 import NutritionApp from './nutrition/NutritionApp';
 import { LanguageProvider } from './contexts/LanguageContext';
 import './nutrition/index.css';
+import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

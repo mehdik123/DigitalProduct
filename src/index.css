@@ -2,24 +2,130 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Hybrid Athlete — global design tokens (single source of truth).
+ * Mirrors welcome-login-preview.html. Tailwind reads the same values from
+ * tailwind.config.js; these CSS vars exist for gradients / raw-CSS utilities.
+ */
 :root {
-    --app-bg: #000000;
+    /* layered surfaces */
+    --bg: #08090d;
+    --surface-1: #101218;
+    --surface-2: #15171f;
+    --surface-3: #1b1e28;
+    --glass: rgba(255, 255, 255, .05);
+    --glass-hi: rgba(255, 255, 255, .08);
+    --hair: rgba(255, 255, 255, .08);
+    --hair-strong: rgba(255, 255, 255, .12);
+
+    /* text */
+    --txt-hi: #f4f5fa;
+    --txt-mid: #9ea3b2;
+    --txt-lo: #646a7a;
+
+    /* brand */
+    --red: #ff2d55;
+    --red-deep: #e11d48;
+    --coral: #ff6a55;
+    --emerald: #34d399;
+
+    --grad-red: linear-gradient(135deg, #ff476a, #e11d48 55%, #c2123f);
+    --grad-coral: linear-gradient(120deg, #ff8a5c, #ff2d55);
+
+    --r-lg: 24px;
+    --r-md: 18px;
+    --r-sm: 13px;
+
+    --ease: cubic-bezier(.22, .61, .36, 1);
+    --spring: cubic-bezier(.34, 1.56, .64, 1);
+
+    /* legacy aliases (kept so older references keep resolving) */
+    --app-bg: #08090d;
     --glass-bg: rgba(20, 20, 20, 0.6);
     --glass-border: rgba(255, 255, 255, 0.1);
-    --accent-red: #dc1e3a;
+    --accent-red: #ff2d55;
     --accent-grey: #1e1e1e;
     --accent-light-grey: #a1a1aa;
 }
 
 @layer base {
     body {
-        @apply bg-black text-white selection:bg-red-500/30 antialiased;
+        /* Note: background/text are intentionally NOT set here so the nutrition
+           sub-app keeps its own theme. Training screens paint their own bg. */
+        font-family: 'Inter', system-ui, sans-serif;
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
         -webkit-tap-highlight-color: transparent;
+        @apply antialiased;
+    }
+}
+
+@layer utilities {
+    /* Tabular figures keep logged numbers aligned while editing. */
+    .tnum {
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
+    }
+
+    /* Depth shadows from the design system. */
+    .shadow-soft {
+        box-shadow: 0 16px 40px -18px rgba(0, 0, 0, .6);
+    }
+
+    .shadow-red {
+        box-shadow: 0 16px 36px -12px rgba(255, 45, 85, .65), inset 0 1px 0 rgba(255, 255, 255, .18);
+    }
+
+    /* Clipped gradient text for the athletic lockup. */
+    .text-grad-coral {
+        background: var(--grad-coral);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 6px 24px rgba(255, 45, 85, .35));
+    }
+
+    .press {
+        transition: transform .18s var(--spring);
+    }
+
+    .press:active {
+        transform: scale(.97);
     }
 }
 
 @layer components {
+    /* The signature page background: layered dark + red ambient glow. */
+    .bg-app {
+        background:
+            radial-gradient(900px 500px at 20% -8%, rgba(255, 45, 85, .16), transparent 60%),
+            radial-gradient(700px 500px at 100% 12%, rgba(91, 140, 255, .05), transparent 55%),
+            #05060a;
+    }
+
+    /* Tighter hero glow (top + bottom) — used on the welcome/login screen. */
+    .bg-hero {
+        background:
+            radial-gradient(140% 70% at 50% -10%, rgba(255, 45, 85, .22), transparent 55%),
+            radial-gradient(120% 60% at 50% 115%, rgba(255, 45, 85, .10), transparent 60%),
+            var(--bg);
+    }
+
+    /* Faint ambient grid (apply to an absolutely-positioned overlay element). */
+    .ambient-grid {
+        background-image:
+            linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px);
+        background-size: 34px 34px;
+        -webkit-mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 75%);
+        mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 75%);
+    }
+
+    /* Diagonal "speed" streak — echoes the brand italic. */
+    .ambient-streak {
+        background: linear-gradient(100deg, transparent 42%, rgba(255, 45, 85, .12) 50%, transparent 58%);
+        transform: rotate(-8deg);
+    }
+
     .glass-card {
         @apply bg-neutral-900/40 backdrop-blur-xl border border-white/5 rounded-3xl;
     }
@@ -92,4 +198,17 @@
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* Respect reduced-motion app-wide. */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
 }

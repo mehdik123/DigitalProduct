@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
-import { Lock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Mail, KeyRound, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { Button, Eyebrow, Input, Field, BrandMark } from './ui';
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -83,99 +87,94 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-red-500/30">
-            {/* Advanced Atmospheric FX */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-                <div className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] bg-red-600/10 rounded-full blur-[160px] animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[80%] bg-neutral-900/40 rounded-full blur-[160px]" />
-            </div>
+        <div className="bg-hero relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-6">
+            {/* Ambient grid + diagonal speed streak (the brand signature). */}
+            <div className="ambient-grid pointer-events-none absolute inset-0 opacity-40" />
+            <div className="ambient-streak pointer-events-none absolute -left-[30%] -top-[10%] h-[46%] w-[160%]" />
 
-            <div className="relative z-10 w-full max-w-md animate-slide-up text-white">
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2.5rem] bg-white/5 border border-white/10 mb-8 shadow-2xl backdrop-blur-2xl relative group">
-                        <div className="absolute inset-0 bg-red-600/20 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Lock className="w-10 h-10 text-red-500 relative z-10" />
-                    </div>
-                    <h1 className="text-5xl font-black italic uppercase tracking-tighter mb-3 leading-none text-white">
-                        Athlete Login
-                    </h1>
-                    <p className="text-neutral-500 font-extrabold uppercase tracking-[0.4em] text-[10px]">
-                        Hybrid Athlete Program v1.1
-                    </p>
+            <div className="relative z-10 w-full max-w-md">
+                <div className="mb-7 flex animate-rise justify-center opacity-0" style={{ animationDelay: '.05s' }}>
+                    <BrandMark />
                 </div>
 
-                <div className="bg-[#0d1117] p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-transparent opacity-50" />
+                <div className="mb-8 flex animate-rise flex-col items-center text-center opacity-0" style={{ animationDelay: '.12s' }}>
+                    <Eyebrow>{t('welcome.eyebrow')}</Eyebrow>
+                    <h1 className="mt-4 font-display text-5xl font-black uppercase italic leading-none tracking-tight text-txt-hi">
+                        {t('common.login')}
+                    </h1>
+                </div>
 
-                    <form onSubmit={handleLogin} className="space-y-6 text-left relative z-10">
-                        <div className="space-y-2">
-                            <label className="block text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">
-                                Email Address
-                            </label>
-                            <input
+                <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45, delay: 0.18, ease: [0.22, 0.61, 0.36, 1] }}
+                    className="overflow-hidden rounded-3xl border border-hair bg-surface-1 p-7 shadow-soft md:p-8"
+                >
+                    <form onSubmit={handleLogin} className="space-y-5 text-left rtl:text-right">
+                        <Field label={t('signup.email')} htmlFor="login-email">
+                            <Input
+                                id="login-email"
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-6 py-5 bg-white/5 border border-white/5 rounded-2xl text-white text-sm font-medium outline-none focus:border-red-500/50 focus:bg-red-500/5 transition-all placeholder:text-neutral-700 shadow-inner shadow-black/20"
                                 placeholder="name@example.com"
+                                icon={<Mail className="h-4 w-4" />}
                                 required
                                 disabled={loading}
                             />
-                        </div>
+                        </Field>
 
-                        <div className="space-y-2">
-                            <label className="block text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">
-                                Password
-                            </label>
-                            <input
+                        <Field label={t('signup.password')} htmlFor="login-password">
+                            <Input
+                                id="login-password"
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-6 py-5 bg-white/5 border border-white/5 rounded-2xl text-white text-sm font-medium outline-none focus:border-red-500/50 focus:bg-red-500/5 transition-all placeholder:text-neutral-700 shadow-inner shadow-black/20"
                                 placeholder="••••••••"
+                                icon={<KeyRound className="h-4 w-4" />}
                                 required
                                 disabled={loading}
                             />
-                        </div>
+                        </Field>
 
                         {error && (
-                            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl animate-fade-in">
-                                <p className="text-[10px] text-red-500 font-black uppercase tracking-tight leading-relaxed">{error}</p>
-                            </div>
+                            <motion.div
+                                initial={{ opacity: 0, y: -4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="rounded-2xl border border-brand/20 bg-brand-soft p-4"
+                            >
+                                <p className="text-[11px] font-bold uppercase leading-relaxed tracking-tight text-brand">
+                                    {error}
+                                </p>
+                            </motion.div>
                         )}
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full flex items-center justify-center gap-4 py-6 bg-red-600 text-white font-black rounded-2xl uppercase tracking-[0.25em] text-xs shadow-2xl shadow-red-900/40 hover:scale-[1.03] active:scale-[0.97] transition-all disabled:opacity-50 group mb-4"
-                        >
+                        <Button type="submit" fullWidth size="lg" disabled={loading}>
                             {loading ? (
-                                <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                <Loader2 className="h-5 w-5 animate-spin" />
                             ) : (
                                 <>
-                                    <ShieldCheck className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                                    <span>Login Now</span>
+                                    <ShieldCheck className="h-5 w-5" />
+                                    <span>{t('common.login')}</span>
                                 </>
                             )}
-                        </button>
+                        </Button>
                     </form>
 
-                    <div className="mt-10 pt-8 border-t border-white/5 text-center relative z-10">
+                    <div className="mt-7 border-t border-hair pt-6 text-center">
                         <button
                             onClick={() => navigate('/')}
-                            className="group inline-flex items-center gap-3 text-neutral-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.3em]"
+                            className="group inline-flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.3em] text-txt-lo transition-colors hover:text-txt-hi"
                         >
-                            <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-2 transition-transform" />
-                            Return to Portal
+                            <ArrowRight className="h-4 w-4 rotate-180 transition-transform group-hover:-translate-x-1.5 rtl:rotate-0 rtl:group-hover:translate-x-1.5" />
+                            {t('common.backToHome')}
                         </button>
                     </div>
-                </div>
+                </motion.div>
 
-                <div className="mt-12 flex items-center justify-center gap-6 opacity-20">
-                    <div className="h-px w-12 bg-neutral-500" />
-                    <p className="text-[9px] font-black text-white uppercase tracking-[0.5em]">System Secure 256-Bit</p>
-                    <div className="h-px w-12 bg-neutral-500" />
+                <div className="mt-6 flex items-center justify-center gap-2 text-[11px] text-txt-lo">
+                    <ShieldCheck className="h-[13px] w-[13px] text-emerald" />
+                    {t('welcome.trust')}
                 </div>
             </div>
         </div>

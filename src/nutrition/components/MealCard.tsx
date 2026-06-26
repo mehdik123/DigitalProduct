@@ -74,7 +74,7 @@ export const MealCard = ({ meal, showMacros, index, onSwapClick }: MealCardProps
               <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Kcal</span>
             </div>
             <div className="text-center p-2 rounded-xl bg-white/5 border border-white/5">
-              <div className="text-lg md:text-xl font-black italic text-blue-400">{meal.protein}g</div>
+              <div className="text-lg md:text-xl font-black italic text-coral">{meal.protein}g</div>
               <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Pro</span>
             </div>
             <div className="text-center p-2 rounded-xl bg-white/5 border border-white/5">

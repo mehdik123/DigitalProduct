@@ -1,218 +1,258 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Check, Loader2, Play, Info, Target } from 'lucide-react';
 import { Exercise, ExerciseSet } from '../types/workout';
-import { Save, Check, Loader2, Play, Info, MoreVertical } from 'lucide-react';
+import { getPhase } from '../data/programConfig';
+import { useLanguage } from '../contexts/LanguageContext';
+import { itemVariants } from '../design/motion';
+import { cn } from '../lib/utils';
 
 interface ExerciseCardNewProps {
   exercise: Exercise;
   index: number;
+  weekNumber: number;
   savedSets?: ExerciseSet[];
+  prevSets?: ExerciseSet[];
   onSave: (sets: ExerciseSet[]) => Promise<void>;
 }
 
-export default function ExerciseCardNew({ exercise, index, savedSets, onSave }: ExerciseCardNewProps) {
-  const [sets, setSets] = useState<ExerciseSet[]>(() => {
-    // Initialize from saved data or create defaults
-    if (savedSets && savedSets.length > 0) {
-      return savedSets;
-    }
-    return Array.from({ length: exercise.sets }, (_, i) => ({
-      setNumber: i + 1,
-      reps: 0,
-      weight: 0,
-      completed: false
-    }));
-  });
+export default function ExerciseCardNew({
+  exercise,
+  index,
+  weekNumber,
+  savedSets,
+  prevSets,
+  onSave,
+}: ExerciseCardNewProps) {
+  const { t } = useLanguage();
+  const phase = getPhase(weekNumber);
+  const defaultRpe = phase.targetRPE ?? 8;
 
+  const build = (): ExerciseSet[] => {
+    const count = savedSets && savedSets.length > 0 ? savedSets.length : exercise.sets;
+    return Array.from({ length: count }, (_, i) => {
+      const s = savedSets?.[i];
+      return {
+        setNumber: i + 1,
+        reps: s?.reps ?? 0,
+        weight: s?.weight ?? 0,
+        rpe: s?.rpe ?? defaultRpe,
+        completed: s?.completed ?? false,
+        targetReps: s?.targetReps,
+        targetWeight: s?.targetWeight,
+      };
+    });
+  };
+
+  const [sets, setSets] = useState<ExerciseSet[]>(build);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
 
-  // Update when savedSets change
   useEffect(() => {
-    if (savedSets && savedSets.length > 0) {
-      setSets(savedSets);
-      setIsSaved(true);
-    }
-  }, [savedSets]);
+    setSets(build());
+    setIsSaved(Boolean(savedSets?.some((s) => s.completed)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedSets, weekNumber]);
 
-  const updateSet = (setIndex: number, field: 'reps' | 'weight', value: number) => {
-    setSets(prev => prev.map((set, i) =>
-      i === setIndex ? { ...set, [field]: value } : set
-    ));
+  const targetWeight = sets[0]?.targetWeight;
+  const repRange = phase.repRange;
+  const targetText = [
+    targetWeight ? `${targetWeight}kg` : null,
+    repRange ? `${repRange[0]}-${repRange[1]} ${t('log.reps').toLowerCase()}` : null,
+    phase.rpeText !== '-' ? `RPE ${phase.rpeText}` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  const updateSet = (i: number, field: 'reps' | 'weight' | 'rpe', value: number) => {
+    setSets((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
+    setIsSaved(false);
+  };
+
+  const toggleComplete = (i: number) => {
+    setSets((prev) => prev.map((s, idx) => (idx === i ? { ...s, completed: !s.completed } : s)));
     setIsSaved(false);
   };
 
   const handleSave = async () => {
-    const hasData = sets.some(s => s.reps > 0 || s.weight > 0);
-    if (!hasData) {
-      alert('Please enter at least some reps or weight');
+    const payload = sets.map((s) => ({
+      ...s,
+      completed: s.completed || s.reps > 0,
+    }));
+    if (!payload.some((s) => s.reps > 0 || s.weight > 0)) {
+      alert(t('log.noData'));
       return;
     }
 
     setIsSaving(true);
     setIsSaved(false);
-
-    // Safety timeout
-    const timeout = setTimeout(() => {
-      setIsSaving(false);
-      console.error('Save operation timed out after 20s');
-      alert('Save request timed out. Please check your internet connection.');
-    }, 20000);
-
     try {
-      console.log('Saving sets:', sets);
-      await onSave(sets.map(s => ({ ...s, completed: true })));
-      console.log('Save successful');
-      clearTimeout(timeout);
+      await onSave(payload);
+      setSets(payload);
       setIsSaved(true);
-    } catch (error: any) {
-      clearTimeout(timeout);
-      console.error('Save failed:', error);
-      alert(error.message || 'Failed to save');
-      setIsSaved(false);
+    } catch (e: any) {
+      alert(e.message || 'Failed to save');
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-3xl bg-zinc-900/40 backdrop-blur-md border border-white/5 shadow-2xl transition-all duration-300 hover:border-red-500/20">
-
-      {/* Background Glow Effect */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-red-600/20 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500 pointer-events-none" />
-
-      {/* Media Header */}
-      <div className="relative h-48 w-full overflow-hidden">
+    <motion.div
+      variants={itemVariants}
+      className="overflow-hidden rounded-3xl border border-hair bg-surface-2"
+    >
+      {/* Media header */}
+      <div className="relative h-40 w-full overflow-hidden">
         {exercise.imageUrl ? (
-          <img
-            src={exercise.imageUrl}
-            alt={exercise.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
+          <img src={exercise.imageUrl} alt={exercise.name} className="h-full w-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-zinc-800" />
+          <div className="h-full w-full bg-surface-3" />
         )}
-
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/60 to-transparent" />
-
-        {/* Floating Play Button */}
+        <div className="absolute inset-0 bg-gradient-to-t from-surface-2 via-surface-2/60 to-transparent" />
         {exercise.videoUrl && (
           <a
             href={exercise.videoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute top-4 right-4 p-3 bg-red-600/90 hover:bg-red-500 backdrop-blur-xl rounded-full text-white shadow-lg shadow-red-900/40 transition-all hover:scale-110 active:scale-95 z-10"
+            className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-brand/90 text-white shadow-lg active:scale-95"
           >
-            <Play className="w-5 h-5 fill-current" />
+            <Play className="h-5 w-5 fill-current" />
           </a>
         )}
-
-        {/* Title Content */}
-        <div className="absolute bottom-4 left-4 right-4 z-10">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 bg-white/10 backdrop-blur-md rounded-md text-[10px] font-bold uppercase tracking-widest text-zinc-300 border border-white/10">
-              Set {index + 1}
-            </span>
-            <span className="px-2 py-0.5 bg-red-600/20 backdrop-blur-md rounded-md text-[10px] font-bold uppercase tracking-widest text-red-400 border border-red-500/20">
-              {exercise.sets} x {exercise.reps}
-            </span>
-          </div>
-          <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white leading-none">
+        <div className="absolute bottom-3 left-4 right-4">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-txt-mid">
+            {exercise.name && `#${index + 1}`}
+          </span>
+          <h3 className="font-display text-2xl font-black italic uppercase leading-none tracking-tight text-txt-hi">
             {exercise.name}
           </h3>
         </div>
       </div>
 
-      {/* Content Body */}
-      <div className="p-4 md:p-6 space-y-6 relative bg-gradient-to-b from-zinc-900/50 to-transparent">
-
-        {/* Notes Toggle */}
-        {exercise.notes && (
-          <div className={`text-sm text-zinc-400 bg-zinc-800/50 rounded-xl p-3 border border-white/5 transition-all ${showNotes ? 'opacity-100' : 'opacity-70'}`}>
-            <div className="flex items-start gap-2">
-              <Info className="w-4 h-4 mt-0.5 text-red-500 shrink-0" />
-              <p className="leading-relaxed">{exercise.notes}</p>
+      <div className="space-y-4 p-4">
+        {/* Target banner */}
+        {targetText && (
+          <div className="flex items-center gap-2 rounded-2xl bg-brand-soft px-3 py-2">
+            <Target className="h-4 w-4 shrink-0 text-brand" />
+            <div className="min-w-0">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-brand/80">
+                {t('log.target')}
+              </div>
+              <div className="tabular-nums truncate text-sm font-bold text-txt-hi">{targetText}</div>
             </div>
           </div>
         )}
 
-        {/* Sets Grid */}
-        <div className="space-y-3">
-          {sets.map((set, i) => (
-            <div key={i} className="flex items-center gap-3">
-              {/* Set Badge */}
-              <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-800/80 text-zinc-500 font-bold text-xs border border-white/5">
-                {set.setNumber}
-              </div>
+        {/* Notes */}
+        {exercise.notes && (
+          <div className="flex items-start gap-2 rounded-2xl border border-hair bg-surface-3 p-3 text-xs text-txt-mid">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+            <p className="leading-relaxed">{exercise.notes}</p>
+          </div>
+        )}
 
-              {/* Input Container */}
-              <div className="flex-1 grid grid-cols-2 gap-3">
-                <div className="relative group/input">
-                  <label className="absolute -top-2 left-2 px-1 bg-zinc-900/90 text-[9px] font-bold text-zinc-500 uppercase tracking-wider transition-colors group-focus-within/input:text-red-500">
-                    Reps
-                  </label>
-                  <input
-                    type="number"
-                    value={set.reps || ''}
-                    onChange={(e) => updateSet(i, 'reps', parseInt(e.target.value) || 0)}
-                    placeholder="0"
-                    className="w-full bg-zinc-950/50 border border-white/5 text-center text-white font-bold p-3 rounded-xl focus:outline-none focus:border-red-500/50 focus:bg-red-500/5 transition-all placeholder:text-zinc-700"
-                  />
-                </div>
-                <div className="relative group/input">
-                  <label className="absolute -top-2 left-2 px-1 bg-zinc-900/90 text-[9px] font-bold text-zinc-500 uppercase tracking-wider transition-colors group-focus-within/input:text-red-500">
-                    Lbs
-                  </label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={set.weight || ''}
-                    onChange={(e) => updateSet(i, 'weight', parseFloat(e.target.value) || 0)}
-                    placeholder="0"
-                    className="w-full bg-zinc-950/50 border border-white/5 text-center text-white font-bold p-3 rounded-xl focus:outline-none focus:border-red-500/50 focus:bg-red-500/5 transition-all placeholder:text-zinc-700"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+        {/* Column headers */}
+        <div className="grid grid-cols-[28px_1fr_1fr_1fr_44px] items-center gap-2 px-1">
+          <span />
+          <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-txt-lo">{t('log.reps')}</span>
+          <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-txt-lo">{t('log.weight')}</span>
+          <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-txt-lo">{t('log.rpe')}</span>
+          <span />
         </div>
 
-        {/* Action Button */}
-        <button
+        {/* Sets */}
+        <div className="space-y-2">
+          {sets.map((set, i) => {
+            const prev = prevSets?.find((p) => p.setNumber === set.setNumber);
+            return (
+              <div key={i} className="space-y-1">
+                <div className="grid grid-cols-[28px_1fr_1fr_1fr_44px] items-center gap-2">
+                  <div className="grid h-8 w-7 place-items-center rounded-lg border border-hair bg-surface-3 text-xs font-bold text-txt-lo">
+                    {set.setNumber}
+                  </div>
+                  <CompactInput value={set.reps} onChange={(v) => updateSet(i, 'reps', v)} />
+                  <CompactInput value={set.weight} onChange={(v) => updateSet(i, 'weight', v)} step={0.5} />
+                  <CompactInput value={set.rpe ?? defaultRpe} onChange={(v) => updateSet(i, 'rpe', v)} max={10} />
+                  <button
+                    type="button"
+                    onClick={() => toggleComplete(i)}
+                    aria-label="toggle complete"
+                    className={cn(
+                      'grid h-11 w-11 place-items-center rounded-xl border transition-colors active:scale-90',
+                      set.completed
+                        ? 'border-success/40 bg-success/15 text-success'
+                        : 'border-hair bg-surface-3 text-txt-lo'
+                    )}
+                  >
+                    <Check className="h-5 w-5" strokeWidth={3} />
+                  </button>
+                </div>
+                {prev && (
+                  <div className="pl-9 text-[10px] font-medium text-txt-lo">
+                    {t('log.lastWeek')}: <span className="tabular-nums text-txt-mid">{prev.reps} × {prev.weight}kg</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Save */}
+        <motion.button
+          whileTap={{ scale: 0.98 }}
           onClick={handleSave}
           disabled={isSaving}
-          className={`w-full relative group/btn overflow-hidden rounded-xl py-4 font-black uppercase tracking-[0.2em] text-sm transition-all duration-300 ${isSaved
-            ? 'bg-emerald-600 text-white shadow-[0_0_20px_rgba(5,150,105,0.4)] hover:bg-emerald-500'
-            : 'bg-white text-black hover:bg-neutral-200'
-            }`}
-        >
-          <div className="relative z-10 flex items-center justify-center gap-2">
-            {isSaving ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Syncing...</span>
-              </>
-            ) : isSaved ? (
-              <>
-                <Check className="w-5 h-5" />
-                <span>Update Log</span>
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                <span>{savedSets && savedSets.length > 0 ? 'Update Log' : 'Log Set'}</span>
-              </>
-            )}
-          </div>
-
-          {/* Shimmer Effect */}
-          {!isSaving && (
-            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent rotate-12" />
+          className={cn(
+            'flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-black uppercase tracking-widest transition-[filter,background] duration-200',
+            isSaved ? 'bg-success text-white' : 'bg-grad-red text-white shadow-red hover:brightness-[1.06]',
+            isSaving && 'opacity-80'
           )}
-        </button>
-
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" /> {t('log.saving')}
+            </>
+          ) : isSaved ? (
+            <>
+              <Check className="h-5 w-5" /> {t('log.saved')}
+            </>
+          ) : savedSets && savedSets.length > 0 ? (
+            t('log.update')
+          ) : (
+            t('log.save')
+          )}
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
+  );
+}
+
+function CompactInput({
+  value,
+  onChange,
+  step = 1,
+  max = 9999,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  step?: number;
+  max?: number;
+}) {
+  return (
+    <input
+      type="number"
+      inputMode="decimal"
+      step={step}
+      value={value || ''}
+      placeholder="0"
+      onChange={(e) => {
+        const raw = e.target.value;
+        if (raw === '') return onChange(0);
+        const parsed = parseFloat(raw);
+        if (!Number.isNaN(parsed)) onChange(Math.min(max, parsed));
+      }}
+      className="tabular-nums h-11 w-full rounded-xl border border-hair bg-surface-3 text-center text-base font-bold text-txt-hi outline-none transition-colors focus:border-brand/60 placeholder:text-txt-lo [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+    />
   );
 }

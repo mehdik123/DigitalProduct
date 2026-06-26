@@ -1,4 +1,7 @@
-import { Dumbbell, Activity, Zap, ArrowRight } from 'lucide-react';
+import { Activity, Zap, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { BrandMark, Eyebrow } from './ui';
+import { cn } from '../lib/utils';
 
 interface WelcomePortalProps {
     onSelectTraining: () => void;
@@ -8,118 +11,143 @@ interface WelcomePortalProps {
 }
 
 export default function WelcomePortal({ onSelectTraining, onSelectNutrition, userName }: WelcomePortalProps) {
+    const { t } = useLanguage();
+
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-red-500/30 font-sans overflow-hidden">
-            {/* Background Image */}
+        <div className="relative min-h-screen overflow-hidden bg-bg font-sans text-txt-hi">
+            {/* Background image + layered dark / red ambient. */}
             <div className="fixed inset-0 z-0">
-                <div className="absolute inset-0 bg-black/60 z-10" />
                 <img
                     src="/images/welcome_bg.jpg"
-                    alt="Background"
-                    className="w-full h-full object-cover opacity-60"
+                    alt=""
+                    className="h-full w-full object-cover opacity-40"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80 z-20" />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/70 to-bg/90" />
+                <div className="bg-app absolute inset-0 opacity-80" />
+                <div className="ambient-grid pointer-events-none absolute inset-0 opacity-30" />
             </div>
 
-            <div className="relative z-10 max-w-5xl mx-auto px-4 py-8 md:py-24 flex flex-col min-h-screen">
-                {/* Simplified Header */}
-                <header className="flex flex-col items-center gap-4 md:gap-6 mb-12 md:mb-24 text-center">
-                    <div className="relative group">
-                        <div className="absolute inset-0 bg-red-600 blur-xl opacity-50 group-hover:opacity-80 transition-opacity duration-1000" />
-                        <div className="relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-zinc-900 to-black rounded-3xl border border-white/10 flex items-center justify-center shadow-2xl rotate-12 group-hover:rotate-[24deg] transition-all duration-700">
-                            <Dumbbell className="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
-                        </div>
+            <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-4 py-8 md:py-20">
+                {/* Header */}
+                <header className="mb-12 flex flex-col items-center gap-6 text-center md:mb-20">
+                    <div className="animate-rise opacity-0" style={{ animationDelay: '.05s' }}>
+                        <BrandMark />
                     </div>
-                    <div className="space-y-2 md:space-y-4">
-                        <h1 className="text-lg md:text-2xl font-black uppercase tracking-[0.4em] text-zinc-500">
-                            {userName ? (
-                                <div className="flex flex-col items-center gap-2">
-                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-zinc-200 to-zinc-500">
-                                        Welcome, {userName.split(' ')[0]}
-                                    </span>
-                                </div>
-                            ) : 'Elite Performance'}
+                    <div className="flex animate-rise flex-col items-center gap-4 opacity-0" style={{ animationDelay: '.12s' }}>
+                        <Eyebrow>
+                            {userName ? `${t('welcome.title')}, ${userName.split(' ')[0]}` : t('welcome.eyebrow')}
+                        </Eyebrow>
+                        <h1 className="font-display text-5xl font-black uppercase italic leading-[.9] tracking-tight text-txt-hi drop-shadow-2xl md:text-8xl">
+                            {t('welcome.choosePath.line1')}{' '}
+                            <span className="text-grad-coral">{t('welcome.choosePath.line2')}</span>
                         </h1>
-                        <h2 className="text-4xl md:text-8xl font-black italic uppercase tracking-tighter leading-none text-white drop-shadow-2xl">
-                            CHOOSE YOUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-800">PATH</span>
-                        </h2>
                     </div>
                 </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 flex-1 pb-20">
-                    {/* Training Option */}
-                    <div
+                <div className="grid flex-1 grid-cols-1 gap-6 pb-16 md:grid-cols-2 md:gap-8">
+                    <PortalCard
                         onClick={onSelectTraining}
-                        className="group relative rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-14 overflow-hidden cursor-pointer active:scale-[0.98] transition-all duration-500 min-h-[300px] flex flex-col"
-                    >
-                        {/* Background Image */}
-                        <div className="absolute inset-0 z-0">
-                            <img
-                                src="/images/upper_body_3.jpg"
-                                alt="Training"
-                                className="w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                        </div>
-
-                        {/* Glass Overlay */}
-                        <div className="absolute inset-0 bg-zinc-900/20 backdrop-blur-sm border border-white/10 rounded-[2rem] md:rounded-[2.5rem] group-hover:border-red-500/50 transition-all duration-500 z-10" />
-
-                        <div className="relative z-20 h-full flex flex-col justify-between space-y-6 md:space-y-12">
-                            <div className="w-16 h-16 md:w-24 md:h-24 bg-black/40 backdrop-blur-md rounded-2xl md:rounded-3xl border border-white/10 flex items-center justify-center text-red-500 shadow-2xl group-hover:scale-110 group-hover:rotate-6 group-hover:bg-red-600 group-hover:text-white group-hover:shadow-[0_0_40px_rgba(220,38,38,0.4)] transition-all duration-500">
-                                <Zap className="w-8 h-8 md:w-12 md:h-12 fill-current" />
-                            </div>
-
-                            <div className="space-y-2 md:space-y-4">
-                                <h3 className="text-3xl md:text-6xl font-black italic uppercase tracking-tighter text-white group-hover:text-red-100 transition-colors drop-shadow-xl">Training Program</h3>
-                                <p className="text-zinc-300 text-sm md:text-xl font-medium leading-relaxed max-w-sm drop-shadow-md">Access your 8-week progressive overload system.</p>
-                            </div>
-
-                            <div className="flex items-center gap-4 text-red-500 font-black uppercase tracking-[0.3em] text-xs md:text-sm group-hover:gap-6 group-hover:text-red-400 transition-all drop-shadow-lg">
-                                Open Program <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Nutrition Option */}
-                    <div
+                        image="/images/upper_body_3.jpg"
+                        tone="brand"
+                        icon={<Zap className="h-7 w-7 fill-current md:h-9 md:w-9" />}
+                        title={t('welcome.training')}
+                        description={t('welcome.training.description')}
+                        cta={t('welcome.startWorkout')}
+                        delay=".2s"
+                    />
+                    <PortalCard
                         onClick={onSelectNutrition}
-                        className="group relative rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-14 overflow-hidden cursor-pointer active:scale-[0.98] transition-all duration-500 min-h-[300px] flex flex-col"
-                    >
-                        {/* Background Image */}
-                        <div className="absolute inset-0 z-0">
-                            <img
-                                src="/images/lower_body_2.jpg"
-                                alt="Nutrition"
-                                className="w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                        </div>
-
-                        {/* Glass Overlay */}
-                        <div className="absolute inset-0 bg-zinc-900/20 backdrop-blur-sm border border-white/10 rounded-[2rem] md:rounded-[2.5rem] group-hover:border-emerald-500/50 transition-all duration-500 z-10" />
-
-                        <div className="relative z-20 h-full flex flex-col justify-between space-y-6 md:space-y-12">
-                            <div className="w-16 h-16 md:w-24 md:h-24 bg-black/40 backdrop-blur-md rounded-2xl md:rounded-3xl border border-white/10 flex items-center justify-center text-emerald-500 shadow-2xl group-hover:scale-110 group-hover:-rotate-6 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-[0_0_40px_rgba(16,185,129,0.4)] transition-all duration-500">
-                                <Activity className="w-8 h-8 md:w-12 md:h-12 fill-current" />
-                            </div>
-
-                            <div className="space-y-2 md:space-y-4">
-                                <h3 className="text-3xl md:text-6xl font-black italic uppercase tracking-tighter text-white group-hover:text-emerald-100 transition-colors drop-shadow-xl">Nutrition Guard</h3>
-                                <p className="text-zinc-300 text-sm md:text-xl font-medium leading-relaxed max-w-sm drop-shadow-md">Calculate macros, plan meals, and optimize.</p>
-                            </div>
-
-                            <div className="flex items-center gap-4 text-emerald-500 font-black uppercase tracking-[0.3em] text-xs md:text-sm group-hover:gap-6 group-hover:text-emerald-400 transition-all drop-shadow-lg">
-                                Open Nutrition <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
-                            </div>
-                        </div>
-                    </div>
+                        image="/images/lower_body_2.jpg"
+                        tone="emerald"
+                        icon={<Activity className="h-7 w-7 fill-current md:h-9 md:w-9" />}
+                        title={t('welcome.nutrition')}
+                        description={t('welcome.nutrition.description')}
+                        cta={t('welcome.openKitchen')}
+                        delay=".3s"
+                    />
                 </div>
 
-                <footer className="mt-8 md:mt-16 flex flex-col items-center gap-6 text-center">
-                    <p className="text-[10px] md:text-xs font-black text-zinc-600 uppercase tracking-[0.4em]">Designed for Performance • Built for Athletes</p>
+                <footer className="mt-8 flex animate-rise flex-col items-center gap-2 text-center opacity-0 md:mt-12" style={{ animationDelay: '.4s' }}>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-txt-lo md:text-xs">
+                        {t('welcome.tagline')}
+                    </p>
                 </footer>
             </div>
         </div>
+    );
+}
+
+interface PortalCardProps {
+    onClick: () => void;
+    image: string;
+    tone: 'brand' | 'emerald';
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    cta: string;
+    delay: string;
+}
+
+function PortalCard({ onClick, image, tone, icon, title, description, cta, delay }: PortalCardProps) {
+    const isBrand = tone === 'brand';
+    return (
+        <button
+            onClick={onClick}
+            style={{ animationDelay: delay }}
+            className={cn(
+                'group relative flex min-h-[300px] animate-rise flex-col overflow-hidden rounded-[28px] p-6 text-left opacity-0 md:p-10',
+                'press transition-[border-color] duration-500'
+            )}
+        >
+            {/* Image + gradient */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src={image}
+                    alt=""
+                    className="h-full w-full object-cover opacity-40 transition-all duration-700 group-hover:scale-105 group-hover:opacity-60"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-transparent" />
+            </div>
+
+            {/* Glass border */}
+            <div
+                className={cn(
+                    'absolute inset-0 z-10 rounded-[28px] border bg-surface-1/20 backdrop-blur-sm transition-colors duration-500',
+                    isBrand ? 'border-hair group-hover:border-brand/50' : 'border-hair group-hover:border-emerald/50'
+                )}
+            />
+
+            <div className="relative z-20 flex h-full flex-col justify-between gap-8">
+                <div
+                    className={cn(
+                        'flex h-16 w-16 items-center justify-center rounded-2xl border border-hair bg-surface-1/40 shadow-soft backdrop-blur-md transition-all duration-500 group-hover:scale-110 md:h-20 md:w-20',
+                        isBrand
+                            ? 'text-brand group-hover:bg-brand group-hover:text-white'
+                            : 'text-emerald group-hover:bg-emerald group-hover:text-white'
+                    )}
+                >
+                    {icon}
+                </div>
+
+                <div className="space-y-2 md:space-y-3">
+                    <h3 className="font-display text-4xl font-black uppercase italic leading-none tracking-tight text-txt-hi drop-shadow-xl md:text-6xl">
+                        {title}
+                    </h3>
+                    <p className="max-w-sm text-sm font-medium leading-relaxed text-txt-mid md:text-base">
+                        {description}
+                    </p>
+                </div>
+
+                <div
+                    className={cn(
+                        'flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] transition-all md:text-sm',
+                        isBrand ? 'text-brand' : 'text-emerald'
+                    )}
+                >
+                    {cta}
+                    <ChevronRight className="h-5 w-5 transition-transform duration-300 ease-spring group-hover:translate-x-1.5 rtl:rotate-180 rtl:group-hover:-translate-x-1.5" />
+                </div>
+            </div>
+        </button>
     );
 }
