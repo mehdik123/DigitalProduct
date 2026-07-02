@@ -8,43 +8,43 @@ interface ProgramIntroProps {
 }
 
 const SPECS = [
-    { icon: Dumbbell, title: '5-Day Split', sub: 'Optimized Frequency', solid: true },
+    { icon: Dumbbell, title: '5 Day Split', sub: 'Optimized Frequency', solid: true },
     { icon: Zap, title: 'Progression', sub: 'Scientific Overload', solid: false },
     { icon: Target, title: 'Full Support', sub: 'Video Drill Guides', solid: false },
 ];
 
 const INSIDE = [
-    'Advanced 12-Week Microcycles',
-    'Weight Tracking & Logging',
+    'Advanced 12 Week Microcycles',
+    'Weight Tracking and Logging',
     'Exercise Video Demonstrations',
     'Personal Record Dashboard',
-    'Mobile-First Interaction',
+    'Mobile First Interaction',
     'Progressive Fatigue Management',
 ];
 
 export default function ProgramIntro({ onBack, onStart }: ProgramIntroProps) {
     return (
-        <div className="bg-app relative min-h-screen overflow-hidden font-sans text-txt-hi">
+        <div className="bg-app relative min-h-dvh overflow-x-hidden font-sans text-txt-hi">
             <div className="ambient-grid pointer-events-none fixed inset-0 opacity-30" />
             <div className="ambient-streak pointer-events-none fixed -left-[30%] -top-[5%] h-[46%] w-[160%]" />
 
-            <div className="relative z-10 mx-auto flex min-h-screen max-w-4xl flex-col px-6 py-12 md:py-16">
+            <div className="relative z-10 mx-auto flex min-h-dvh max-w-4xl flex-col px-5 py-8 pb-nav-space sm:px-6 sm:py-12 md:py-16">
                 <button
                     onClick={onBack}
-                    className="group mb-12 flex items-center gap-3 self-start text-txt-lo transition-colors hover:text-txt-hi"
+                    className="group mb-8 flex items-center gap-2 self-start text-txt-lo transition-colors hover:text-txt-hi sm:mb-12 sm:gap-3"
                 >
                     <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1" />
                     <span className="text-xs font-black uppercase tracking-[0.3em]">Back to Portal</span>
                 </button>
 
-                <div className="space-y-12 pb-32">
+                <div className="space-y-8 pb-4 sm:space-y-12">
                     {/* Hero */}
-                    <div className="animate-rise space-y-5 opacity-0" style={{ animationDelay: '.05s' }}>
+                    <div className="animate-rise space-y-4 opacity-0 sm:space-y-5" style={{ animationDelay: '.05s' }}>
                         <Eyebrow>Hybrid Training System</Eyebrow>
-                        <h1 className="font-display text-5xl font-black uppercase italic leading-none tracking-tight md:text-8xl">
-                            12-Week <span className="text-grad-coral">Elite</span> Program
+                        <h1 className="font-display text-display-hero font-black uppercase italic leading-none tracking-tight">
+                            12 Week <span className="text-grad-coral">Elite</span> Program
                         </h1>
-                        <p className="max-w-2xl text-lg font-medium leading-relaxed text-txt-mid md:text-xl">
+                        <p className="max-w-2xl text-base font-medium leading-relaxed text-txt-mid sm:text-lg md:text-xl">
                             A high-performance progressive overload system designed to build functional power,
                             elite aesthetics, and hybrid work capacity.
                         </p>

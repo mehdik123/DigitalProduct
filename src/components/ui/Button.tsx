@@ -2,7 +2,8 @@ import { ReactNode } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { tap } from '../../design/motion';
+import { tap, spring } from '../../design/motion';
+import { haptic } from '../../lib/haptics';
 
 type Variant = 'primary' | 'secondary' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
@@ -67,8 +68,10 @@ export function Button({
     return (
       <motion.button
         whileTap={disabled ? undefined : tap}
+        transition={spring.snappy}
+        onTapStart={() => !disabled && haptic.light()}
         disabled={disabled}
-        className={cn(base, variants[variant], 'rounded-2xl px-4 py-4 text-left', className)}
+        className={cn(base, variants[variant], 'rounded-2xl px-3.5 py-3.5 text-left sm:px-4 sm:py-4', className)}
         {...props}
       >
         {icon && (
@@ -82,7 +85,7 @@ export function Button({
           </span>
         )}
         <span className="flex-1">
-          <span className="block font-display text-lg font-extrabold uppercase italic leading-none tracking-wide">
+          <span className="block font-display text-base font-extrabold uppercase italic leading-none tracking-wide sm:text-lg">
             {children}
           </span>
           <span
@@ -107,6 +110,8 @@ export function Button({
   return (
     <motion.button
       whileTap={disabled ? undefined : tap}
+      transition={spring.snappy}
+      onTapStart={() => !disabled && haptic.light()}
       disabled={disabled}
       className={cn(base, variants[variant], sizes[size], className)}
       {...props}

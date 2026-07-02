@@ -87,7 +87,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="bg-hero relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-6">
+        <div className="bg-hero relative flex min-h-dvh flex-col items-center justify-center overflow-x-hidden overflow-y-auto p-5 sm:p-6">
             {/* Ambient grid + diagonal speed streak (the brand signature). */}
             <div className="ambient-grid pointer-events-none absolute inset-0 opacity-40" />
             <div className="ambient-streak pointer-events-none absolute -left-[30%] -top-[10%] h-[46%] w-[160%]" />
@@ -99,7 +99,7 @@ export default function LoginPage() {
 
                 <div className="mb-8 flex animate-rise flex-col items-center text-center opacity-0" style={{ animationDelay: '.12s' }}>
                     <Eyebrow>{t('welcome.eyebrow')}</Eyebrow>
-                    <h1 className="mt-4 font-display text-5xl font-black uppercase italic leading-none tracking-tight text-txt-hi">
+                    <h1 className="mt-4 font-display text-display-lg font-black uppercase italic leading-none tracking-tight text-txt-hi">
                         {t('common.login')}
                     </h1>
                 </div>

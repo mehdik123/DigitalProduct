@@ -14,7 +14,7 @@ export default function WelcomePortal({ onSelectTraining, onSelectNutrition, use
     const { t } = useLanguage();
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-bg font-sans text-txt-hi">
+        <div className="relative min-h-dvh overflow-x-hidden bg-bg font-sans text-txt-hi">
             {/* Background image + layered dark / red ambient. */}
             <div className="fixed inset-0 z-0">
                 <img
@@ -27,9 +27,9 @@ export default function WelcomePortal({ onSelectTraining, onSelectNutrition, use
                 <div className="ambient-grid pointer-events-none absolute inset-0 opacity-30" />
             </div>
 
-            <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-4 py-8 md:py-20">
+            <div className="relative z-10 mx-auto flex min-h-dvh max-w-5xl flex-col px-4 py-6 pb-8 sm:py-8 md:py-20">
                 {/* Header */}
-                <header className="mb-12 flex flex-col items-center gap-6 text-center md:mb-20">
+                <header className="mb-8 flex flex-col items-center gap-4 text-center sm:mb-12 md:mb-20">
                     <div className="animate-rise opacity-0" style={{ animationDelay: '.05s' }}>
                         <BrandMark />
                     </div>
@@ -37,14 +37,14 @@ export default function WelcomePortal({ onSelectTraining, onSelectNutrition, use
                         <Eyebrow>
                             {userName ? `${t('welcome.title')}, ${userName.split(' ')[0]}` : t('welcome.eyebrow')}
                         </Eyebrow>
-                        <h1 className="font-display text-5xl font-black uppercase italic leading-[.9] tracking-tight text-txt-hi drop-shadow-2xl md:text-8xl">
+                        <h1 className="font-display text-display-hero font-black uppercase italic tracking-tight text-txt-hi drop-shadow-2xl">
                             {t('welcome.choosePath.line1')}{' '}
                             <span className="text-grad-coral">{t('welcome.choosePath.line2')}</span>
                         </h1>
                     </div>
                 </header>
 
-                <div className="grid flex-1 grid-cols-1 gap-6 pb-16 md:grid-cols-2 md:gap-8">
+                <div className="grid flex-1 grid-cols-1 gap-4 pb-4 sm:gap-6 md:grid-cols-2 md:gap-8">
                     <PortalCard
                         onClick={onSelectTraining}
                         image="/images/upper_body_3.jpg"
@@ -95,7 +95,7 @@ function PortalCard({ onClick, image, tone, icon, title, description, cta, delay
             onClick={onClick}
             style={{ animationDelay: delay }}
             className={cn(
-                'group relative flex min-h-[300px] animate-rise flex-col overflow-hidden rounded-[28px] p-6 text-left opacity-0 md:p-10',
+                'group relative flex min-h-[220px] animate-rise flex-col overflow-hidden rounded-2xl p-5 text-left opacity-0 sm:min-h-[260px] sm:rounded-[28px] sm:p-6 md:p-10',
                 'press transition-[border-color] duration-500'
             )}
         >
@@ -117,10 +117,10 @@ function PortalCard({ onClick, image, tone, icon, title, description, cta, delay
                 )}
             />
 
-            <div className="relative z-20 flex h-full flex-col justify-between gap-8">
+            <div className="relative z-20 flex h-full flex-col justify-between gap-5 sm:gap-8">
                 <div
                     className={cn(
-                        'flex h-16 w-16 items-center justify-center rounded-2xl border border-hair bg-surface-1/40 shadow-soft backdrop-blur-md transition-all duration-500 group-hover:scale-110 md:h-20 md:w-20',
+                        'flex h-14 w-14 items-center justify-center rounded-xl border border-hair bg-surface-1/40 shadow-soft backdrop-blur-md transition-all duration-500 group-hover:scale-110 sm:h-16 sm:w-16 sm:rounded-2xl md:h-20 md:w-20',
                         isBrand
                             ? 'text-brand group-hover:bg-brand group-hover:text-white'
                             : 'text-emerald group-hover:bg-emerald group-hover:text-white'
@@ -129,8 +129,8 @@ function PortalCard({ onClick, image, tone, icon, title, description, cta, delay
                     {icon}
                 </div>
 
-                <div className="space-y-2 md:space-y-3">
-                    <h3 className="font-display text-4xl font-black uppercase italic leading-none tracking-tight text-txt-hi drop-shadow-xl md:text-6xl">
+                <div className="space-y-1.5 sm:space-y-2 md:space-y-3">
+                    <h3 className="font-display text-display-lg font-black uppercase italic leading-none tracking-tight text-txt-hi drop-shadow-xl">
                         {title}
                     </h3>
                     <p className="max-w-sm text-sm font-medium leading-relaxed text-txt-mid md:text-base">

@@ -18,44 +18,44 @@ export const translations: Translations = {
     // Welcome Portal
     'welcome.title': {
         en: 'Welcome',
-        ar: 'مرحباً'
+        ar: 'مرحبا'
     },
     'welcome.subtitle': {
         en: 'Choose your focus for today. Master your body through training or fuel your performance through nutrition.',
-        ar: 'اختر تركيزك لليوم. أتقن جسمك من خلال التدريب أو عزز أدائك من خلال التغذية.'
+        ar: 'ختار على أش بغيتي تركز اليوم. طوّر جسمك بالتمارين ولا قوّي الأداء ديالك بالماكلة.'
     },
     'welcome.training': {
         en: 'Training',
-        ar: 'التدريب'
+        ar: 'التمرين'
     },
     'welcome.training.description': {
-        en: 'Access your 12-week progressive overload program, log workouts, and track PRs.',
-        ar: 'الوصول إلى برنامج الحمل التدريجي لمدة 12 أسبوعاً، تسجيل التمارين، وتتبع الأرقام القياسية.'
+        en: 'Access your 12 week progressive overload program, log workouts, and track PRs.',
+        ar: 'دخل للبرنامج ديالك ديال 12 سيمانة، سجل التمارين وتبّع الأرقام ديالك.'
     },
     'welcome.nutrition': {
         en: 'Nutrition',
-        ar: 'التغذية'
+        ar: 'الماكلة'
     },
     'welcome.nutrition.description': {
         en: 'Calculate macros, plan meals, and discover healthy alternatives for your goals.',
-        ar: 'احسب السعرات، خطط للوجبات، واكتشف البدائل الصحية لأهدافك.'
+        ar: 'حسب الماكروز، خطط للوجبات، ولقا بدائل صحية للأهداف ديالك.'
     },
     'welcome.startWorkout': {
         en: 'Start Workout',
-        ar: 'ابدأ التمرين'
+        ar: 'بدا التمرين'
     },
     'welcome.openKitchen': {
         en: 'Open Kitchen',
-        ar: 'افتح المطبخ'
+        ar: 'حل الكوزينة'
     },
     // Welcome / Login entry screen
     'welcome.eyebrow': {
-        en: '12-Week Program',
+        en: '12 Week Program',
         ar: 'برنامج 12 أسبوعاً'
     },
     'welcome.tagline': {
-        en: 'Build real strength and an engine that lasts — one program, twelve weeks, no hype.',
-        ar: 'ابنِ قوة حقيقية ولياقة تدوم — برنامج واحد، اثنا عشر أسبوعاً، بلا مبالغة.'
+        en: 'Build real strength and an engine that lasts. One program, twelve weeks, no hype.',
+        ar: 'بني قوة حقيقية ولياقة تدوم. برنامج واحد، 12 سيمانة، بلا مبالغة.'
     },
     'welcome.stat.program': {
         en: 'Program',
@@ -71,103 +71,103 @@ export const translations: Translations = {
     },
     'welcome.join.subtitle': {
         en: 'Start your 12 weeks today',
-        ar: 'ابدأ أسابيعك الـ12 اليوم'
+        ar: 'بدا 12 سيمانة ديالك اليوم'
     },
     'welcome.login.subtitle': {
         en: 'Already have an account?',
-        ar: 'لديك حساب بالفعل؟'
+        ar: 'عندك حساب من قبل؟'
     },
     'welcome.trust': {
         en: 'Secure sign-in · coached by El Mehdi',
-        ar: 'تسجيل دخول آمن · بإشراف المهدي'
+        ar: 'دخول آمن · مع تأطير المهدي'
     },
     'welcome.choosePath.line1': {
         en: 'Choose Your',
-        ar: 'اختر'
+        ar: 'ختار'
     },
     'welcome.choosePath.line2': {
         en: 'Path',
-        ar: 'مسارك'
+        ar: 'الطريق ديالك'
     },
 
     // Signup Flow
     'signup.title': {
         en: 'Create Your Program',
-        ar: 'أنشئ برنامجك'
+        ar: 'صاوب البرنامج ديالك'
     },
     'signup.description': {
-        en: 'Enter your details to get started with your personalized 12-week program',
-        ar: 'أدخل بياناتك للبدء ببرنامجك الشخصي لمدة 12 أسبوعاً'
+        en: 'Enter your details to get started with your personalized 12 week program',
+        ar: 'دخل المعلومات ديالك باش تبدا البرنامج الشخصي ديالك ديال 12 سيمانة'
     },
     'signup.fullName': {
         en: 'Full Name',
-        ar: 'الاسم الكامل'
+        ar: 'السمية الكاملة'
     },
     'signup.email': {
         en: 'Email Address',
-        ar: 'البريد الإلكتروني'
+        ar: 'الإيميل'
     },
     'signup.emailNote': {
         en: 'Your email will be used as your username',
-        ar: 'سيتم استخدام بريدك الإلكتروني كاسم مستخدم'
+        ar: 'الإيميل ديالك غادي يتستعمل بحال اسم المستخدم'
     },
     'signup.password': {
         en: 'Password',
-        ar: 'كلمة المرور'
+        ar: 'كلمة السر'
     },
     'signup.confirmPassword': {
         en: 'Confirm Password',
-        ar: 'تأكيد كلمة المرور'
+        ar: 'أكّد كلمة السر'
     },
     'signup.passwordPlaceholder': {
         en: 'Min. 6 characters',
-        ar: '6 أحرف كحد أدنى'
+        ar: '6 حروف على الأقل'
     },
     'signup.createAccount': {
         en: 'Build My Program',
-        ar: 'أنشئ برنامجي'
+        ar: 'صاوب البرنامج ديالي'
     },
     'signup.howItWorks': {
         en: 'How It Works?',
-        ar: 'كيف يعمل؟'
+        ar: 'كيفاش كيخدم؟'
     },
 
     // How It Works Modal
     'howItWorks.title': {
         en: 'How "Get My Own Copy" Works',
-        ar: 'كيف يعمل "أنشئ نسختي الخاصة"'
+        ar: 'كيفاش كيخدم "صاوب نسختك الخاصة"'
     },
     'howItWorks.step1.title': {
         en: 'Step 1: Create Your Account',
-        ar: 'الخطوة 1: أنشئ حسابك'
+        ar: 'المرحلة 1: صاوب حسابك'
     },
     'howItWorks.step1.description': {
         en: 'Enter your name, email, and choose a secure password.',
-        ar: 'أدخل اسمك، بريدك الإلكتروني، واختر كلمة مرور آمنة.'
+        ar: 'دخل سميتك، الإيميل ديالك، وختار كلمة سر آمنة.'
     },
     'howItWorks.step2.title': {
         en: 'Step 2: Login',
-        ar: 'الخطوة 2: تسجيل الدخول'
+        ar: 'المرحلة 2: دخل'
     },
     'howItWorks.step2.description': {
         en: 'Use your email and the password you created to login to your account.',
-        ar: 'استخدم بريدك الإلكتروني وكلمة المرور التي أنشأتها لتسجيل الدخول إلى حسابك.'
+        ar: 'استعمل الإيميل وكلمة السر اللي صاوبتي باش تدخل لحسابك.'
     },
     'howItWorks.step2.description_simplified': {
         en: 'Use your email and the password you created to login to your account.',
-        ar: 'استخدم بريدك الإلكتروني وكلمة المرور التي أنشأتها لتسجيل الدخول إلى حسابك.'
+        ar: 'استعمل الإيميل وكلمة السر اللي صاوبتي باش تدخل لحسابك.'
     },
     'howItWorks.step3.title': {
         en: 'Step 3: Track Your Progress',
-        ar: 'الخطوة 3: تتبع تقدمك'
+        ar: 'المرحلة 3: تبّع تقدمك'
     },
     'howItWorks.step3.description': {
         en: 'Log your workouts, track weights, and watch your progress over 12 weeks. Your data is saved automatically.',
-        ar: 'سجل تمارينك، تتبع الأوزان، وراقب تقدمك على مدى 12 أسبوعاً. يتم حفظ بياناتك تلقائياً.'
+        ar: 'سجل التمارين ديالك، تبّع الأثقال، وشوف تقدمك على مدى 12 سيمانة. المعلومات ديالك كتسجل بوحدها.'
     },
     'howItWorks.important': {
         en: 'Important: This creates a personal copy of the program just for you. Your progress is private and saved to your account.',
-        ar: 'مهم: هذا ينشئ نسخة شخصية من البرنامج لك فقط. تقدمك خاص ومحفوظ في حسابك.'
+        ar: 'مهم: هادشي كيصاوب نسخة خاصة بيك من البرنامج. تقدمك خاص بيك ومحفوظ فحسابك.'
     },
     'howItWorks.gotIt': {
         en: 'Got It!',
@@ -177,53 +177,53 @@ export const translations: Translations = {
     // Success Modal
     'signup.success.title': {
         en: 'Account Created!',
-        ar: 'تم إنشاء الحساب!'
+        ar: 'تصاوب الحساب!'
     },
     'signup.success.message': {
         en: 'Your account has been successfully created. Please login with your email and password.',
-        ar: 'تم إنشاء حسابك بنجاح. يرجى تسجيل الدخول باستخدام بريدك الإلكتروني وكلمة المرور.'
+        ar: 'الحساب ديالك تصاوب بنجاح. دخل بالإيميل وكلمة السر ديالك.'
     },
     'signup.success.button': {
         en: 'Go to Login',
-        ar: 'اذهب لتسجيل الدخول'
+        ar: 'سير للدخول'
     },
     'signup.error.alreadyRegistered': {
         en: 'This email is already registered. Redirecting to login...',
-        ar: 'هذا البريد الإلكتروني مسجل بالفعل. جاري التوجيه لتسجيل الدخول...'
+        ar: 'هاد الإيميل مسجل من قبل. غادي نوجهوك للدخول...'
     },
     'signup.timeoutRedirect': {
         en: 'Server is taking a moment. Account likely created! Redirecting to login...',
-        ar: 'الخادم يستغرق لحظة. تم إنشاء الحساب على الأرجح! جاري التوجيه لتسجيل الدخول...'
+        ar: 'السيرفر خد شوية ديال الوقت. الحساب غالبا تصاوب! غادي نوجهوك للدخول...'
     },
 
     // Credentials Modal
     'credentials.welcome': {
         en: 'Welcome',
-        ar: 'مرحباً'
+        ar: 'مرحبا'
     },
     'credentials.actionRequired': {
         en: 'Action Required:',
-        ar: 'إجراء مطلوب:'
+        ar: 'خاصك دير:'
     },
     'credentials.instruction': {
         en: 'Please copy your credentials below. You will need to manually enter them on the next screen to access your program.',
-        ar: 'يرجى نسخ بيانات الاعتماد أدناه. ستحتاج إلى إدخالها يدوياً في الشاشة التالية للوصول إلى برنامجك.'
+        ar: 'نسخ المعلومات ديالك اللي تحت. غادي تحتاج تدخلهم بيدك فالشاشة الجاية باش توصل للبرنامج ديالك.'
     },
     'credentials.copyPasswordInstruction': {
         en: 'Please copy your password below. You will need to remember your email and enter this password to access your program.',
-        ar: 'يرجى نسخ كلمة المرور أدناه. ستحتاج إلى تذكر بريدك الإلكتروني وإدخال كلمة المرور هذه للوصول إلى برنامجك.'
+        ar: 'نسخ كلمة السر ديالك اللي تحت. خاصك تعقل على الإيميل وتدخل هاد كلمة السر باش توصل للبرنامج ديالك.'
     },
     'credentials.personalLink': {
         en: 'YOUR PERSONAL LINK',
-        ar: 'رابطك الشخصي'
+        ar: 'الرابط الشخصي ديالك'
     },
     'credentials.email': {
         en: 'EMAIL',
-        ar: 'البريد الإلكتروني'
+        ar: 'الإيميل'
     },
     'credentials.password': {
         en: 'PASSWORD',
-        ar: 'كلمة المرور'
+        ar: 'كلمة السر'
     },
     'credentials.warning': {
         en: 'Important:',
@@ -231,25 +231,25 @@ export const translations: Translations = {
     },
     'credentials.warningText': {
         en: 'Screenshot this page! Click your personal link and use these credentials to login.',
-        ar: 'التقط صورة لهذه الصفحة! انقر على رابطك الشخصي واستخدم بيانات الاعتماد هذه لتسجيل الدخول.'
+        ar: 'دير تصويرة لهاد الصفحة! كليكي على الرابط الشخصي ديالك واستعمل هاد المعلومات باش تدخل.'
     },
     'credentials.goToLogin': {
         en: 'Go to Login Page',
-        ar: 'اذهب إلى صفحة تسجيل الدخول'
+        ar: 'سير لصفحة الدخول'
     },
 
     // Common
     'common.backToHome': {
         en: 'Back to Home',
-        ar: 'العودة للرئيسية'
+        ar: 'رجع للرئيسية'
     },
     'common.logout': {
         en: 'Logout',
-        ar: 'تسجيل الخروج'
+        ar: 'خروج'
     },
     'common.login': {
         en: 'Login',
-        ar: 'تسجيل الدخول'
+        ar: 'دخول'
     },
     'common.createAccount': {
         en: 'Join Program',
@@ -257,31 +257,348 @@ export const translations: Translations = {
     },
     'common.alreadyHaveAccount': {
         en: 'Already Have Account?',
-        ar: 'لديك حساب بالفعل؟'
+        ar: 'عندك حساب من قبل؟'
     },
 
     // Workout Section
     'workout.title': {
         en: 'Personal Training Split',
-        ar: 'برنامج التدريب الشخصي'
+        ar: 'برنامج التمرين الشخصي'
     },
     'workout.selectWorkout': {
         en: 'Select a workout to view exercises',
-        ar: 'اختر تمريناً لعرض التمارين'
+        ar: 'ختار تمرين باش تشوف الحركات'
     },
     'workout.logWeights': {
         en: 'Select a workout to log your weights',
-        ar: 'اختر تمريناً لتسجيل أوزانك'
+        ar: 'ختار تمرين باش تسجل الأثقال ديالك'
     },
     'workout.week': {
         en: 'Week',
-        ar: 'الأسبوع'
+        ar: 'السيمانة'
     },
+    'workout.done': { en: 'Done', ar: 'سالا' },
+    'workout.start': { en: 'Start', ar: 'بدا' },
+    'workout.review': { en: 'Review', ar: 'راجع' },
+    'common.gotIt': { en: 'Got it', ar: 'فهمت' },
 
-    // Nutrition Section
+    // Nutrition Section (Moroccan Darija)
     'nutrition.backToPortal': {
         en: 'Back to Brand Portal',
-        ar: 'الرجوع للبوابة الرئيسية'
+        ar: 'رجع للبوابة'
+    },
+    'nutrition.badgePlans': {
+        en: 'Nutrition Plans',
+        ar: 'برامج الماكلة'
+    },
+    'nutrition.selectTarget': {
+        en: 'Select your calorie target to unlock your personalized meal plan.',
+        ar: 'ختار عدد الكالوري ديالك باش تفتح برنامج الماكلة المخصص ليك.'
+    },
+    'nutrition.kcalPerDay': {
+        en: 'kcal/day',
+        ar: 'كالوري/نهار'
+    },
+    'nutrition.viewBlueprint': {
+        en: 'View Blueprint',
+        ar: 'شوف البلان'
+    },
+    'nutrition.designedFor': {
+        en: 'Designed for Hybrid Athlete Performance',
+        ar: 'مصمم لأداء الرياضي الهجين'
+    },
+    // Calorie plan cards
+    'nutrition.plan.2000.title': {
+        en: 'Aggressive Fat Loss',
+        ar: 'تنقيص الشحم بقوة'
+    },
+    'nutrition.plan.2000.desc': {
+        en: 'Maximum deficit for rapid results',
+        ar: 'أقصى عجز فالكالوري باش النتائج يجيو دغيا'
+    },
+    'nutrition.plan.2500.title': {
+        en: 'Moderate Deficit',
+        ar: 'عجز متوسط'
+    },
+    'nutrition.plan.2500.desc': {
+        en: 'Sustainable fat loss / maintenance',
+        ar: 'تنقيص الشحم بشوية ولا الحفاظ على الوزن'
+    },
+    'nutrition.plan.3000.title': {
+        en: 'Maintenance / Lean Bulk',
+        ar: 'الحفاظ ولا الزيادة فالعضل'
+    },
+    'nutrition.plan.3000.desc': {
+        en: 'Maintain or grow lean muscle',
+        ar: 'حافظ ولا كبّر العضل الصافي'
+    },
+    'nutrition.plan.3500.title': {
+        en: 'Lean Bulk',
+        ar: 'زيادة العضل الصافي'
+    },
+    'nutrition.plan.3500.desc': {
+        en: 'Optimal muscle growth for larger athletes',
+        ar: 'نمو مثالي للعضل للرياضيين الكبار'
+    },
+    'nutrition.meals3': {
+        en: '3 meals',
+        ar: '3 وجبات'
+    },
+    'nutrition.meals3snack1': {
+        en: '3 meals + 1 snack',
+        ar: '3 وجبات + سناك'
+    },
+    'nutrition.meals4snack1': {
+        en: '4 meals + 1 snack',
+        ar: '4 وجبات + سناك'
+    },
+    // Meal plan view descriptions (keyed by calorie target)
+    'nutrition.planDesc.2000': {
+        en: 'Aggressive fat loss with 3 nutrient-dense meals',
+        ar: 'تنقيص الشحم بقوة مع 3 وجبات غنية بالمغذيات'
+    },
+    'nutrition.planDesc.2500': {
+        en: 'Moderate deficit or maintenance with 3 meals + snack',
+        ar: 'عجز متوسط ولا الحفاظ مع 3 وجبات + سناك'
+    },
+    'nutrition.planDesc.3000': {
+        en: 'Maintenance or lean bulk with 3 meals + snack',
+        ar: 'الحفاظ ولا زيادة العضل مع 3 وجبات + سناك'
+    },
+    'nutrition.planDesc.3500': {
+        en: 'Lean bulk for larger athletes with 4 meals + snack',
+        ar: 'زيادة العضل للرياضيين الكبار مع 4 وجبات + سناك'
+    },
+    // Meal plan view chrome
+    'nutrition.backToPlans': {
+        en: 'Back to Plans',
+        ar: 'رجع للبرامج'
+    },
+    'nutrition.dailyProtocol': {
+        en: 'Daily Protocol',
+        ar: 'البروتوكول اليومي'
+    },
+    'nutrition.kcal': {
+        en: 'kcal',
+        ar: 'كالوري'
+    },
+    'nutrition.hideMacros': {
+        en: 'Hide Macros',
+        ar: 'خبي الماكروز'
+    },
+    'nutrition.showMacros': {
+        en: 'Show Macros',
+        ar: 'بيّن الماكروز'
+    },
+    'nutrition.shop': {
+        en: 'Shop',
+        ar: 'التسوق'
+    },
+    'nutrition.pdf': {
+        en: 'PDF',
+        ar: 'PDF'
+    },
+    'nutrition.totalCalories': {
+        en: 'Total Calories',
+        ar: 'مجموع الكالوري'
+    },
+    'nutrition.protein': {
+        en: 'Protein',
+        ar: 'البروتين'
+    },
+    'nutrition.carbs': {
+        en: 'Carbs',
+        ar: 'الكاربوهيدرات'
+    },
+    'nutrition.fats': {
+        en: 'Fats',
+        ar: 'الدهون'
+    },
+    // Toasts
+    'nutrition.toast.generatingPdf': {
+        en: 'Generating PDF...',
+        ar: 'كنصاوب PDF...'
+    },
+    'nutrition.toast.generatingPdfDesc': {
+        en: 'Preparing high-quality layout with images...',
+        ar: 'كنوجد التصميم بجودة عالية مع التصاور...'
+    },
+    'nutrition.toast.pdfSuccess': {
+        en: 'PDF downloaded successfully!',
+        ar: 'تحمّل ال PDF بنجاح!'
+    },
+    'nutrition.toast.pdfSuccessDesc': {
+        en: 'Your meal plan has been saved to your downloads folder.',
+        ar: 'برنامج الماكلة ديالك تسجل فمجلد التحميلات.'
+    },
+    'nutrition.toast.pdfError': {
+        en: 'Failed to export PDF',
+        ar: 'ما تصاوبش ال PDF'
+    },
+    'nutrition.toast.pdfErrorDesc': {
+        en: 'Please try again or contact support if the issue persists.',
+        ar: 'عاود حاول ولا تواصل مع الدعم إلا بقا المشكل.'
+    },
+    'nutrition.toast.swapSuccess': {
+        en: 'Meal swapped successfully!',
+        ar: 'تبدلات الوجبة بنجاح!'
+    },
+    'nutrition.toast.swapSuccessDesc': {
+        en: 'Replaced with {name}',
+        ar: 'تبدلات بـ {name}'
+    },
+    // Meal types
+    'nutrition.mealType.breakfast': {
+        en: 'Breakfast',
+        ar: 'الفطور'
+    },
+    'nutrition.mealType.lunch': {
+        en: 'Lunch',
+        ar: 'الغدا'
+    },
+    'nutrition.mealType.dinner': {
+        en: 'Dinner',
+        ar: 'العشا'
+    },
+    'nutrition.mealType.snack': {
+        en: 'Snack',
+        ar: 'سناك'
+    },
+    // Macro short labels (meal card)
+    'nutrition.kcalShort': {
+        en: 'Kcal',
+        ar: 'كالوري'
+    },
+    'nutrition.proShort': {
+        en: 'Pro',
+        ar: 'بروتين'
+    },
+    'nutrition.carbShort': {
+        en: 'Carb',
+        ar: 'كارب'
+    },
+    'nutrition.fatShort': {
+        en: 'Fat',
+        ar: 'دهون'
+    },
+    'nutrition.fibShort': {
+        en: 'Fib',
+        ar: 'ألياف'
+    },
+    'nutrition.hideDetails': {
+        en: 'Hide Details',
+        ar: 'خبي التفاصيل'
+    },
+    'nutrition.viewRecipe': {
+        en: 'View Recipe',
+        ar: 'شوف الوصفة'
+    },
+    'nutrition.ingredients': {
+        en: 'Ingredients',
+        ar: 'المكونات'
+    },
+    'nutrition.instructions': {
+        en: 'Instructions',
+        ar: 'طريقة التحضير'
+    },
+    // Swap dialog
+    'nutrition.swapMeal': {
+        en: 'Swap Meal',
+        ar: 'بدّل الوجبة'
+    },
+    'nutrition.swapReplace': {
+        en: 'Replace',
+        ar: 'بدّل'
+    },
+    'nutrition.swapWithAlt': {
+        en: 'with a similar alternative',
+        ar: 'ببديل مشابه'
+    },
+    'nutrition.noAlternatives': {
+        en: 'No alternative meals available for this meal type yet.',
+        ar: 'مازال ما كاينش بدائل لهاد النوع ديال الوجبات.'
+    },
+    'nutrition.cal': {
+        en: 'cal',
+        ar: 'كالوري'
+    },
+    'nutrition.proteinLower': {
+        en: 'protein',
+        ar: 'بروتين'
+    },
+    'nutrition.carbsLower': {
+        en: 'carbs',
+        ar: 'كارب'
+    },
+    'nutrition.fatsLower': {
+        en: 'fats',
+        ar: 'دهون'
+    },
+    'nutrition.cancel': {
+        en: 'Cancel',
+        ar: 'إلغاء'
+    },
+    // Fiber tracker
+    'nutrition.fiber.poor': {
+        en: 'Poor',
+        ar: 'ضعيف'
+    },
+    'nutrition.fiber.moderate': {
+        en: 'Moderate',
+        ar: 'متوسط'
+    },
+    'nutrition.fiber.good': {
+        en: 'Good',
+        ar: 'مزيان'
+    },
+    'nutrition.fiber.excessive': {
+        en: 'Excessive',
+        ar: 'بزاف'
+    },
+    'nutrition.fiberIntake': {
+        en: 'Fiber Intake',
+        ar: 'كمية الألياف'
+    },
+    'nutrition.fiberTarget': {
+        en: 'Target: 35-50g per day',
+        ar: 'الهدف: 35-50غ فالنهار'
+    },
+    'nutrition.currentStatus': {
+        en: 'Current Status:',
+        ar: 'الحالة دابا:'
+    },
+    // Shopping list
+    'nutrition.smartShoppingList': {
+        en: 'Smart Shopping List',
+        ar: 'لائحة التسوق الذكية'
+    },
+    'nutrition.cat.produce': {
+        en: 'Produce',
+        ar: 'الخضرة والفواكه'
+    },
+    'nutrition.cat.meatDairy': {
+        en: 'Meat & Dairy',
+        ar: 'اللحم والحليب'
+    },
+    'nutrition.cat.pantry': {
+        en: 'Pantry',
+        ar: 'المونة'
+    },
+    'nutrition.cat.other': {
+        en: 'Other',
+        ar: 'حوايج أخرى'
+    },
+    'nutrition.copyList': {
+        en: 'Copy List',
+        ar: 'نسخ اللائحة'
+    },
+    'nutrition.close': {
+        en: 'Close',
+        ar: 'سد'
+    },
+    'nutrition.copiedClipboard': {
+        en: 'Copied to clipboard!',
+        ar: 'تنسخات!'
     },
 
     // Technical Explanations (Darija flavored)
@@ -307,68 +624,111 @@ export const translations: Translations = {
     },
 
     // Phases (12-week periodization)
-    'phase.anatomical': { en: 'Anatomical Adaptation', ar: 'التأقلم التشريحي' },
-    'phase.hypertrophy': { en: 'Hypertrophy', ar: 'التضخم العضلي' },
+    'phase.anatomical': { en: 'Anatomical Adaptation', ar: 'التأقلم' },
+    'phase.hypertrophy': { en: 'Hypertrophy', ar: 'تكبير العضل' },
     'phase.deload': { en: 'Deload', ar: 'تخفيف الحمل' },
     'phase.strength': { en: 'Strength', ar: 'القوة' },
     'phase.peak': { en: 'Peak', ar: 'الذروة' },
     'phase.retest': { en: 'Retest', ar: 'إعادة الاختبار' },
 
     // Week selector / gating
-    'week.label': { en: 'Week', ar: 'الأسبوع' },
-    'week.locked.title': { en: 'Week Locked', ar: 'الأسبوع مقفل' },
+    'week.label': { en: 'Week', ar: 'السيمانة' },
+    'week.locked.title': { en: 'Week Locked', ar: 'السيمانة مقفولة' },
     'week.locked.message': {
         en: 'Finish logging the current week to unlock this one.',
-        ar: 'أكمل تسجيل الأسبوع الحالي لفتح هذا الأسبوع.'
+        ar: 'كمل تسجيل السيمانة الحالية باش تفتح هادي.'
     },
-    'week.active': { en: 'In Progress', ar: 'قيد التنفيذ' },
-    'week.completed': { en: 'Completed', ar: 'مكتمل' },
+    'week.active': { en: 'In Progress', ar: 'خدّامة دابا' },
+    'week.completed': { en: 'Completed', ar: 'سالات' },
+    'week.lockedNotice': {
+        en: 'This week is locked. Complete every workout of your current week and log the weights you used — once the whole week is done, the next week unlocks automatically.',
+        ar: 'هاد السيمانة مقفولة. كمل جميع تمارين السيمانة الحالية وسجّل الأثقال اللي استعملتي — منين تكمل السيمانة كاملة، السيمانة الجاية كتفتح بوحدها.'
+    },
 
     // Targets & logging
-    'log.target': { en: 'This week’s target', ar: 'هدف هذا الأسبوع' },
-    'log.lastWeek': { en: 'Last week', ar: 'الأسبوع الماضي' },
+    'log.target': { en: 'This week’s target', ar: 'هدف هاد السيمانة' },
+    'log.lastWeek': { en: 'Last week', ar: 'السيمانة اللي فاتت' },
     'log.reps': { en: 'Reps', ar: 'التكرارات' },
-    'log.weight': { en: 'Weight', ar: 'الوزن' },
-    'log.rpe': { en: 'RPE', ar: 'الجهد' },
+    'log.weight': { en: 'Weight', ar: 'الثقل' },
+    'log.optional': { en: 'optional', ar: 'اختياري' },
+    'log.rest': { en: 'Rest', ar: 'الراحة' },
+    'log.restBetween': { en: 'Rest', ar: 'راحة' },
+    'log.to': { en: 'to', ar: 'ل' },
     'log.set': { en: 'Set', ar: 'المجموعة' },
-    'log.save': { en: 'Save', ar: 'حفظ' },
-    'log.saving': { en: 'Saving…', ar: 'جارٍ الحفظ…' },
-    'log.saved': { en: 'Saved', ar: 'تم الحفظ' },
-    'log.update': { en: 'Update', ar: 'تحديث' },
-    'log.done': { en: 'Done', ar: 'تم' },
-    'log.noData': { en: 'Enter reps or weight before saving.', ar: 'أدخل التكرارات أو الوزن قبل الحفظ.' },
+    'log.save': { en: 'Save', ar: 'سجل' },
+    'log.saving': { en: 'Saving…', ar: 'كيتسجل…' },
+    'log.saved': { en: 'Saved', ar: 'تسجل' },
+    'log.update': { en: 'Update', ar: 'حدّث' },
+    'log.done': { en: 'Done', ar: 'سالا' },
+    'log.noData': { en: 'Enter reps or weight before saving.', ar: 'دخل التكرارات ولا الثقل قبل ما تسجل.' },
+    'log.noReps': { en: 'Enter reps before saving.', ar: 'دخل التكرارات قبل ما تسجل.' },
+    'log.syncFailed': {
+        en: 'Could not load saved sets. You can still log this workout. Check your connection or run the database setup in Supabase.',
+        ar: 'ما قدرناش نحملو المجموعات المحفوظة. تقدر تكمل التسجيل. تشيك على الاتصال ولا إعداد قاعدة البيانات.'
+    },
+    'log.retrySync': { en: 'Try again', ar: 'عاود حاول' },
 
     // Week progress / unlock
-    'progress.weekLabel': { en: 'Week progress', ar: 'تقدم الأسبوع' },
-    'progress.setsLogged': { en: '{done} of {total} sets logged', ar: 'تم تسجيل {done} من {total} مجموعة' },
-    'unlock.title': { en: 'Week Complete!', ar: 'اكتمل الأسبوع!' },
-    'unlock.message': { en: 'Next week unlocked. New targets are ready.', ar: 'تم فتح الأسبوع التالي. الأهداف الجديدة جاهزة.' },
-    'unlock.finalTitle': { en: 'Program Complete!', ar: 'اكتمل البرنامج!' },
-    'unlock.continue': { en: 'Continue', ar: 'متابعة' },
+    'progress.weekLabel': { en: 'Week progress', ar: 'تقدم السيمانة' },
+    'progress.setsLogged': { en: '{done} of {total} sets logged', ar: 'تسجلو {done} من {total} مجموعة' },
+    'unlock.title': { en: 'Week Complete!', ar: 'كملتي السيمانة!' },
+    'unlock.message': { en: 'Next week unlocked. New targets are ready.', ar: 'السيمانة الجاية تفتحات. الأهداف الجديدة واجدة.' },
+    'unlock.weekReady': {
+        en: 'Nice work — Week {week} is now unlocked.',
+        ar: 'مبروك — السيمانة {week} تفتحات دابا.'
+    },
+    'unlock.whatChanged': { en: "What's new this week", ar: 'أشنو الجديد فهاد السيمانة' },
+    'unlock.point1': {
+        en: 'Your targets went up: you will see more reps or a bit more weight than last week.',
+        ar: 'الأهداف ديالك زادو: غادي تلقا تكرارات كثر ولا ثقل شوية كثر من السيمانة اللي فاتت.'
+    },
+    'unlock.point2': {
+        en: 'That means a little more total volume, which is exactly what makes you stronger over time.',
+        ar: 'هادشي كيعني حجم تمرين شوية كثر، وهادا بالضبط اللي كيقويك مع الوقت.'
+    },
+    'unlock.point3': {
+        en: 'Finish every workout of this week and log your sets to unlock the next one.',
+        ar: 'كمل جميع تمارين هاد السيمانة وسجّل المجموعات ديالك باش تفتح اللي من بعد.'
+    },
+    'unlock.finalTitle': { en: 'Program Complete!', ar: 'كملتي البرنامج!' },
+    'unlock.finalMessage': {
+        en: 'You finished all 12 weeks. Time to retest and see how far you have come.',
+        ar: 'كملتي 12 سيمانة كاملين. دابا وقت إعادة الاختبار باش تشوف شحال تقدمتي.'
+    },
+    'unlock.continue': { en: 'Continue', ar: 'كمل' },
 
     // Baseline (Week 0)
     'baseline.title': { en: 'Set Your Baseline', ar: 'حدد نقطة البداية' },
     'baseline.subtitle': {
         en: 'Enter your current working weight for the key lifts. We’ll build your 12 weeks from here.',
-        ar: 'أدخل وزنك الحالي للتمارين الأساسية. سنبني أسابيعك الـ12 انطلاقاً من هنا.'
+        ar: 'دخل الثقل اللي كتخدم بيه دابا فالتمارين الأساسية. غادي نبنيو 12 سيمانة ديالك من هنا.'
     },
-    'baseline.weight': { en: 'Working weight (kg)', ar: 'وزن العمل (كجم)' },
+    'baseline.weight': { en: 'Working weight (kg)', ar: 'ثقل الخدمة (كجم)' },
     'baseline.reps': { en: 'Reps', ar: 'التكرارات' },
-    'baseline.submit': { en: 'Start Week 1', ar: 'ابدأ الأسبوع 1' },
-    'baseline.saving': { en: 'Setting up…', ar: 'جارٍ الإعداد…' },
+    'baseline.submit': { en: 'Start Week 1', ar: 'بدا السيمانة 1' },
+    'baseline.saving': { en: 'Setting up…', ar: 'كنوجدو…' },
 
     // Retest (Week 12)
-    'retest.title': { en: 'Week 12 Retest', ar: 'إعادة اختبار الأسبوع 12' },
+    'retest.title': { en: 'Week 12 Retest', ar: 'إعادة اختبار السيمانة 12' },
     'retest.subtitle': {
         en: 'Retest your key lifts and see how far you’ve come.',
-        ar: 'أعد اختبار تمارينك الأساسية وشاهد مدى تقدمك.'
+        ar: 'عاود اختبر التمارين الأساسية ديالك وشوف شحال تقدمتي.'
     },
     'retest.open': { en: 'Retest & Compare', ar: 'إعادة الاختبار والمقارنة' },
-    'retest.compare': { en: 'Your Progress', ar: 'تقدمك' },
-    'retest.baseline': { en: 'Baseline', ar: 'البداية' },
-    'retest.now': { en: 'Now', ar: 'الآن' },
-    'retest.gained': { en: 'Gained', ar: 'المكتسب' },
-    'retest.save': { en: 'Save Retest', ar: 'حفظ الاختبار' }
+    'retest.compare': { en: 'Your Progress', ar: 'التقدم ديالك' },
+    'retest.baseline': { en: 'Week 1', ar: 'السيمانة 1' },
+    'retest.now': { en: 'Now', ar: 'دابا' },
+    'retest.gained': { en: 'Gained', ar: 'اللي ربحتي' },
+    'retest.save': { en: 'Save Retest', ar: 'سجل الاختبار' },
+
+    // App shell (workouts screen chrome)
+    'app.accessLocked': { en: 'Access Locked', ar: 'الدخول مقفول' },
+    'app.authRequired': { en: 'Authentication required for program access', ar: 'خاصك تدخل باش توصل للبرنامج ديالك' },
+    'app.enableAccess': { en: 'Enable Access', ar: 'فتح الدخول' },
+    'app.hello': { en: 'Hello,', ar: 'أهلا،' },
+    'app.athlete': { en: 'Athlete', ar: 'الرياضي' },
+    'app.activeSystem': { en: 'Active System', ar: 'النظام خدّام' },
+    'app.systemSpec': { en: 'System Specification', ar: 'مواصفات النظام' }
 };
 
 // Helper function to get translation, with optional {placeholder} interpolation

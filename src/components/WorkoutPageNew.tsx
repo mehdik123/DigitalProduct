@@ -1,19 +1,23 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ArrowLeft, PartyPopper } from 'lucide-react';
+import { ArrowLeft, PartyPopper, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WorkoutDay, ExerciseSet } from '../types/workout';
 import ExerciseCardNew from './ExerciseCardNew';
+import { pushProgramToCloud } from '../services/workoutService';
 import {
-  saveExerciseSets,
-  loadWorkoutSets,
-  getCompletedSetCount,
-  completeWeek,
-} from '../services/workoutService';
+  getLocalDaySets,
+  getLocalPreviousSets,
+  getLocalCompletedCount,
+  getLocalProgramState,
+  collectAllSets,
+  saveLocalDaySets,
+} from '../services/localProgram';
 import { workoutSplit } from '../data/workoutData';
 import { getPhase, isDeloadWeek } from '../data/programConfig';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ProgressBar, Skeleton, Button } from './ui';
-import { listVariants, celebrateVariants } from '../design/motion';
+import { ProgressRing, Button, StatCounter } from './ui';
+import { celebrateVariants } from '../design/motion';
+import { celebrateWeekUnlock } from '../lib/celebration';
 
 interface WorkoutPageNewProps {
   workout: WorkoutDay;
@@ -34,7 +38,6 @@ export default function WorkoutPageNew({
   const [savedSets, setSavedSets] = useState<Map<string, ExerciseSet[]>>(new Map());
   const [prevSets, setPrevSets] = useState<Map<string, ExerciseSet[]>>(new Map());
   const [done, setDone] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [celebration, setCelebration] = useState<{ week: number; final: boolean } | null>(null);
 
   const phase = getPhase(weekNumber);
@@ -52,65 +55,60 @@ export default function WorkoutPageNew({
     );
   }, [weekNumber]);
 
-  useEffect(() => {
-    if (!profile?.id) {
-      setLoading(false);
-      return;
+  const refreshSavedData = () => {
+    if (!profile?.id) return;
+    const loaded = new Map<string, ExerciseSet[]>();
+    const prev = new Map<string, ExerciseSet[]>();
+    for (const exercise of workout.exercises) {
+      loaded.set(exercise.id, getLocalDaySets(profile.id, weekNumber, workout.id, exercise.id));
+      const p = getLocalPreviousSets(profile.id, weekNumber, workout.id, exercise.id);
+      if (p) prev.set(exercise.id, p);
     }
-    let cancelled = false;
+    setSavedSets(loaded);
+    setPrevSets(prev);
+    setDone(getLocalCompletedCount(profile.id, weekNumber));
+  };
 
-    (async () => {
-      setLoading(true);
-      const [loaded, prev, count] = await Promise.all([
-        loadWorkoutSets(profile.id, weekNumber, workout.id),
-        weekNumber > 1 ? loadWorkoutSets(profile.id, weekNumber - 1, workout.id) : Promise.resolve(new Map()),
-        getCompletedSetCount(profile.id, weekNumber).catch(() => 0),
-      ]);
-      if (cancelled) return;
-      setSavedSets(loaded);
-      setPrevSets(prev as Map<string, ExerciseSet[]>);
-      setDone(count);
-      setLoading(false);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
+  useEffect(() => {
+    refreshSavedData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.id, weekNumber, workout.id]);
 
   const handleSaveExercise = async (exerciseId: string, sets: ExerciseSet[]) => {
-    const result = await saveExerciseSets({
-      weekNumber,
-      workoutDayId: workout.id,
-      exerciseId,
-      sets,
-    });
+    const exercise = workout.exercises.find((e) => e.id === exerciseId);
+    if (!exercise) return;
 
-    if (!result.success) {
-      throw new Error(result.error || 'Save failed');
+    // Local-first: persist instantly so logging always works offline.
+    const local = saveLocalDaySets(profile.id, weekNumber, workout.id, exercise, sets);
+    setSavedSets((prev) => new Map(prev).set(exerciseId, sets));
+    setDone(local.completedCount);
+
+    if (local.unlockedWeek || local.final) {
+      setCelebration({ week: local.unlockedWeek ?? weekNumber + 1, final: Boolean(local.final) });
     }
 
-    setSavedSets((prev) => new Map(prev).set(exerciseId, sets));
+    // Best-effort permanent backup to Supabase — never blocks local logging.
+    void backgroundSync();
+  };
 
-    // Refresh week-level progress and attempt to complete the week.
-    const count = await getCompletedSetCount(profile.id, weekNumber).catch(() => done);
-    setDone(count);
-
-    if (count >= expectedTotal) {
-      const res = await completeWeek(weekNumber);
-      // Only celebrate on a genuine unlock (not on re-saves of an already-completed week).
-      if (res.success && (res.unlockedWeek || res.final)) {
-        setCelebration({ week: res.unlockedWeek ?? weekNumber + 1, final: Boolean(res.final) });
-      }
+  const backgroundSync = async () => {
+    try {
+      const state = getLocalProgramState(profile.id);
+      await pushProgramToCloud(profile.id, collectAllSets(profile.id), state.currentWeek, state.weeks);
+    } catch (e) {
+      console.warn('[WorkoutPage] cloud sync skipped (offline):', e);
     }
   };
+
+  useEffect(() => {
+    if (celebration) celebrateWeekUnlock();
+  }, [celebration]);
 
   const progress = expectedTotal > 0 ? Math.min(1, done / expectedTotal) : 0;
 
   return (
-    <div className="bg-app min-h-screen text-txt-hi">
-      {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-hair bg-bg/60 backdrop-blur-xl">
+    <div className="bg-app min-h-dvh text-txt-hi">
+      <div className="sticky top-0 z-40 border-b border-hair bg-bg/60 backdrop-blur-xl pad-safe-top">
         <div className="mx-auto max-w-3xl px-4 py-4">
           <div className="flex items-center gap-3">
             <button
@@ -121,60 +119,61 @@ export default function WorkoutPageNew({
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div className="min-w-0 flex-1">
-              <h1 className="truncate font-display text-2xl font-black italic uppercase tracking-tight">
+              <h1 className="truncate font-display text-lg font-black italic uppercase tracking-tight sm:text-2xl">
                 {workout?.name}
               </h1>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-txt-mid">
-                <span className="text-brand">{t('week.label')} {weekNumber}</span>
-                <span className="h-1 w-1 rounded-full bg-txt-lo" />
-                <span>{t(phase.phaseLabelKey)}</span>
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-txt-mid sm:text-xs">
+                <span className="shrink-0 text-brand">{t('week.label')} {weekNumber}</span>
+                <span className="h-1 w-1 shrink-0 rounded-full bg-txt-lo" />
+                <span className="truncate">{t(phase.phaseLabelKey)}</span>
               </div>
             </div>
           </div>
 
-          {/* Week progress */}
-          <div className="mt-3">
-            <div className="mb-1 flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-txt-lo">
-              <span>{t('progress.weekLabel')}</span>
-              <span className="tabular-nums">{t('progress.setsLogged', { done, total: expectedTotal })}</span>
+          <div className="mt-3 flex items-center gap-3 sm:gap-4">
+            <ProgressRing
+              value={progress}
+              size={64}
+              strokeWidth={7}
+              label={`Week progress ${Math.round(progress * 100)}%`}
+            />
+            <div className="min-w-0 flex-1">
+              <div className="mb-0.5 flex items-center justify-between gap-2 text-[9px] font-semibold uppercase tracking-wider text-txt-lo sm:text-[10px]">
+                <span className="truncate">{t('progress.weekLabel')}</span>
+                <span className="shrink-0">
+                  <StatCounter value={done} /> / <span className="stat">{expectedTotal}</span>
+                </span>
+              </div>
+              <p className="truncate text-[11px] text-txt-mid sm:text-xs">
+                {t('progress.setsLogged', { done, total: expectedTotal })}
+              </p>
             </div>
-            <ProgressBar value={progress} tone={progress >= 1 ? 'success' : 'brand'} />
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="mx-auto max-w-3xl space-y-5 px-4 py-6 pb-32">
+      <div className="mx-auto max-w-3xl space-y-4 px-3 py-5 pb-nav-space sm:space-y-5 sm:px-4 sm:py-6">
         {workout?.description && (
           <p className="rounded-2xl border border-hair bg-surface-2 p-4 text-sm leading-relaxed text-txt-mid">
             {workout.description}
           </p>
         )}
 
-        {loading ? (
-          <div className="space-y-5">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-64 w-full rounded-3xl" />
-            ))}
-          </div>
-        ) : (
-          <motion.div variants={listVariants} initial="hidden" animate="show" className="space-y-5">
-            {workout.exercises.map((exercise, index) => (
-              <ExerciseCardNew
-                key={exercise.id}
-                exercise={exercise}
-                index={index}
-                weekNumber={weekNumber}
-                savedSets={savedSets.get(exercise.id)}
-                prevSets={prevSets.get(exercise.id)}
-                onSave={(sets) => handleSaveExercise(exercise.id, sets)}
-              />
-            ))}
-          </motion.div>
-        )}
+        <div className="space-y-5">
+          {workout.exercises.map((exercise, index) => (
+            <ExerciseCardNew
+              key={exercise.id}
+              exercise={exercise}
+              index={index}
+              weekNumber={weekNumber}
+              savedSets={savedSets.get(exercise.id)}
+              prevSets={prevSets.get(exercise.id)}
+              onSave={(sets) => handleSaveExercise(exercise.id, sets)}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Unlock celebration */}
       <AnimatePresence>
         {celebration && (
           <motion.div
@@ -201,7 +200,28 @@ export default function WorkoutPageNew({
               <h2 className="font-display text-3xl font-black uppercase italic tracking-tight">
                 {celebration.final ? t('unlock.finalTitle') : t('unlock.title')}
               </h2>
-              <p className="mt-2 text-sm text-txt-mid">{t('unlock.message')}</p>
+
+              {celebration.final ? (
+                <p className="mt-2 text-sm text-txt-mid">{t('unlock.finalMessage')}</p>
+              ) : (
+                <>
+                  <p className="mt-2 text-sm text-txt-mid">
+                    {t('unlock.weekReady', { week: celebration.week })}
+                  </p>
+                  <div className="mt-5 space-y-2 rounded-2xl border border-hair bg-surface-1 p-4 text-left">
+                    <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-success">
+                      <TrendingUp className="h-3.5 w-3.5" />
+                      {t('unlock.whatChanged')}
+                    </p>
+                    <ul className="space-y-1.5 text-xs leading-relaxed text-txt-mid">
+                      <li>• {t('unlock.point1')}</li>
+                      <li>• {t('unlock.point2')}</li>
+                      <li>• {t('unlock.point3')}</li>
+                    </ul>
+                  </div>
+                </>
+              )}
+
               <div className="mt-6">
                 <Button
                   fullWidth
@@ -222,4 +242,3 @@ export default function WorkoutPageNew({
     </div>
   );
 }
-

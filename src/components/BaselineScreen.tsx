@@ -44,13 +44,13 @@ export default function BaselineScreen({ onComplete }: BaselineScreenProps) {
       variants={screenVariants}
       initial="hidden"
       animate="show"
-      className="max-w-2xl mx-auto px-4 py-8 pb-32"
+      className="max-w-2xl mx-auto px-3 py-6 pb-nav-space sm:px-4 sm:py-8"
     >
       <div className="mb-8 text-center">
         <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-brand-soft text-brand">
           <Dumbbell className="h-7 w-7" />
         </div>
-        <h1 className="font-display text-4xl font-black italic uppercase tracking-tight text-txt-hi">
+        <h1 className="font-display text-display-lg font-black italic uppercase tracking-tight text-txt-hi">
           {t('baseline.title')}
         </h1>
         <p className="mx-auto mt-2 max-w-md text-sm text-txt-mid">{t('baseline.subtitle')}</p>

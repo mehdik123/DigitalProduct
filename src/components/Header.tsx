@@ -16,7 +16,7 @@ export default function Header({ }: HeaderProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="sticky top-0 z-[60] flex w-full items-center justify-between border-b border-hair bg-bg/60 px-4 py-4 backdrop-blur-xl supports-[backdrop-filter]:bg-bg/30 md:px-8">
+    <div className="sticky top-0 z-[60] flex w-full items-center justify-between border-b border-hair bg-bg/60 px-3 py-3 backdrop-blur-xl pad-safe-top supports-[backdrop-filter]:bg-bg/30 sm:px-4 md:px-8">
       {/* Brand Identity */}
       <button
         onClick={() => navigate('/')}
@@ -34,17 +34,18 @@ export default function Header({ }: HeaderProps) {
           </IconButton>
         </div>
 
-        <div className="scale-90 opacity-80 transition-opacity hover:opacity-100">
+        <div className="scale-100 opacity-90 transition-opacity hover:opacity-100">
           <LanguageToggle />
         </div>
 
         {user && (
           <button
             onClick={() => signOut()}
-            className="group flex items-center gap-2 rounded-xl border border-hair bg-surface-2 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-txt-mid transition-all hover:border-brand/50 hover:bg-brand-soft hover:text-brand"
+            className="group flex items-center gap-2 rounded-xl border border-hair bg-surface-2 px-3 py-2 text-txt-mid transition-all hover:border-brand/50 hover:bg-brand-soft hover:text-brand sm:px-4"
+            aria-label={t('common.logout')}
           >
-            <span>{t('common.logout')}</span>
-            <LogOut className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+            <span className="hidden text-[10px] font-bold uppercase tracking-wider sm:inline">{t('common.logout')}</span>
+            <LogOut className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </button>
         )}
       </div>

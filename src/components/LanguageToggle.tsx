@@ -1,31 +1,49 @@
-
+import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
+import { haptic } from '../lib/haptics';
+import { spring } from '../design/motion';
+import { cn } from '../lib/utils';
 
 export default function LanguageToggle() {
-    const { language, setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
 
-    return (
-        <div className="relative inline-flex bg-neutral-900 border border-white/5 p-1 rounded-2xl shadow-inner shadow-black/50">
-            {/* Sliding Indicator */}
-            <div
-                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] transition-all duration-300 ease-out rounded-xl shadow-lg shadow-blue-500/20 ${language === 'en' ? 'left-1 bg-blue-600' : 'left-[calc(50%+2px)] bg-blue-600'
-                    }`}
-            />
+  const select = (lang: 'en' | 'ar') => {
+    if (lang !== language) {
+      haptic.light();
+      setLanguage(lang);
+    }
+  };
 
-            <button
-                onClick={() => setLanguage('en')}
-                className={`relative z-10 px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-colors duration-300 ${language === 'en' ? 'text-white' : 'text-neutral-500 hover:text-neutral-300'
-                    }`}
-            >
-                EN
-            </button>
-            <button
-                onClick={() => setLanguage('ar')}
-                className={`relative z-10 px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-colors duration-300 ${language === 'ar' ? 'text-white' : 'text-neutral-500 hover:text-neutral-300'
-                    }`}
-            >
-                AR
-            </button>
-        </div>
-    );
+  return (
+    <div
+      className="relative inline-flex rounded-xl border border-hair bg-surface-2 p-0.5 shadow-soft"
+      role="group"
+      aria-label="Language"
+    >
+      {(['en', 'ar'] as const).map((lang) => {
+        const active = language === lang;
+        return (
+          <button
+            key={lang}
+            type="button"
+            onClick={() => select(lang)}
+            aria-pressed={active}
+            className={cn(
+              'relative z-10 min-h-[36px] min-w-[44px] rounded-[10px] px-3 text-[10px] font-black uppercase tracking-[0.2em] transition-colors',
+              active ? 'text-white' : 'text-txt-lo hover:text-txt-hi'
+            )}
+          >
+            {active && (
+              <motion.span
+                layoutId="lang-pill"
+                className="absolute inset-0 rounded-[10px] bg-grad-red shadow-red"
+                transition={spring.snappy}
+              />
+            )}
+            <span className="relative z-10">{lang.toUpperCase()}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
 }

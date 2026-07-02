@@ -11,9 +11,10 @@ interface WeekSelectorProps {
     currentWeek: number;
     weeks: Record<number, WeekStatus>;
     onWeekSelect: (week: number) => void;
+    onLockedSelect?: (week: number) => void;
 }
 
-export default function WeekSelector({ currentWeek, weeks, onWeekSelect }: WeekSelectorProps) {
+export default function WeekSelector({ currentWeek, weeks, onWeekSelect, onLockedSelect }: WeekSelectorProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
     const { t } = useLanguage();
     const list = Array.from({ length: TOTAL_WEEKS }, (_, i) => i + 1);
@@ -51,12 +52,11 @@ export default function WeekSelector({ currentWeek, weeks, onWeekSelect }: WeekS
                     return (
                         <motion.button
                             key={week}
-                            whileTap={isLocked ? undefined : { scale: 0.94 }}
-                            onClick={() => !isLocked && onWeekSelect(week)}
-                            disabled={isLocked}
+                            whileTap={{ scale: 0.94 }}
+                            onClick={() => (isLocked ? onLockedSelect?.(week) : onWeekSelect(week))}
                             aria-disabled={isLocked}
                             className={cn(
-                                'relative flex-shrink-0 snap-center w-[88px] h-28 rounded-3xl border p-2.5',
+                                'relative flex-shrink-0 snap-center w-[72px] h-24 rounded-2xl border p-2 sm:w-[80px] sm:h-28 sm:rounded-3xl sm:p-2.5',
                                 'flex flex-col items-center justify-between text-center transition-colors duration-300',
                                 isSelected
                                     ? 'bg-brand border-white/20 shadow-[0_0_28px_rgba(255,45,85,0.4)]'
@@ -73,7 +73,7 @@ export default function WeekSelector({ currentWeek, weeks, onWeekSelect }: WeekS
 
                             <span
                                 className={cn(
-                                    'font-display tabular-nums text-3xl font-black italic leading-none',
+                                    'font-display tabular-nums text-2xl font-black italic leading-none sm:text-3xl',
                                     isSelected ? 'text-white' : status === 'completed' ? 'text-success' : isLocked ? 'text-txt-lo' : 'text-white'
                                 )}
                             >

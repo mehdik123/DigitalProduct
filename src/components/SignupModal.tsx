@@ -41,7 +41,7 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 p-6 backdrop-blur-2xl"
+      className="fixed inset-0 z-[200] flex items-end justify-center overflow-hidden bg-black/85 p-0 backdrop-blur-2xl sm:items-center sm:p-6"
     >
       {/* Ambient grid behind the card. */}
       <div className="ambient-grid pointer-events-none absolute inset-0 opacity-30" />
@@ -51,12 +51,13 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
         variants={celebrateVariants}
         initial="hidden"
         animate="show"
-        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-hair bg-surface-1 p-7 shadow-soft md:p-8"
+        className="relative flex max-h-[92dvh] w-full max-w-md flex-col overflow-y-auto rounded-t-3xl border border-hair bg-surface-1 p-5 shadow-soft sm:max-h-none sm:rounded-3xl sm:p-7 md:p-8"
+        style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
       >
-        <div className="mb-7 flex items-start justify-between">
-          <div className="space-y-4">
+        <div className="mb-5 flex items-start justify-between sm:mb-7">
+          <div className="space-y-3 sm:space-y-4">
             <BrandMark />
-            <h2 className="font-display text-3xl font-black uppercase italic leading-none tracking-tight text-txt-hi">
+            <h2 className="font-display text-display-md font-black uppercase italic leading-none tracking-tight text-txt-hi">
               {t('signup.title')}
             </h2>
           </div>
@@ -88,7 +89,7 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
             />
           </Field>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label={t('signup.password')} htmlFor="signup-password">
               <Input
                 id="signup-password"

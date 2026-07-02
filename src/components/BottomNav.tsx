@@ -1,11 +1,21 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Target, Dumbbell, Utensils, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { haptic } from '../lib/haptics';
+import { spring } from '../design/motion';
+import { cn } from '../lib/utils';
 
 interface BottomNavProps {
     activeView?: 'welcome' | 'intro' | 'workouts' | 'nutrition';
     onViewChange?: (view: 'welcome' | 'intro' | 'workouts') => void;
 }
+
+const tabs = [
+    { id: 'welcome' as const, icon: Target, label: 'Home' },
+    { id: 'workouts' as const, icon: Dumbbell, label: 'Train', matchIntro: true },
+    { id: 'nutrition' as const, icon: Utensils, label: 'Diet', route: true },
+];
 
 export default function BottomNav({ activeView, onViewChange }: BottomNavProps) {
     const navigate = useNavigate();
@@ -13,90 +23,77 @@ export default function BottomNav({ activeView, onViewChange }: BottomNavProps) 
     const { user, signOut } = useAuth();
 
     const isNutrition = location.pathname.startsWith('/nutrition');
-
-    // Determine active state
     const currentView = isNutrition ? 'nutrition' : activeView;
 
     const handleNav = (target: 'welcome' | 'workouts' | 'nutrition') => {
+        haptic.light();
         if (target === 'nutrition') {
             navigate('/nutrition');
-        } else {
-            if (onViewChange) {
-                onViewChange(target === 'workouts' && !user ? 'intro' : target);
-            }
-            if (location.pathname !== '/') {
-                navigate('/');
-                // We'll need a way to communicate the view change if we just navigated
-                // For now, most nav happens within App.tsx where onViewChange is provided
-            }
+            return;
         }
+        onViewChange?.(target === 'workouts' && !user ? 'intro' : target);
+        if (location.pathname !== '/') navigate('/');
     };
 
-    const handleLogout = async () => {
-        await signOut();
-        navigate('/');
-        if (onViewChange) onViewChange('welcome');
+    const isActive = (tab: (typeof tabs)[number]) => {
+        if (tab.id === 'nutrition') return currentView === 'nutrition';
+        if (tab.matchIntro) return currentView === 'workouts' || currentView === 'intro';
+        return currentView === tab.id;
     };
-
-    const tabClass = (active: boolean) =>
-        `relative flex items-center gap-2 overflow-hidden rounded-[1.5rem] p-4 transition-all duration-500 ${active
-            ? 'flex-1 bg-grad-red text-white shadow-red'
-            : 'text-txt-lo hover:bg-white/5 hover:text-txt-hi'
-        }`;
 
     return (
-        <nav className="pointer-events-none fixed bottom-6 left-1/2 z-[100] flex w-full max-w-sm -translate-x-1/2 animate-slide-up justify-center px-4">
-            <div className="pointer-events-auto relative flex w-full items-center justify-between overflow-hidden rounded-[2rem] border border-hair bg-surface-1/85 p-2 shadow-soft backdrop-blur-2xl">
+        <nav
+            className="pointer-events-none fixed inset-x-0 bottom-0 z-[100] flex justify-center px-3"
+            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+        >
+            <div className="pointer-events-auto flex w-full max-w-sm items-center gap-1 rounded-[1.75rem] border border-hair bg-surface-1/90 p-1.5 shadow-soft backdrop-blur-2xl">
+                <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 
-                {/* Gloss Reflection */}
-                <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
-
-                {/* Home */}
-                <button onClick={() => handleNav('welcome')} className={tabClass(currentView === 'welcome')}>
-                    <div className="relative z-10 flex w-full items-center justify-center gap-2">
-                        <Target className={`h-5 w-5 ${currentView === 'welcome' ? 'animate-pulse' : ''}`} />
-                        {currentView === 'welcome' && (
-                            <span className="animate-fade-in whitespace-nowrap text-[10px] font-black uppercase tracking-[0.2em]">
-                                Home
+                {tabs.map((tab) => {
+                    const active = isActive(tab);
+                    const Icon = tab.icon;
+                    return (
+                        <motion.button
+                            key={tab.id}
+                            type="button"
+                            whileTap={{ scale: 0.94 }}
+                            transition={spring.snappy}
+                            onClick={() => handleNav(tab.id)}
+                            aria-label={tab.label}
+                            aria-current={active ? 'page' : undefined}
+                            className={cn(
+                                'relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-[1.25rem] py-2.5 min-h-[52px] transition-colors',
+                                active
+                                    ? 'bg-grad-red text-white shadow-red'
+                                    : 'text-txt-lo hover:bg-white/5 hover:text-txt-hi'
+                            )}
+                        >
+                            <Icon className={cn('h-5 w-5', active && 'drop-shadow-sm')} />
+                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">
+                                {tab.label}
                             </span>
-                        )}
-                    </div>
-                </button>
-
-                {/* Training */}
-                <button onClick={() => handleNav('workouts')} className={tabClass(currentView === 'workouts' || currentView === 'intro')}>
-                    <div className="relative z-10 flex w-full items-center justify-center gap-2">
-                        <Dumbbell className={`h-5 w-5 ${currentView === 'workouts' || currentView === 'intro' ? 'animate-pulse' : ''}`} />
-                        {(currentView === 'workouts' || currentView === 'intro') && (
-                            <span className="animate-fade-in whitespace-nowrap text-[10px] font-black uppercase tracking-[0.2em]">
-                                Train
-                            </span>
-                        )}
-                    </div>
-                </button>
-
-                {/* Nutrition */}
-                <button onClick={() => handleNav('nutrition')} className={tabClass(currentView === 'nutrition')}>
-                    <div className="relative z-10 flex w-full items-center justify-center gap-2">
-                        <Utensils className={`h-5 w-5 ${currentView === 'nutrition' ? 'animate-pulse' : ''}`} />
-                        {currentView === 'nutrition' && (
-                            <span className="animate-fade-in whitespace-nowrap text-[10px] font-black uppercase tracking-[0.2em]">
-                                Diet
-                            </span>
-                        )}
-                    </div>
-                </button>
+                        </motion.button>
+                    );
+                })}
 
                 {user && (
                     <>
-                        <div className="mx-1 h-6 w-px bg-hair" />
-                        <button
-                            onClick={handleLogout}
-                            className="rounded-full border border-transparent p-3 text-txt-lo transition-all hover:border-brand/20 hover:bg-brand-soft hover:text-brand"
-                            title="Logout"
+                        <div className="mx-0.5 h-8 w-px bg-hair" />
+                        <motion.button
+                            type="button"
+                            whileTap={{ scale: 0.94 }}
+                            transition={spring.snappy}
+                            onClick={async () => {
+                                haptic.light();
+                                await signOut();
+                                navigate('/');
+                                onViewChange?.('welcome');
+                            }}
+                            aria-label="Logout"
+                            className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[1.25rem] text-txt-lo transition-colors hover:bg-brand-soft hover:text-brand"
                         >
                             <LogOut className="h-5 w-5" />
-                        </button>
+                        </motion.button>
                     </>
                 )}
             </div>

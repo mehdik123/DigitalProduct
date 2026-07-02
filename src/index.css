@@ -39,6 +39,27 @@
     --ease: cubic-bezier(.22, .61, .36, 1);
     --spring: cubic-bezier(.34, 1.56, .64, 1);
 
+    /* kit aliases (design-system + skills reference these) */
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --crimson: #e11d48;
+    --gradient-brand: linear-gradient(135deg, #e11d48 0%, #ff6a55 100%);
+    --gradient-brand-soft: linear-gradient(135deg, rgba(225, 29, 72, 0.16) 0%, rgba(255, 106, 77, 0.16) 100%);
+    --text: #f4f5fa;
+    --text-2: #9ea3b2;
+    --text-3: #646a7a;
+    --font-display: 'Saira Condensed', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-stat: 'Space Grotesk', ui-monospace, sans-serif;
+    --glow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --glow-brand: 0 8px 28px rgba(225, 29, 72, 0.3);
+    --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --kb: 0px;
+
     /* legacy aliases (kept so older references keep resolving) */
     --app-bg: #08090d;
     --glass-bg: rgba(20, 20, 20, 0.6);
@@ -52,10 +73,19 @@
     body {
         /* Note: background/text are intentionally NOT set here so the nutrition
            sub-app keeps its own theme. Training screens paint their own bg. */
-        font-family: 'Inter', system-ui, sans-serif;
+        font-family: var(--font-body);
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
         -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        overscroll-behavior-y: none;
         @apply antialiased;
+    }
+
+    .stat,
+    [data-stat] {
+        font-family: var(--font-stat);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
     }
 }
 
@@ -140,6 +170,76 @@
 
     .mobile-bottom-nav {
         @apply fixed bottom-0 left-0 right-0 h-20 bg-neutral-950/80 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-6 z-50;
+    }
+
+    /* screen-scaffold skill — shimmer skeleton */
+    .skeleton {
+        background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 37%, var(--surface-2) 63%);
+        background-size: 400% 100%;
+        border-radius: var(--r-md);
+        animation: shimmer 1.4s ease infinite;
+    }
+
+    /* design-system skill — canonical card */
+    .card {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        box-shadow: var(--glow-sm), var(--highlight-top);
+    }
+
+    .text-gradient {
+        background: var(--gradient-brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .pad-safe-top {
+        padding-top: var(--safe-top);
+    }
+
+    .pad-safe-bottom {
+        padding-bottom: calc(var(--safe-bottom) + var(--kb, 0px));
+    }
+
+    .min-h-dvh {
+        min-height: 100dvh;
+    }
+
+    .h-dvh {
+        height: 100dvh;
+    }
+
+    /* Fluid display type — one dominant hero line per screen */
+    .text-display-hero {
+        font-size: clamp(2rem, 9vw, 4.5rem);
+        line-height: 0.92;
+    }
+
+    .text-display-lg {
+        font-size: clamp(1.75rem, 6vw, 3rem);
+        line-height: 0.95;
+    }
+
+    .text-display-md {
+        font-size: clamp(1.25rem, 4.5vw, 2rem);
+        line-height: 1;
+    }
+
+    /* Reserve space above fixed bottom nav (nav + offset + safe area) */
+    .pb-nav-space {
+        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
     }
 }
 

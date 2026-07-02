@@ -6,10 +6,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@nutrition/components/ui/dialog";
-import { Button } from "@nutrition/components/ui/button";
+import { Button } from "../../components/ui";
 import { Meal } from "@nutrition/types/meal";
 import { getAlternativesForMeal } from "@nutrition/data/mealAlternatives";
 import { Flame, RefreshCw, Check, Clock, ChefHat } from "lucide-react";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface MealSwapDialogProps {
   meal: Meal | null;
@@ -19,8 +20,9 @@ interface MealSwapDialogProps {
 }
 
 export const MealSwapDialog = ({ meal, open, onClose, onSwap }: MealSwapDialogProps) => {
+  const { t } = useLanguage();
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
-  
+
   if (!meal) return null;
 
   const alternatives = getAlternativesForMeal(meal);
@@ -40,45 +42,45 @@ export const MealSwapDialog = ({ meal, open, onClose, onSwap }: MealSwapDialogPr
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden bg-card border-border/50 p-0">
-        <DialogHeader className="p-6 pb-4 border-b border-border/50">
-          <DialogTitle className="text-2xl font-bold flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/15">
-              <RefreshCw className="w-5 h-5 text-primary" />
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden bg-surface-1 border-hair text-txt-hi p-0">
+        <DialogHeader className="p-6 pb-4 border-b border-hair">
+          <DialogTitle className="font-display text-2xl font-black italic uppercase tracking-tight flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-brand-soft">
+              <RefreshCw className="w-5 h-5 text-brand" />
             </div>
-            Swap Meal
+            {t('nutrition.swapMeal')}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Replace <span className="text-foreground font-medium">{meal.name}</span> with a similar alternative
+          <DialogDescription className="text-txt-mid">
+            {t('nutrition.swapReplace')} <span className="text-txt-hi font-medium">{meal.name}</span> {t('nutrition.swapWithAlt')}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="overflow-y-auto max-h-[calc(85vh-200px)] p-6 pt-4 scrollbar-thin">
+        <div className="overflow-y-auto max-h-[calc(85vh-200px)] p-6 pt-4 scrollbar-hide">
           {alternatives.length === 0 ? (
             <div className="text-center py-16">
-              <ChefHat className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                No alternative meals available for this meal type yet.
+              <ChefHat className="w-12 h-12 text-txt-lo mx-auto mb-4" />
+              <p className="text-txt-mid">
+                {t('nutrition.noAlternatives')}
               </p>
             </div>
           ) : (
             <div className="grid gap-4">
               {alternatives.map((altMeal, index) => {
                 const isSelected = selectedMeal?.name === altMeal.name;
-                
+
                 return (
                   <div
                     key={index}
                     onClick={() => setSelectedMeal(altMeal)}
-                    className={`relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ${
+                    className={`relative rounded-2xl overflow-hidden cursor-pointer border transition-all duration-300 active:scale-[0.99] ${
                       isSelected
-                        ? "ring-2 ring-primary shadow-glow-sm"
-                        : "ring-1 ring-border/50 hover:ring-primary/50"
+                        ? "border-brand shadow-red bg-surface-2"
+                        : "border-hair bg-surface-2 hover:border-brand/50"
                     }`}
                   >
                     {/* Selected Indicator */}
                     {isSelected && (
-                      <div className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-primary text-primary-foreground">
+                      <div className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-brand text-white">
                         <Check className="w-4 h-4" />
                       </div>
                     )}
@@ -99,9 +101,9 @@ export const MealSwapDialog = ({ meal, open, onClose, onSwap }: MealSwapDialogPr
                       <div className="flex-1 p-4 sm:p-5">
                         <div className="flex items-start justify-between gap-2 mb-3">
                           <div>
-                            <h3 className="text-lg font-bold leading-tight">{altMeal.name}</h3>
+                            <h3 className="text-lg font-black italic uppercase leading-tight text-txt-hi">{altMeal.name}</h3>
                             {altMeal.prepTime && (
-                              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                              <span className="inline-flex items-center gap-1 text-xs text-txt-lo mt-1">
                                 <Clock className="w-3 h-3" />
                                 {altMeal.prepTime}
                               </span>
@@ -110,38 +112,38 @@ export const MealSwapDialog = ({ meal, open, onClose, onSwap }: MealSwapDialogPr
                         </div>
 
                         {/* Macros */}
-                        <div className="grid grid-cols-4 gap-3 p-3 bg-secondary/40 rounded-lg mb-3">
+                        <div className="grid grid-cols-4 gap-3 p-3 bg-surface-1 border border-hair rounded-xl mb-3">
                           <div className="text-center">
                             <div className="flex items-center justify-center gap-1">
-                              <Flame className="w-3 h-3 text-primary" />
-                              <span className="text-sm font-bold text-primary">
+                              <Flame className="w-3 h-3 text-brand" />
+                              <span className="stat text-sm font-bold text-brand">
                                 {altMeal.calories}
                               </span>
                             </div>
-                            <span className="text-[10px] text-muted-foreground uppercase tracking-wide">cal</span>
+                            <span className="text-[10px] text-txt-lo uppercase tracking-wide">{t('nutrition.cal')}</span>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm font-bold macro-protein">
+                            <div className="stat text-sm font-bold text-coral">
                               {altMeal.protein}g
                             </div>
-                            <span className="text-[10px] text-muted-foreground uppercase tracking-wide">protein</span>
+                            <span className="text-[10px] text-txt-lo uppercase tracking-wide">{t('nutrition.proteinLower')}</span>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm font-bold macro-carbs">
+                            <div className="stat text-sm font-bold text-emerald">
                               {altMeal.carbs}g
                             </div>
-                            <span className="text-[10px] text-muted-foreground uppercase tracking-wide">carbs</span>
+                            <span className="text-[10px] text-txt-lo uppercase tracking-wide">{t('nutrition.carbsLower')}</span>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm font-bold macro-fats">
+                            <div className="stat text-sm font-bold text-txt-hi">
                               {altMeal.fats}g
                             </div>
-                            <span className="text-[10px] text-muted-foreground uppercase tracking-wide">fats</span>
+                            <span className="text-[10px] text-txt-lo uppercase tracking-wide">{t('nutrition.fatsLower')}</span>
                           </div>
                         </div>
 
                         {/* Ingredients preview */}
-                        <p className="text-sm text-muted-foreground line-clamp-2">
+                        <p className="text-sm text-txt-mid line-clamp-2">
                           {altMeal.ingredients.map((ing) => ing.name).join(", ")}
                         </p>
                       </div>
@@ -154,17 +156,18 @@ export const MealSwapDialog = ({ meal, open, onClose, onSwap }: MealSwapDialogPr
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 p-6 pt-4 border-t border-border/50 bg-secondary/30">
-          <Button variant="outline" onClick={handleClose} className="border-border/50">
-            Cancel
+        <div className="flex justify-end gap-3 p-6 pt-4 border-t border-hair bg-surface-2">
+          <Button variant="secondary" size="sm" onClick={handleClose}>
+            {t('nutrition.cancel')}
           </Button>
           <Button
+            variant="primary"
+            size="sm"
             onClick={handleSwap}
             disabled={!selectedMeal}
-            className="bg-primary hover:bg-primary/90 shadow-glow-sm disabled:shadow-none"
+            icon={<RefreshCw className="w-4 h-4" />}
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Swap Meal
+            {t('nutrition.swapMeal')}
           </Button>
         </div>
       </DialogContent>

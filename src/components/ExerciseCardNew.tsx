@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Check, Loader2, Play, Info, Target } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Loader2, Play, Timer, Minus, Plus, TrendingUp } from 'lucide-react';
 import { Exercise, ExerciseSet } from '../types/workout';
 import { getPhase } from '../data/programConfig';
 import { useLanguage } from '../contexts/LanguageContext';
-import { itemVariants } from '../design/motion';
+import { spring } from '../design/motion';
+import { haptic } from '../lib/haptics';
 import { cn } from '../lib/utils';
 
 interface ExerciseCardNewProps {
@@ -26,17 +27,17 @@ export default function ExerciseCardNew({
 }: ExerciseCardNewProps) {
   const { t } = useLanguage();
   const phase = getPhase(weekNumber);
-  const defaultRpe = phase.targetRPE ?? 8;
+  const isCalisthenics = exercise.type === 'calisthenics';
 
   const build = (): ExerciseSet[] => {
-    const count = savedSets && savedSets.length > 0 ? savedSets.length : exercise.sets;
+    const count = savedSets?.length ? savedSets.length : exercise.sets;
     return Array.from({ length: count }, (_, i) => {
       const s = savedSets?.[i];
       return {
         setNumber: i + 1,
         reps: s?.reps ?? 0,
         weight: s?.weight ?? 0,
-        rpe: s?.rpe ?? defaultRpe,
+        rpe: s?.rpe ?? 8,
         completed: s?.completed ?? false,
         targetReps: s?.targetReps,
         targetWeight: s?.targetWeight,
@@ -56,33 +57,37 @@ export default function ExerciseCardNew({
 
   const targetWeight = sets[0]?.targetWeight;
   const repRange = phase.repRange;
-  const targetText = [
-    targetWeight ? `${targetWeight}kg` : null,
-    repRange ? `${repRange[0]}-${repRange[1]} ${t('log.reps').toLowerCase()}` : null,
-    phase.rpeText !== '-' ? `RPE ${phase.rpeText}` : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
 
-  const updateSet = (i: number, field: 'reps' | 'weight' | 'rpe', value: number) => {
+  const updateSet = (i: number, field: 'reps' | 'weight', value: number) => {
     setSets((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
     setIsSaved(false);
   };
 
+  const bump = (i: number, field: 'reps' | 'weight', delta: number, step = 1) => {
+    haptic.light();
+    setSets((prev) =>
+      prev.map((s, idx) => {
+        if (idx !== i) return s;
+        const next = Math.max(0, (field === 'reps' ? s.reps : s.weight) + delta * step);
+        return { ...s, [field]: field === 'reps' ? Math.round(next) : Math.round(next * 2) / 2 };
+      })
+    );
+    setIsSaved(false);
+  };
+
   const toggleComplete = (i: number) => {
+    haptic.light();
     setSets((prev) => prev.map((s, idx) => (idx === i ? { ...s, completed: !s.completed } : s)));
     setIsSaved(false);
   };
 
   const handleSave = async () => {
+    // 0 is a valid value. Saving logs every set in the exercise.
     const payload = sets.map((s) => ({
       ...s,
-      completed: s.completed || s.reps > 0,
+      rpe: 8,
+      completed: true,
     }));
-    if (!payload.some((s) => s.reps > 0 || s.weight > 0)) {
-      alert(t('log.noData'));
-      return;
-    }
 
     setIsSaving(true);
     setIsSaved(false);
@@ -90,6 +95,7 @@ export default function ExerciseCardNew({
       await onSave(payload);
       setSets(payload);
       setIsSaved(true);
+      haptic.success();
     } catch (e: any) {
       alert(e.message || 'Failed to save');
     } finally {
@@ -97,127 +103,174 @@ export default function ExerciseCardNew({
     }
   };
 
+  const completedCount = sets.filter((s) => s.completed).length;
+
   return (
     <motion.div
-      variants={itemVariants}
-      className="overflow-hidden rounded-3xl border border-hair bg-surface-2"
+      layout
+      className="overflow-hidden rounded-2xl border border-hair bg-surface-1 shadow-soft sm:rounded-3xl"
     >
-      {/* Media header */}
-      <div className="relative h-40 w-full overflow-hidden">
+      {/* Hero strip */}
+      <div className="relative h-28 overflow-hidden sm:h-32">
         {exercise.imageUrl ? (
-          <img src={exercise.imageUrl} alt={exercise.name} className="h-full w-full object-cover" />
+          <img src={exercise.imageUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div className="h-full w-full bg-surface-3" />
+          <div className="h-full bg-gradient-to-br from-surface-3 to-surface-2" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-surface-2 via-surface-2/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface-1 via-surface-1/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand/20 to-transparent opacity-60" />
+
         {exercise.videoUrl && (
-          <a
+          <motion.a
+            whileTap={{ scale: 0.92 }}
             href={exercise.videoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-brand/90 text-white shadow-lg active:scale-95"
+            className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-grad-red text-white shadow-red"
           >
-            <Play className="h-5 w-5 fill-current" />
-          </a>
+            <Play className="h-4 w-4 fill-current" />
+          </motion.a>
         )}
-        <div className="absolute bottom-3 left-4 right-4">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-txt-mid">
-            {exercise.name && `#${index + 1}`}
-          </span>
-          <h3 className="font-display text-2xl font-black italic uppercase leading-none tracking-tight text-txt-hi">
-            {exercise.name}
-          </h3>
+
+        <div className="absolute bottom-3 left-3 right-3">
+          <div className="flex items-end justify-between gap-2">
+            <div className="min-w-0">
+              <span className="inline-flex rounded-md bg-brand/90 px-2 py-0.5 font-display text-[10px] font-black italic uppercase text-white">
+                {t('log.set')} {index + 1}
+              </span>
+              <h3 className="mt-1 line-clamp-2 font-display text-lg font-black italic uppercase leading-tight text-txt-hi sm:text-xl">
+                {exercise.name}
+              </h3>
+            </div>
+            <div className="shrink-0 rounded-xl border border-hair bg-surface-2/90 px-2.5 py-1.5 text-center backdrop-blur-sm">
+              <div className="stat text-lg font-bold leading-none text-brand">{completedCount}</div>
+              <div className="text-[8px] font-bold uppercase tracking-wider text-txt-lo">/{sets.length}</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-4 p-4">
-        {/* Target banner */}
-        {targetText && (
-          <div className="flex items-center gap-2 rounded-2xl bg-brand-soft px-3 py-2">
-            <Target className="h-4 w-4 shrink-0 text-brand" />
-            <div className="min-w-0">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-brand/80">
-                {t('log.target')}
-              </div>
-              <div className="tabular-nums truncate text-sm font-bold text-txt-hi">{targetText}</div>
-            </div>
-          </div>
-        )}
-
-        {/* Notes */}
-        {exercise.notes && (
-          <div className="flex items-start gap-2 rounded-2xl border border-hair bg-surface-3 p-3 text-xs text-txt-mid">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-            <p className="leading-relaxed">{exercise.notes}</p>
-          </div>
-        )}
-
-        {/* Column headers */}
-        <div className="grid grid-cols-[28px_1fr_1fr_1fr_44px] items-center gap-2 px-1">
-          <span />
-          <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-txt-lo">{t('log.reps')}</span>
-          <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-txt-lo">{t('log.weight')}</span>
-          <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-txt-lo">{t('log.rpe')}</span>
-          <span />
+      <div className="space-y-3 p-3 sm:p-4">
+        {/* Target + rest chips */}
+        <div className="flex flex-wrap gap-2">
+          {(targetWeight && !isCalisthenics) && (
+            <Chip icon={<TrendingUp className="h-3.5 w-3.5" />} label={t('log.target')} value={`${targetWeight} kg`} tone="brand" />
+          )}
+          {repRange && (
+            <Chip label={t('log.reps')} value={`${repRange[0]} ${t('log.to')} ${repRange[1]}`} tone="coral" />
+          )}
+          {exercise.rest && (
+            <Chip icon={<Timer className="h-3.5 w-3.5" />} label={t('log.rest')} value={exercise.rest} tone="emerald" />
+          )}
         </div>
 
         {/* Sets */}
         <div className="space-y-2">
-          {sets.map((set, i) => {
-            const prev = prevSets?.find((p) => p.setNumber === set.setNumber);
-            return (
-              <div key={i} className="space-y-1">
-                <div className="grid grid-cols-[28px_1fr_1fr_1fr_44px] items-center gap-2">
-                  <div className="grid h-8 w-7 place-items-center rounded-lg border border-hair bg-surface-3 text-xs font-bold text-txt-lo">
-                    {set.setNumber}
+          <AnimatePresence initial={false}>
+            {sets.map((set, i) => {
+              const prev = prevSets?.find((p) => p.setNumber === set.setNumber);
+              const isLast = i === sets.length - 1;
+              return (
+                <motion.div
+                  key={set.setNumber}
+                  layout
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={spring.smooth}
+                  className={cn(
+                    'relative overflow-hidden rounded-2xl border p-3 transition-colors',
+                    set.completed
+                      ? 'border-emerald/40 bg-emerald/10 shadow-[0_0_24px_rgba(52,211,153,0.12)]'
+                      : 'border-hair bg-surface-2'
+                  )}
+                >
+                  {set.completed && (
+                    <motion.div
+                      layoutId={`glow-${exercise.id}-${set.setNumber}`}
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-r from-emerald/5 to-transparent"
+                    />
+                  )}
+
+                  <div className="relative flex items-center gap-3">
+                    <motion.button
+                      type="button"
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => toggleComplete(i)}
+                      className={cn(
+                        'grid h-11 w-11 shrink-0 place-items-center rounded-xl font-display text-sm font-black italic transition-colors',
+                        set.completed
+                          ? 'bg-emerald text-white shadow-[0_0_16px_rgba(52,211,153,0.4)]'
+                          : 'bg-surface-3 text-txt-mid ring-1 ring-hair hover:text-brand'
+                      )}
+                    >
+                      {set.completed ? <Check className="h-5 w-5" strokeWidth={3} /> : set.setNumber}
+                    </motion.button>
+
+                    <div className="grid flex-1 grid-cols-2 gap-2">
+                      <StepperField
+                        label={t('log.reps')}
+                        value={set.reps}
+                        tone="coral"
+                        onChange={(v) => updateSet(i, 'reps', v)}
+                        onBump={(d) => bump(i, 'reps', d, 1)}
+                      />
+                      <StepperField
+                        label={isCalisthenics ? `${t('log.weight')} (${t('log.optional')})` : t('log.weight')}
+                        value={set.weight}
+                        tone="brand"
+                        suffix="kg"
+                        step={2.5}
+                        onChange={(v) => updateSet(i, 'weight', v)}
+                        onBump={(d) => bump(i, 'weight', d, 2.5)}
+                      />
+                    </div>
                   </div>
-                  <CompactInput value={set.reps} onChange={(v) => updateSet(i, 'reps', v)} />
-                  <CompactInput value={set.weight} onChange={(v) => updateSet(i, 'weight', v)} step={0.5} />
-                  <CompactInput value={set.rpe ?? defaultRpe} onChange={(v) => updateSet(i, 'rpe', v)} max={10} />
-                  <button
-                    type="button"
-                    onClick={() => toggleComplete(i)}
-                    aria-label="toggle complete"
-                    className={cn(
-                      'grid h-11 w-11 place-items-center rounded-xl border transition-colors active:scale-90',
-                      set.completed
-                        ? 'border-success/40 bg-success/15 text-success'
-                        : 'border-hair bg-surface-3 text-txt-lo'
-                    )}
-                  >
-                    <Check className="h-5 w-5" strokeWidth={3} />
-                  </button>
-                </div>
-                {prev && (
-                  <div className="pl-9 text-[10px] font-medium text-txt-lo">
-                    {t('log.lastWeek')}: <span className="tabular-nums text-txt-mid">{prev.reps} × {prev.weight}kg</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+
+                  {prev && (
+                    <p className="relative mt-2 pl-14 text-[10px] text-txt-lo">
+                      {t('log.lastWeek')}:{' '}
+                      <span className="stat font-semibold text-coral">
+                        {isCalisthenics ? `${prev.reps} ${t('log.reps').toLowerCase()}` : `${prev.reps} × ${prev.weight} kg`}
+                      </span>
+                    </p>
+                  )}
+
+                  {!isLast && exercise.rest && (
+                    <div className="relative mt-3 flex items-center justify-center gap-2 border-t border-dashed border-hair pt-2">
+                      <Timer className="h-3 w-3 text-emerald" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald">
+                        {t('log.restBetween')}: {exercise.rest}
+                      </span>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         </div>
 
-        {/* Save */}
         <motion.button
-          whileTap={{ scale: 0.98 }}
+          whileTap={{ scale: 0.97 }}
+          transition={spring.snappy}
           onClick={handleSave}
           disabled={isSaving}
           className={cn(
-            'flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-black uppercase tracking-widest transition-[filter,background] duration-200',
-            isSaved ? 'bg-success text-white' : 'bg-grad-red text-white shadow-red hover:brightness-[1.06]',
+            'relative flex h-13 w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-3.5 text-sm font-black uppercase tracking-[0.2em] transition-all',
+            isSaved
+              ? 'bg-emerald text-white shadow-[0_8px_28px_rgba(52,211,153,0.35)]'
+              : 'bg-grad-red text-white shadow-red',
             isSaving && 'opacity-80'
           )}
         >
           {isSaving ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" /> {t('log.saving')}
+              <Loader2 className="h-5 w-5 animate-spin" /> {t('log.saving')}
             </>
           ) : isSaved ? (
             <>
               <Check className="h-5 w-5" /> {t('log.saved')}
             </>
-          ) : savedSets && savedSets.length > 0 ? (
+          ) : savedSets?.length ? (
             t('log.update')
           ) : (
             t('log.save')
@@ -228,31 +281,92 @@ export default function ExerciseCardNew({
   );
 }
 
-function CompactInput({
+function Chip({
+  icon,
+  label,
   value,
-  onChange,
-  step = 1,
-  max = 9999,
+  tone,
 }: {
-  value: number;
-  onChange: (v: number) => void;
-  step?: number;
-  max?: number;
+  icon?: React.ReactNode;
+  label: string;
+  value: string;
+  tone: 'brand' | 'coral' | 'emerald';
 }) {
+  const styles = {
+    brand: 'border-brand/30 bg-brand-soft text-brand',
+    coral: 'border-coral/30 bg-coral/10 text-coral',
+    emerald: 'border-emerald/30 bg-emerald/10 text-emerald',
+  };
   return (
-    <input
-      type="number"
-      inputMode="decimal"
-      step={step}
-      value={value || ''}
-      placeholder="0"
-      onChange={(e) => {
-        const raw = e.target.value;
-        if (raw === '') return onChange(0);
-        const parsed = parseFloat(raw);
-        if (!Number.isNaN(parsed)) onChange(Math.min(max, parsed));
-      }}
-      className="tabular-nums h-11 w-full rounded-xl border border-hair bg-surface-3 text-center text-base font-bold text-txt-hi outline-none transition-colors focus:border-brand/60 placeholder:text-txt-lo [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-    />
+    <div className={cn('inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5', styles[tone])}>
+      {icon}
+      <span className="text-[9px] font-bold uppercase tracking-wider opacity-80">{label}</span>
+      <span className="stat text-xs font-bold text-txt-hi">{value}</span>
+    </div>
+  );
+}
+
+function StepperField({
+  label,
+  value,
+  tone,
+  suffix,
+  step = 1,
+  onChange,
+  onBump,
+}: {
+  label: string;
+  value: number;
+  tone: 'brand' | 'coral';
+  suffix?: string;
+  step?: number;
+  onChange: (v: number) => void;
+  onBump: (delta: number) => void;
+}) {
+  const ring = tone === 'brand' ? 'focus-within:ring-brand/50 focus-within:border-brand/60' : 'focus-within:ring-coral/50 focus-within:border-coral/60';
+  const labelColor = tone === 'brand' ? 'text-brand' : 'text-coral';
+
+  return (
+    <div className={cn('rounded-xl bg-surface-3/80 p-2 ring-1 ring-hair transition-shadow focus-within:ring-2', ring)}>
+      <div className={cn('mb-1 text-[9px] font-black uppercase tracking-wider', labelColor)}>{label}</div>
+      <div className="flex items-center gap-1">
+        <StepBtn onClick={() => onBump(-1)} aria-label={`decrease ${label}`}>
+          <Minus className="h-3.5 w-3.5" />
+        </StepBtn>
+        <input
+          type="number"
+          inputMode="decimal"
+          step={step}
+          value={value || ''}
+          placeholder="0"
+          onChange={(e) => {
+            const raw = e.target.value;
+            if (raw === '') return onChange(0);
+            const parsed = parseFloat(raw);
+            if (!Number.isNaN(parsed)) onChange(parsed);
+          }}
+          className="stat h-10 min-w-0 flex-1 bg-transparent text-center text-xl font-bold text-txt-hi outline-none placeholder:text-txt-lo [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        />
+        <StepBtn onClick={() => onBump(1)} aria-label={`increase ${label}`}>
+          <Plus className="h-3.5 w-3.5" />
+        </StepBtn>
+        {suffix && <span className="pr-1 text-[10px] font-bold text-txt-lo">{suffix}</span>}
+      </div>
+    </div>
+  );
+}
+
+function StepBtn({ children, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <motion.button
+      type="button"
+      whileTap={{ scale: 0.88 }}
+      transition={spring.snappy}
+      onClick={onClick}
+      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-2 text-txt-mid ring-1 ring-hair hover:text-txt-hi"
+      {...props}
+    >
+      {children}
+    </motion.button>
   );
 }

@@ -4,13 +4,12 @@ interface SkeletonProps {
   className?: string;
 }
 
+/** screen-scaffold skill — shimmer placeholder matching real layout boxes. */
 export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
-      className={cn(
-        'animate-pulse rounded-2xl bg-white/5',
-        className
-      )}
+      className={cn('skeleton', className)}
+      aria-hidden
     />
   );
 }
