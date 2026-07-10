@@ -149,6 +149,7 @@ export interface CloudSet {
 
 export interface CloudProgram {
   currentWeek: number;
+  daysPerWeek: number | null;
   weeks: Record<number, WeekStatus>;
   sets: CloudSet[];
 }
@@ -157,7 +158,7 @@ export interface CloudProgram {
 export async function fetchCloudProgram(userId: string): Promise<CloudProgram | null> {
   try {
     const [profileRes, statusRes, setsRes] = await Promise.all([
-      supabase.from('profiles').select('current_week').eq('id', userId).maybeSingle(),
+      supabase.from('profiles').select('current_week, days_per_week').eq('id', userId).maybeSingle(),
       supabase.from('week_status').select('week, status').eq('user_id', userId),
       supabase
         .from('set_logs')
@@ -188,7 +189,12 @@ export async function fetchCloudProgram(userId: string): Promise<CloudProgram | 
       completed: r.completed ?? false,
     }));
 
-    return { currentWeek: profileRes.data?.current_week ?? 0, weeks, sets };
+    return {
+      currentWeek: profileRes.data?.current_week ?? 0,
+      daysPerWeek: (profileRes.data as any)?.days_per_week ?? null,
+      weeks,
+      sets,
+    };
   } catch (e) {
     console.warn('[workoutService] fetchCloudProgram failed (offline):', e);
     return null;

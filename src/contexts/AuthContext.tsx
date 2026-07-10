@@ -52,16 +52,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                     fullName: data.full_name,
                     createdAt: new Date(data.created_at),
                     currentWeek: data.current_week,
-                    programStartDate: new Date(data.program_start_date || data.created_at)
+                    programStartDate: new Date(data.program_start_date || data.created_at),
+                    daysPerWeek: data.days_per_week ?? undefined
                 });
             } else if (error && error.code === 'PGRST116') { // Record not found
                 // Profile missing, recreate it (logic from App.tsx)
                 console.log('Profile missing in AuthContext, creating new profile...');
+                const metaDays = Number(metadata?.days_per_week);
                 const newProfileData = {
                     id: userId,
                     email: userEmail,
                     full_name: metadata?.full_name || userEmail?.split('@')[0],
                     current_week: 1,
+                    days_per_week: metaDays === 3 || metaDays === 4 || metaDays === 5 ? metaDays : 5,
                     created_at: new Date().toISOString()
                 };
 
@@ -79,7 +82,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                         fullName: inserted.full_name,
                         createdAt: new Date(inserted.created_at),
                         currentWeek: inserted.current_week,
-                        programStartDate: new Date(inserted.created_at)
+                        programStartDate: new Date(inserted.created_at),
+                        daysPerWeek: inserted.days_per_week ?? undefined
                     });
                 } else if (insertError) {
                     console.error('Error creating missing profile in AuthContext:', insertError);

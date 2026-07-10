@@ -7,6 +7,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { spring } from '../design/motion';
 import { haptic } from '../lib/haptics';
 import { cn } from '../lib/utils';
+import { VideoModal } from './ui/VideoModal';
 
 interface ExerciseCardNewProps {
   exercise: Exercise;
@@ -48,6 +49,7 @@ export default function ExerciseCardNew({
   const [sets, setSets] = useState<ExerciseSet[]>(build);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     setSets(build());
@@ -121,15 +123,18 @@ export default function ExerciseCardNew({
         <div className="absolute inset-0 bg-gradient-to-r from-brand/20 to-transparent opacity-60" />
 
         {exercise.videoUrl && (
-          <motion.a
+          <motion.button
+            type="button"
             whileTap={{ scale: 0.92 }}
-            href={exercise.videoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => {
+              haptic.light();
+              setShowVideo(true);
+            }}
+            aria-label={`Play ${exercise.name} video`}
             className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-grad-red text-white shadow-red"
           >
             <Play className="h-4 w-4 fill-current" />
-          </motion.a>
+          </motion.button>
         )}
 
         <div className="absolute bottom-3 left-3 right-3">
@@ -277,6 +282,13 @@ export default function ExerciseCardNew({
           )}
         </motion.button>
       </div>
+
+      <VideoModal
+        open={showVideo}
+        onClose={() => setShowVideo(false)}
+        videoUrl={exercise.videoUrl}
+        title={exercise.name}
+      />
     </motion.div>
   );
 }

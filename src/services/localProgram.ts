@@ -1,5 +1,5 @@
-import { ExerciseSet, Exercise } from '../types/workout';
-import { workoutSplit } from '../data/workoutData';
+import { ExerciseSet, Exercise, WorkoutDay } from '../types/workout';
+import { getWorkoutSplit, DaysPerWeek } from '../data/workoutData';
 import { getPhase, isDeloadWeek, TOTAL_WEEKS } from '../data/programConfig';
 import type { WeekStatus, ProgramState, CloudSet } from './workoutService';
 
@@ -38,15 +38,22 @@ type WeekLogs = Record<number, Record<string, StoredSet[]>>; // day_id -> exerci
 
 interface Store {
   version: 1;
+  daysPerWeek: DaysPerWeek;
   currentWeek: number;
   weeks: Record<number, WeekStatus>;
   logs: Record<number, WeekLogs>; // week -> day -> exercise -> sets
 }
 
+const DEFAULT_DAYS: DaysPerWeek = 5;
 const storageKey = (userId: string) => `ha_program_v1_${userId}`;
 
 function isCalisthenics(exercise: Exercise): boolean {
   return exercise.type === 'calisthenics';
+}
+
+/** The workout split this store's user is enrolled in. */
+function splitOf(store: Store): WorkoutDay[] {
+  return getWorkoutSplit(store.daysPerWeek);
 }
 
 /** Deterministic pseudo-random reps in [6, 10] seeded by the exercise id. */
@@ -69,9 +76,9 @@ function round(value: number): number {
 }
 
 /** Builds fresh (unlogged) target sets for week 1. */
-function buildWeek1Targets(): WeekLogs {
+function buildWeek1Targets(split: WorkoutDay[]): WeekLogs {
   const week: WeekLogs = {};
-  for (const day of workoutSplit) {
+  for (const day of split) {
     week[day.id] = {};
     for (const ex of day.exercises) {
       const count = expectedSets(ex, 1);
@@ -89,36 +96,65 @@ function buildWeek1Targets(): WeekLogs {
   return week;
 }
 
-function createStore(): Store {
+function normalizeDays(days?: DaysPerWeek | number | null): DaysPerWeek {
+  return days === 3 || days === 4 || days === 5 ? days : DEFAULT_DAYS;
+}
+
+function createStore(daysPerWeek: DaysPerWeek = DEFAULT_DAYS): Store {
   const weeks: Record<number, WeekStatus> = {};
   for (let w = 1; w <= TOTAL_WEEKS; w++) weeks[w] = w === 1 ? 'active' : 'locked';
   return {
     version: 1,
+    daysPerWeek,
     currentWeek: 1,
     weeks,
-    logs: { 1: buildWeek1Targets() },
+    logs: { 1: buildWeek1Targets(getWorkoutSplit(daysPerWeek)) },
   };
 }
 
-function load(userId: string): Store {
-  if (typeof window === 'undefined') return createStore();
+/**
+ * Loads (or creates) the local store. `daysPerWeek` is only used the first time
+ * a store is created for this user; once set it is never changed here (the
+ * choice is irreversible and owned by the profile).
+ */
+function load(userId: string, daysPerWeek?: DaysPerWeek | number | null): Store {
+  const days = normalizeDays(daysPerWeek);
+  if (typeof window === 'undefined') return createStore(days);
   try {
     const raw = window.localStorage.getItem(storageKey(userId));
     if (!raw) {
-      const fresh = createStore();
+      const fresh = createStore(days);
       save(userId, fresh);
       return fresh;
     }
     const parsed = JSON.parse(raw) as Store;
+    if (!parsed.daysPerWeek) {
+      parsed.daysPerWeek = days;
+      save(userId, parsed);
+    }
     if (!parsed?.logs?.[1]) {
-      parsed.logs = { ...(parsed.logs ?? {}), 1: buildWeek1Targets() };
+      parsed.logs = { ...(parsed.logs ?? {}), 1: buildWeek1Targets(splitOf(parsed)) };
     }
     return parsed;
   } catch {
-    const fresh = createStore();
+    const fresh = createStore(days);
     save(userId, fresh);
     return fresh;
   }
+}
+
+/**
+ * Ensures a local store exists for this user, seeded with their chosen program.
+ * Safe to call repeatedly; never overwrites an already-chosen program.
+ */
+export function ensureLocalProgram(userId: string, daysPerWeek?: DaysPerWeek | number | null): DaysPerWeek {
+  const store = load(userId, daysPerWeek);
+  return store.daysPerWeek;
+}
+
+/** The days-per-week this device has recorded for the user. */
+export function getLocalDaysPerWeek(userId: string): DaysPerWeek {
+  return load(userId).daysPerWeek;
 }
 
 function save(userId: string, store: Store): void {
@@ -146,8 +182,8 @@ function deriveState(store: Store): ProgramState {
 }
 
 /** Public: current program state (instant, local). */
-export function getLocalProgramState(userId: string): ProgramState {
-  return deriveState(load(userId));
+export function getLocalProgramState(userId: string, daysPerWeek?: DaysPerWeek | number | null): ProgramState {
+  return deriveState(load(userId, daysPerWeek));
 }
 
 /** Public: resolved sets for one exercise on a given week/day. */
@@ -162,7 +198,7 @@ export function getLocalDaySets(
   if (stored && stored.length) return toExerciseSets(stored);
 
   // Fallback: synthesize targets if this week has not been generated yet.
-  const day = workoutSplit.find((d) => d.id === dayId);
+  const day = splitOf(store).find((d) => d.id === dayId);
   const ex = day?.exercises.find((e) => e.id === exerciseId);
   if (!ex) return [];
   const count = expectedSets(ex, week);
@@ -183,7 +219,7 @@ export function getLocalCompletedCount(userId: string, week: number): number {
   const weekLogs = store.logs?.[week];
   if (!weekLogs) return 0;
   let count = 0;
-  for (const day of workoutSplit) {
+  for (const day of splitOf(store)) {
     const dayLogs = weekLogs[day.id];
     if (!dayLogs) continue;
     for (const ex of day.exercises) {
@@ -198,7 +234,7 @@ export function isLocalDayComplete(userId: string, week: number, dayId: number):
   const store = load(userId);
   const dayLogs = store.logs?.[week]?.[dayId];
   if (!dayLogs) return false;
-  const day = workoutSplit.find((d) => d.id === dayId);
+  const day = splitOf(store).find((d) => d.id === dayId);
   if (!day) return false;
   for (const ex of day.exercises) {
     const need = expectedSets(ex, week);
@@ -211,7 +247,7 @@ export function isLocalDayComplete(userId: string, week: number, dayId: number):
 function isWeekComplete(store: Store, week: number): boolean {
   const weekLogs = store.logs?.[week];
   if (!weekLogs) return false;
-  for (const day of workoutSplit) {
+  for (const day of splitOf(store)) {
     const dayLogs = weekLogs[day.id];
     if (!dayLogs) return false;
     for (const ex of day.exercises) {
@@ -236,7 +272,7 @@ function generateNextWeek(store: Store, week: number): void {
 
   const nextLogs: WeekLogs = {};
 
-  for (const day of workoutSplit) {
+  for (const day of splitOf(store)) {
     nextLogs[day.id] = {};
     for (const ex of day.exercises) {
       const cali = isCalisthenics(ex);

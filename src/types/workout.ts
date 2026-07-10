@@ -82,6 +82,8 @@ export interface UserProfile {
   createdAt: Date;
   currentWeek: number;
   programStartDate: Date;
+  /** Training days per week (3, 4, or 5). Chosen once at signup, irreversible. */
+  daysPerWeek?: number;
 }
 
 export interface AuthUser {

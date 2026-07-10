@@ -5,7 +5,7 @@ import WorkoutCard from './components/WorkoutCard';
 import WorkoutPageNew from './components/WorkoutPageNew';
 import WeekSelector from './components/WeekSelector';
 import RetestScreen from './components/RetestScreen';
-import { workoutSplit } from './data/workoutData';
+import { getWorkoutSplit, DaysPerWeek } from './data/workoutData';
 import { WorkoutDay } from './types/workout';
 import { Info, Lock, Circle, Trophy } from 'lucide-react';
 import {
@@ -20,6 +20,7 @@ import {
   isLocalDayComplete,
   mergeCloudIntoLocal,
   collectAllSets,
+  ensureLocalProgram,
 } from './services/localProgram';
 import WelcomePortal from './components/WelcomePortal';
 import ProgramIntro from './components/ProgramIntro';
@@ -49,10 +50,15 @@ function App() {
   const [showRetest, setShowRetest] = useState(false);
   const [lockedNotice, setLockedNotice] = useState(false);
 
+  // The program a user is enrolled in (chosen once at signup, irreversible).
+  const daysPerWeek = (profile?.daysPerWeek as DaysPerWeek | undefined) ?? undefined;
+  const split = getWorkoutSplit(daysPerWeek);
+
   const loadProgram = () => {
     if (!user) return;
-    // Local-first: instant, always available.
-    const local = getLocalProgramState(user.id);
+    // Local-first: instant, always available. Seed with the user's program.
+    ensureLocalProgram(user.id, profile?.daysPerWeek);
+    const local = getLocalProgramState(user.id, profile?.daysPerWeek);
     setProgramState(local);
     setCurrentWeek(Math.max(1, local.currentWeek));
 
@@ -67,6 +73,8 @@ function App() {
       // Pull anything logged on other devices and merge it in.
       const cloud = await fetchCloudProgram(userId);
       if (cloud) {
+        // Adopt the program the account was created with (irreversible).
+        ensureLocalProgram(userId, cloud.daysPerWeek ?? profile?.daysPerWeek);
         const merged = mergeCloudIntoLocal(userId, { currentWeek: cloud.currentWeek, sets: cloud.sets });
         setProgramState(merged);
         setCurrentWeek(Math.max(1, merged.currentWeek));
@@ -84,6 +92,16 @@ function App() {
     if (user) loadProgram();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
+
+  // Once the profile (with its days-per-week) arrives, re-seed the local
+  // program so a fresh device builds the right split.
+  useEffect(() => {
+    if (user && profile?.daysPerWeek) {
+      ensureLocalProgram(user.id, profile.daysPerWeek);
+      setProgramState(getLocalProgramState(user.id, profile.daysPerWeek));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, profile?.daysPerWeek]);
 
   const weekStatuses: Record<number, WeekStatus> = programState?.weeks ?? {};
 
@@ -110,11 +128,12 @@ function App() {
 
   // ... (rest of the component)
 
-  const handleSignupSubmit = async ({ fullName, email, password }: { fullName: string; email: string; password: string }) => {
+  const handleSignupSubmit = async ({ fullName, email, password, daysPerWeek }: { fullName: string; email: string; password: string; daysPerWeek: DaysPerWeek }) => {
     setIsSubmitting(true);
     try {
       const { data, error } = await signUp(email, password, {
-        full_name: fullName
+        full_name: fullName,
+        days_per_week: daysPerWeek
       });
 
       if (error) throw error;
@@ -169,6 +188,7 @@ function App() {
         weekNumber={currentWeek}
         onBack={() => setSelectedWorkout(null)}
         profile={profile || { id: user.id }}
+        daysPerWeek={daysPerWeek}
         onWeekUnlocked={() => loadProgram()}
       />
     );
@@ -176,7 +196,7 @@ function App() {
 
   // Week 12 retest & comparison screen
   if (showRetest && user) {
-    return <RetestScreen profileId={user.id} onBack={() => setShowRetest(false)} />;
+    return <RetestScreen profileId={user.id} daysPerWeek={daysPerWeek} onBack={() => setShowRetest(false)} />;
   }
 
   const isHome = view === 'welcome';
@@ -338,7 +358,7 @@ function App() {
                         animate="show"
                         className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
                       >
-                        {workoutSplit.map((workout) => (
+                        {split.map((workout) => (
                           <WorkoutCard
                             key={workout.id}
                             workout={workout}

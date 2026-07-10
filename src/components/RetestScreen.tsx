@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, Trophy } from 'lucide-react';
 import { KEY_LIFTS, KEY_LIFT_LABELS } from '../data/programConfig';
-import { workoutSplit } from '../data/workoutData';
+import { getWorkoutSplit, DaysPerWeek } from '../data/workoutData';
+import { WorkoutDay } from '../types/workout';
 import {
   saveExerciseSets,
   getComparison,
@@ -14,18 +15,20 @@ import { screenVariants, celebrateVariants } from '../design/motion';
 
 interface RetestScreenProps {
   profileId: string;
+  daysPerWeek?: DaysPerWeek | number;
   onBack: () => void;
 }
 
-const dayIdFor = (exerciseId: string): number => {
-  for (const day of workoutSplit) {
+const dayIdFor = (split: WorkoutDay[], exerciseId: string): number => {
+  for (const day of split) {
     if (day.exercises.some((e) => e.id === exerciseId)) return day.id;
   }
   return 1;
 };
 
-export default function RetestScreen({ profileId, onBack }: RetestScreenProps) {
+export default function RetestScreen({ profileId, daysPerWeek, onBack }: RetestScreenProps) {
   const { t } = useLanguage();
+  const split = getWorkoutSplit(daysPerWeek);
   const [values, setValues] = useState<Record<string, { weight: number; reps: number }>>(
     () => Object.fromEntries(KEY_LIFTS.map((id) => [id, { weight: 0, reps: 3 }]))
   );
@@ -63,7 +66,7 @@ export default function RetestScreen({ profileId, onBack }: RetestScreenProps) {
       const v = values[id];
       const res = await saveExerciseSets({
         weekNumber: 12,
-        workoutDayId: dayIdFor(id),
+        workoutDayId: dayIdFor(split, id),
         exerciseId: id,
         sets: [
           {

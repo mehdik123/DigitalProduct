@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Loader2, User, Mail, KeyRound } from 'lucide-react';
+import { X, Loader2, User, Mail, KeyRound, CalendarDays, Check, Lock } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button, Input, Field, IconButton, BrandMark } from './ui';
 import { celebrateVariants } from '../design/motion';
+import { AVAILABLE_DAYS_PER_WEEK, DaysPerWeek } from '../data/workoutData';
 
 interface SignupModalProps {
   onClose: () => void;
-  onSubmit: (data: { fullName: string; email: string; password: string }) => Promise<void> | void;
+  onSubmit: (data: { fullName: string; email: string; password: string; daysPerWeek: DaysPerWeek }) => Promise<void> | void;
   loading?: boolean;
 }
+
+const DAY_OPTIONS: DaysPerWeek[] = [3, 4, 5];
 
 export default function SignupModal({ onClose, onSubmit, loading }: SignupModalProps) {
   const { t } = useLanguage();
@@ -17,6 +20,9 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [daysPerWeek, setDaysPerWeek] = useState<DaysPerWeek | null>(
+    AVAILABLE_DAYS_PER_WEEK.length === 1 ? AVAILABLE_DAYS_PER_WEEK[0] : null
+  );
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,7 +40,11 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
       setError('Passwords do not match');
       return;
     }
-    onSubmit({ fullName: fullName.trim(), email: email.trim(), password });
+    if (!daysPerWeek) {
+      setError(t('signup.days.required'));
+      return;
+    }
+    onSubmit({ fullName: fullName.trim(), email: email.trim(), password, daysPerWeek });
   };
 
   return (
@@ -110,6 +120,56 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
                 icon={<KeyRound className="h-4 w-4" />}
               />
             </Field>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4 text-brand" />
+              <span className="text-[11px] font-black uppercase tracking-widest text-txt-mid">
+                {t('signup.days.label')}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {DAY_OPTIONS.map((d) => {
+                const available = AVAILABLE_DAYS_PER_WEEK.includes(d);
+                const selected = daysPerWeek === d;
+                return (
+                  <button
+                    key={d}
+                    type="button"
+                    disabled={!available}
+                    onClick={() => available && setDaysPerWeek(d)}
+                    className={[
+                      'relative flex flex-col items-center justify-center gap-0.5 rounded-2xl border px-2 py-3 transition-all',
+                      selected
+                        ? 'border-brand bg-brand-soft shadow-red'
+                        : 'border-hair bg-surface-2',
+                      available
+                        ? 'hover:border-brand/50'
+                        : 'cursor-not-allowed opacity-55',
+                    ].join(' ')}
+                  >
+                    {selected && (
+                      <span className="absolute right-1.5 top-1.5 grid h-4 w-4 place-items-center rounded-full bg-brand text-white">
+                        <Check className="h-2.5 w-2.5" />
+                      </span>
+                    )}
+                    {!available && (
+                      <Lock className="absolute right-1.5 top-1.5 h-3 w-3 text-txt-lo" />
+                    )}
+                    <span className={`stat text-2xl font-black leading-none ${selected ? 'text-brand' : 'text-txt-hi'}`}>
+                      {d}
+                    </span>
+                    <span className="text-[8px] font-bold uppercase tracking-wider text-txt-lo">
+                      {available ? t('signup.days.perWeek') : t('signup.days.comingSoon')}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[10px] font-medium leading-relaxed text-txt-lo">
+              {t('signup.days.note')}
+            </p>
           </div>
 
           {error && (

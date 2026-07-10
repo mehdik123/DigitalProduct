@@ -1,6 +1,12 @@
 import { WorkoutDay } from '../types/workout';
 
-export const workoutSplit: WorkoutDay[] = [
+export type DaysPerWeek = 3 | 4 | 5;
+
+/** Days-per-week options currently available for selection at signup. */
+export const AVAILABLE_DAYS_PER_WEEK: DaysPerWeek[] = [5];
+
+/** The 5-day split (currently the only finished program). */
+export const fiveDaySplit: WorkoutDay[] = [
   {
     id: 1,
     name: 'Upper Body 1',
@@ -547,3 +553,26 @@ export const workoutSplit: WorkoutDay[] = [
     ]
   }
 ];
+
+/**
+ * 3-day and 4-day splits are not authored yet. They intentionally stay empty
+ * until the real workouts are provided; the signup UI only lets users pick a
+ * program from AVAILABLE_DAYS_PER_WEEK, so no user can land on an empty split.
+ */
+export const threeDaySplit: WorkoutDay[] = [];
+export const fourDaySplit: WorkoutDay[] = [];
+
+export const workoutPrograms: Record<DaysPerWeek, WorkoutDay[]> = {
+  3: threeDaySplit,
+  4: fourDaySplit,
+  5: fiveDaySplit,
+};
+
+/** Returns the workout split for the given days-per-week (falls back to 5). */
+export function getWorkoutSplit(days?: DaysPerWeek | number | null): WorkoutDay[] {
+  const split = days ? workoutPrograms[days as DaysPerWeek] : undefined;
+  return split && split.length ? split : fiveDaySplit;
+}
+
+/** Backward-compatible default export (the 5-day program). */
+export const workoutSplit = fiveDaySplit;

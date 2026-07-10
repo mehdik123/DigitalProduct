@@ -131,6 +131,26 @@ export const translations: Translations = {
         en: 'How It Works?',
         ar: 'كيفاش كيخدم؟'
     },
+    'signup.days.label': {
+        en: 'How many days per week do you want to train?',
+        ar: 'شحال من نهار فالسيمانة بغيتي تمرن؟'
+    },
+    'signup.days.perWeek': {
+        en: 'days/week',
+        ar: 'أيام/سيمانة'
+    },
+    'signup.days.comingSoon': {
+        en: 'Coming soon',
+        ar: 'قريباً'
+    },
+    'signup.days.note': {
+        en: 'Important: this choice is permanent and cannot be changed later. Your program is built around the days you pick.',
+        ar: 'مهم: هاد الاختيار دائم وما يمكنش يتبدل من بعد. البرنامج ديالك كيتبنا على عدد الأيام اللي ختاريتي.'
+    },
+    'signup.days.required': {
+        en: 'Please choose how many days per week you want to train.',
+        ar: 'عافاك ختار شحال من نهار فالسيمانة بغيتي تمرن.'
+    },
 
     // How It Works Modal
     'howItWorks.title': {

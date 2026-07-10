@@ -12,7 +12,7 @@ import {
   collectAllSets,
   saveLocalDaySets,
 } from '../services/localProgram';
-import { workoutSplit } from '../data/workoutData';
+import { getWorkoutSplit, DaysPerWeek } from '../data/workoutData';
 import { getPhase, isDeloadWeek } from '../data/programConfig';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ProgressRing, Button, StatCounter } from './ui';
@@ -24,6 +24,7 @@ interface WorkoutPageNewProps {
   weekNumber: number;
   onBack: () => void;
   profile: { id: string };
+  daysPerWeek?: DaysPerWeek | number;
   onWeekUnlocked?: (unlockedWeek: number, isFinal: boolean) => void;
 }
 
@@ -32,6 +33,7 @@ export default function WorkoutPageNew({
   weekNumber,
   onBack,
   profile,
+  daysPerWeek,
   onWeekUnlocked,
 }: WorkoutPageNewProps) {
   const { t } = useLanguage();
@@ -44,7 +46,7 @@ export default function WorkoutPageNew({
 
   const expectedTotal = useMemo(() => {
     const deload = isDeloadWeek(weekNumber);
-    return workoutSplit.reduce(
+    return getWorkoutSplit(daysPerWeek).reduce(
       (sum, day) =>
         sum +
         day.exercises.reduce(
@@ -53,7 +55,7 @@ export default function WorkoutPageNew({
         ),
       0
     );
-  }, [weekNumber]);
+  }, [weekNumber, daysPerWeek]);
 
   const refreshSavedData = () => {
     if (!profile?.id) return;
