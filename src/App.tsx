@@ -7,7 +7,7 @@ import WeekSelector from './components/WeekSelector';
 import RetestScreen from './components/RetestScreen';
 import { getWorkoutSplit, DaysPerWeek } from './data/workoutData';
 import { WorkoutDay } from './types/workout';
-import { Info, Lock, Circle, Trophy } from 'lucide-react';
+import { Info, Lock, Circle, Trophy, ArrowLeft } from 'lucide-react';
 import {
   ensureProgramStarted,
   fetchCloudProgram,
@@ -30,6 +30,7 @@ import HowItWorksModal from './components/HowItWorksModal';
 import BottomNav from './components/BottomNav';
 import { useLanguage } from './contexts/LanguageContext';
 import { useAuth } from './contexts/AuthContext';
+import { isTimeoutError } from './lib/supabaseClient';
 import { Pill, Button, ScreenTransition, WorkoutFeedSkeleton, Skeleton } from './components/ui';
 import { listVariants } from './design/motion';
 import { motion } from 'framer-motion';
@@ -144,13 +145,28 @@ function App() {
         setShowSignupForm(false);
         // useEffect will handle redirection to 'workouts' view
       } else {
-        // Email confirmation likely required
-        alert('Check your email to confirm your account!');
+        // Account created but no session (e.g. email confirmation enabled).
+        alert(t('signup.success.message'));
         setShowSignupForm(false);
+        navigate('/login/returning');
       }
     } catch (err: any) {
       console.error('Signup error:', err);
-      alert(err.message);
+      const message: string = err?.message ?? '';
+
+      if (/already\s*(registered|exists)|user\s*already/i.test(message)) {
+        alert(t('signup.error.alreadyRegistered'));
+        setShowSignupForm(false);
+        navigate('/login/returning');
+      } else if (isTimeoutError(err)) {
+        // The request may well have succeeded server-side; send them to login
+        // rather than showing a raw abort error.
+        alert(t('signup.timeoutRedirect'));
+        setShowSignupForm(false);
+        navigate('/login/returning');
+      } else {
+        alert(message || 'Signup failed. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -246,12 +262,13 @@ function App() {
           <ProgramIntro
               onBack={() => setView('welcome')}
               onStart={handleStartProgram}
+              daysPerWeek={daysPerWeek}
             />
         )}
 
         {/* Workouts Feed - Authenticated users only */}
         {isWorkouts && (
-          <div className="mx-auto max-w-7xl px-4 py-5 pb-nav-space sm:px-6 sm:py-6 md:py-12">
+          <div className="mx-auto max-w-7xl px-4 pt-5 pb-nav-space sm:px-6 sm:pt-6 md:pt-12">
             {/* Redirect if not logged in */}
             {!user ? (
               <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-8">
@@ -268,33 +285,49 @@ function App() {
               </div>
             ) : (
               <>
-                <div className={`mb-10 relative z-50`}>
+                <div className={`mb-4 relative z-50 sm:mb-8`}>
                   <Header
                     onSignup={() => setShowSignupForm(true)}
                     showAuthButtons={false}
                   />
                 </div>
 
-                <div className="space-y-6 px-1 sm:space-y-8 sm:px-0">
-                  {/* Title Section */}
-                  <div className="space-y-3 px-1 sm:space-y-4 sm:px-2">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0 space-y-2">
+                <div className="space-y-3.5 px-1 sm:space-y-8 sm:px-0">
+                  {/* Title Section — greeting and status share a row on mobile */}
+                  <div className="space-y-2 px-1 sm:space-y-4 sm:px-2">
+                    <div className="flex items-end justify-between gap-2.5 sm:gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setView('welcome')}
+                        aria-label={t('common.backToHome')}
+                        className="grid h-9 w-9 shrink-0 place-items-center self-center rounded-full border border-hair bg-surface-2 text-txt-mid transition-colors hover:text-txt-hi active:scale-95 rtl:rotate-180 sm:h-10 sm:w-10"
+                      >
+                        <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </button>
+
+                      <div className="min-w-0 flex-1 space-y-1 sm:space-y-2">
                         {(profile?.fullName || user?.user_metadata?.full_name || user?.email) && (
-                          <Pill tone="brand" dot>
-                            {(profile?.fullName || user?.user_metadata?.full_name || user?.email)?.split(' ')[0]}
-                          </Pill>
+                          <div className="hidden sm:block">
+                            <Pill tone="brand" dot>
+                              {(profile?.fullName || user?.user_metadata?.full_name || user?.email)?.split(' ')[0]}
+                            </Pill>
+                          </div>
                         )}
-                        <h2 className="font-display text-display-lg font-black italic tracking-tight uppercase leading-[0.95] text-txt-hi">
+                        <h2 className="font-display text-2xl font-black italic tracking-tight uppercase leading-[0.95] text-txt-hi sm:text-display-lg">
                           {t('app.hello')} <span className="text-brand">{(profile?.fullName || user?.user_metadata?.full_name || user?.email)?.split(' ')[0] || t('app.athlete')}</span>
                         </h2>
-                        <h3 className="font-display text-base font-black italic tracking-tight uppercase leading-none text-txt-lo sm:text-xl md:text-2xl">
+                        <h3 className="font-display text-[11px] font-black italic tracking-tight uppercase leading-none text-txt-lo sm:text-xl md:text-2xl">
                           {t('workout.title')}
                         </h3>
                       </div>
+
+                      <div className="flex shrink-0 items-center gap-1.5 rounded-lg bg-grad-red px-2.5 py-1.5 shadow-red sm:hidden">
+                        <span className="h-1 w-1 rounded-full bg-white animate-pulse" />
+                        <span className="text-[9px] font-black uppercase tracking-widest text-white">{t('workout.week')} {currentWeek}</span>
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="hidden flex-wrap items-center gap-2 sm:flex">
                       <div className="flex items-center gap-2 bg-grad-red px-4 py-2 rounded-xl shadow-red">
                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                         <span className="text-[11px] font-black uppercase tracking-widest text-white">{t('workout.week')} {currentWeek}</span>
@@ -356,7 +389,7 @@ function App() {
                         variants={listVariants}
                         initial="hidden"
                         animate="show"
-                        className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
+                        className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
                       >
                         {split.map((workout) => (
                           <WorkoutCard
@@ -372,7 +405,7 @@ function App() {
                     </>
                   )}
 
-                  <div className="pt-10 flex justify-center">
+                  <div className="pt-4 flex justify-center sm:pt-10">
                     <button
                       onClick={() => setShowHowItWorks(true)}
                       className="flex items-center gap-2 text-[9px] font-black text-txt-lo hover:text-txt-hi uppercase tracking-[0.4em] transition-all"
@@ -388,12 +421,14 @@ function App() {
           </div>
         )}
         </ScreenTransition>
-
-        {/* Persistent Bottom Navigation */}
-        {!isHome && (
-          <BottomNav activeView={view} onViewChange={setView} />
-        )}
       </div>
+
+      {/* Persistent Bottom Navigation.
+          Must stay outside the scaled wrapper above: a CSS transform on an ancestor
+          makes `fixed` resolve against that element instead of the viewport. */}
+      {!isHome && (
+        <BottomNav activeView={view} onViewChange={setView} />
+      )}
 
       {/* Auth Choice Modal */}
       {showAuthChoice && (

@@ -111,28 +111,41 @@ export default function WorkoutPageNew({
   return (
     <div className="bg-app min-h-dvh text-txt-hi">
       <div className="sticky top-0 z-40 border-b border-hair bg-bg/60 backdrop-blur-xl pad-safe-top">
-        <div className="mx-auto max-w-3xl px-4 py-4">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto max-w-3xl px-3 py-2.5 sm:px-4 sm:py-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               onClick={onBack}
-              className="grid h-10 w-10 place-items-center rounded-full border border-hair bg-surface-2 active:scale-95 rtl:rotate-180"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-hair bg-surface-2 active:scale-95 rtl:rotate-180 sm:h-10 sm:w-10"
               aria-label="Back"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
             <div className="min-w-0 flex-1">
-              <h1 className="truncate font-display text-lg font-black italic uppercase tracking-tight sm:text-2xl">
+              <h1 className="truncate font-display text-base font-black italic uppercase tracking-tight sm:text-2xl">
                 {workout?.name}
               </h1>
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-txt-mid sm:text-xs">
+              <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-txt-mid sm:text-xs">
                 <span className="shrink-0 text-brand">{t('week.label')} {weekNumber}</span>
                 <span className="h-1 w-1 shrink-0 rounded-full bg-txt-lo" />
                 <span className="truncate">{t(phase.phaseLabelKey)}</span>
               </div>
             </div>
+
+            {/* Mobile: progress collapses into the header row. */}
+            <div className="flex shrink-0 items-center gap-2 sm:hidden">
+              <span className="text-[10px] font-bold tracking-wider text-txt-mid">
+                <StatCounter value={done} />/<span className="stat">{expectedTotal}</span>
+              </span>
+              <ProgressRing
+                value={progress}
+                size={34}
+                strokeWidth={4}
+                label={`Week progress ${Math.round(progress * 100)}%`}
+              />
+            </div>
           </div>
 
-          <div className="mt-3 flex items-center gap-3 sm:gap-4">
+          <div className="mt-3 hidden items-center gap-3 sm:flex sm:gap-4">
             <ProgressRing
               value={progress}
               size={64}
@@ -154,14 +167,14 @@ export default function WorkoutPageNew({
         </div>
       </div>
 
-      <div className="mx-auto max-w-3xl space-y-4 px-3 py-5 pb-nav-space sm:space-y-5 sm:px-4 sm:py-6">
+      <div className="mx-auto max-w-3xl space-y-2.5 px-3 pt-3 pb-nav-space sm:space-y-5 sm:px-4 sm:pt-6">
         {workout?.description && (
-          <p className="rounded-2xl border border-hair bg-surface-2 p-4 text-sm leading-relaxed text-txt-mid">
+          <p className="rounded-xl border border-hair bg-surface-2 p-3 text-xs leading-relaxed text-txt-mid sm:rounded-2xl sm:p-4 sm:text-sm">
             {workout.description}
           </p>
         )}
 
-        <div className="space-y-5">
+        <div className="space-y-2.5 sm:space-y-5">
           {workout.exercises.map((exercise, index) => (
             <ExerciseCardNew
               key={exercise.id}

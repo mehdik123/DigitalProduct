@@ -60,7 +60,6 @@ export default function AuthChoiceModal({ onClose, onJoin, onLogin, dismissible 
                         style={{ animationDelay: '.5s' }}
                         items={[
                             { value: '12', unit: 'wk', label: t('welcome.stat.program'), accent: true },
-                            { value: '5', unit: '/wk', label: t('welcome.stat.sessions') },
                             { value: 'S+E', label: t('welcome.stat.focus') },
                         ]}
                     />

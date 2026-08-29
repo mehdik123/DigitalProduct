@@ -5,10 +5,17 @@ import { cn } from '../lib/utils';
 interface ProgramIntroProps {
     onBack: () => void;
     onStart: () => void;
+    /** The user's chosen training frequency; omitted before a choice is made. */
+    daysPerWeek?: number;
 }
 
-const SPECS = [
-    { icon: Dumbbell, title: '5 Day Split', sub: 'Optimized Frequency', solid: true },
+const buildSpecs = (daysPerWeek?: number) => [
+    {
+        icon: Dumbbell,
+        title: daysPerWeek ? `${daysPerWeek} Day Split` : 'Your Split',
+        sub: 'Optimized Frequency',
+        solid: true,
+    },
     { icon: Zap, title: 'Progression', sub: 'Scientific Overload', solid: false },
     { icon: Target, title: 'Full Support', sub: 'Video Drill Guides', solid: false },
 ];
@@ -22,53 +29,56 @@ const INSIDE = [
     'Progressive Fatigue Management',
 ];
 
-export default function ProgramIntro({ onBack, onStart }: ProgramIntroProps) {
+export default function ProgramIntro({ onBack, onStart, daysPerWeek }: ProgramIntroProps) {
+    const specs = buildSpecs(daysPerWeek);
+
     return (
         <div className="bg-app relative min-h-dvh overflow-x-hidden font-sans text-txt-hi">
             <div className="ambient-grid pointer-events-none fixed inset-0 opacity-30" />
             <div className="ambient-streak pointer-events-none fixed -left-[30%] -top-[5%] h-[46%] w-[160%]" />
 
-            <div className="relative z-10 mx-auto flex min-h-dvh max-w-4xl flex-col px-5 py-8 pb-nav-space sm:px-6 sm:py-12 md:py-16">
+            {/* Use pt-* only: a py-* utility would also set padding-bottom and cancel pb-nav-space. */}
+            <div className="relative z-10 mx-auto flex min-h-dvh max-w-4xl flex-col px-5 pt-6 pb-nav-space sm:px-6 sm:pt-12 md:pt-16">
                 <button
                     onClick={onBack}
-                    className="group mb-8 flex items-center gap-2 self-start text-txt-lo transition-colors hover:text-txt-hi sm:mb-12 sm:gap-3"
+                    className="group mb-4 flex items-center gap-2 self-start text-txt-lo transition-colors hover:text-txt-hi sm:mb-12 sm:gap-3"
                 >
-                    <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1" />
-                    <span className="text-xs font-black uppercase tracking-[0.3em]">Back to Portal</span>
+                    <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1 sm:h-5 sm:w-5" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] sm:text-xs">Back to Portal</span>
                 </button>
 
-                <div className="space-y-8 pb-4 sm:space-y-12">
+                <div className="space-y-4 sm:space-y-12">
                     {/* Hero */}
-                    <div className="animate-rise space-y-4 opacity-0 sm:space-y-5" style={{ animationDelay: '.05s' }}>
+                    <div className="animate-rise space-y-2.5 opacity-0 sm:space-y-5" style={{ animationDelay: '.05s' }}>
                         <Eyebrow>Hybrid Training System</Eyebrow>
-                        <h1 className="font-display text-display-hero font-black uppercase italic leading-none tracking-tight">
+                        <h1 className="font-display text-display-lg font-black uppercase italic leading-none tracking-tight sm:text-display-hero">
                             12 Week <span className="text-grad-coral">Elite</span> Program
                         </h1>
-                        <p className="max-w-2xl text-base font-medium leading-relaxed text-txt-mid sm:text-lg md:text-xl">
+                        <p className="max-w-2xl text-xs font-medium leading-relaxed text-txt-mid sm:text-lg md:text-xl">
                             A high-performance progressive overload system designed to build functional power,
                             elite aesthetics, and hybrid work capacity.
                         </p>
                     </div>
 
                     {/* Specifications */}
-                    <div className="grid animate-rise grid-cols-1 gap-4 opacity-0 md:grid-cols-3" style={{ animationDelay: '.15s' }}>
-                        {SPECS.map(({ icon: Icon, title, sub, solid }) => (
-                            <Card key={title} interactive className="group space-y-4">
+                    <div className="grid animate-rise grid-cols-3 gap-2 opacity-0 sm:gap-4 md:grid-cols-3" style={{ animationDelay: '.15s' }}>
+                        {specs.map(({ icon: Icon, title, sub, solid }) => (
+                            <Card key={title} interactive className="group space-y-2 sm:space-y-4">
                                 <div
                                     className={cn(
-                                        'flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-110',
+                                        'flex h-8 w-8 items-center justify-center rounded-lg transition-transform group-hover:scale-110 sm:h-12 sm:w-12 sm:rounded-xl',
                                         solid
                                             ? 'bg-grad-red text-white shadow-red'
                                             : 'border border-hair bg-surface-3 text-brand'
                                     )}
                                 >
-                                    <Icon className="h-6 w-6" />
+                                    <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-display text-xl font-extrabold uppercase italic tracking-tight">
+                                    <h3 className="font-display text-sm font-extrabold uppercase italic leading-tight tracking-tight sm:text-xl">
                                         {title}
                                     </h3>
-                                    <p className="text-xs font-bold uppercase tracking-wider text-txt-lo">{sub}</p>
+                                    <p className="text-[8px] font-bold uppercase tracking-wider text-txt-lo sm:text-xs">{sub}</p>
                                 </div>
                             </Card>
                         ))}
@@ -76,18 +86,18 @@ export default function ProgramIntro({ onBack, onStart }: ProgramIntroProps) {
 
                     {/* What's Inside */}
                     <div className="animate-rise opacity-0" style={{ animationDelay: '.25s' }}>
-                        <Card className="relative space-y-8 overflow-hidden p-8 md:p-10">
+                        <Card className="relative space-y-3 overflow-hidden p-4 sm:space-y-8 sm:p-8 md:p-10">
                             <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-brand-soft blur-3xl" />
-                            <h2 className="font-display text-2xl font-black uppercase italic tracking-tight">
+                            <h2 className="font-display text-base font-black uppercase italic tracking-tight sm:text-2xl">
                                 The Athlete Experience
                             </h2>
-                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-2 sm:gap-5 md:grid-cols-2">
                                 {INSIDE.map((item) => (
-                                    <div key={item} className="group flex items-center gap-4">
-                                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft transition-colors group-hover:bg-brand">
-                                            <CheckCircle2 className="h-3.5 w-3.5 text-brand group-hover:text-white" />
+                                    <div key={item} className="group flex items-center gap-2.5 sm:gap-4">
+                                        <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-brand-soft transition-colors group-hover:bg-brand sm:h-6 sm:w-6">
+                                            <CheckCircle2 className="h-2.5 w-2.5 text-brand group-hover:text-white sm:h-3.5 sm:w-3.5" />
                                         </div>
-                                        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-txt-mid transition-colors group-hover:text-txt-hi">
+                                        <span className="text-[9px] font-black uppercase tracking-[0.15em] text-txt-mid transition-colors group-hover:text-txt-hi sm:text-[11px] sm:tracking-[0.2em]">
                                             {item}
                                         </span>
                                     </div>
@@ -97,7 +107,7 @@ export default function ProgramIntro({ onBack, onStart }: ProgramIntroProps) {
                     </div>
 
                     {/* Action */}
-                    <div className="flex animate-rise justify-center pt-6 opacity-0" style={{ animationDelay: '.35s' }}>
+                    <div className="flex animate-rise justify-center opacity-0" style={{ animationDelay: '.35s' }}>
                         <Button variant="primary" size="lg" arrow onClick={onStart} className="w-full px-12 md:w-auto">
                             <span className="tracking-[0.3em]">Access Program</span>
                         </Button>

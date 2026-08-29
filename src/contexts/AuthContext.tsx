@@ -59,20 +59,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 // Profile missing, recreate it (logic from App.tsx)
                 console.log('Profile missing in AuthContext, creating new profile...');
                 const metaDays = Number(metadata?.days_per_week);
-                const newProfileData = {
+                let payload: Record<string, unknown> = {
                     id: userId,
                     email: userEmail,
                     full_name: metadata?.full_name || userEmail?.split('@')[0],
                     current_week: 1,
-                    days_per_week: metaDays === 3 || metaDays === 4 || metaDays === 5 ? metaDays : 5,
-                    created_at: new Date().toISOString()
+                    created_at: new Date().toISOString(),
+                    days_per_week: metaDays === 3 || metaDays === 4 || metaDays === 5 ? metaDays : 5
                 };
 
-                const { data: inserted, error: insertError } = await supabase
-                    .from('profiles')
-                    .insert([newProfileData])
-                    .select()
-                    .single();
+                let inserted: any = null;
+                let insertError: any = null;
+
+                // A database that is behind on migrations may lack some of these
+                // columns. Drop whichever column PostgREST reports as unknown
+                // (PGRST204) and retry, so a profile always gets created.
+                for (let attempt = 0; attempt < 4; attempt++) {
+                    const res = await supabase.from('profiles').insert([payload]).select().single();
+                    inserted = res.data;
+                    insertError = res.error;
+                    if (!insertError) break;
+
+                    const missingColumn = insertError.message?.match(/'([^']+)' column/)?.[1];
+                    if (
+                        insertError.code === 'PGRST204' &&
+                        missingColumn &&
+                        missingColumn !== 'id' &&
+                        missingColumn in payload
+                    ) {
+                        console.warn(
+                            `profiles.${missingColumn} is missing — your database is behind on migrations ` +
+                            '(run supabase/migrations/015_repair_profiles.sql). Retrying without it.'
+                        );
+                        const { [missingColumn]: _dropped, ...rest } = payload;
+                        payload = rest;
+                        continue;
+                    }
+                    break;
+                }
 
                 if (inserted) {
                     setProfile({

@@ -13,7 +13,7 @@ const Index = () => {
 
   return (
     <div className="bg-app min-h-dvh text-txt-hi relative overflow-x-hidden selection:bg-brand-soft">
-      <div className="relative z-10 max-w-7xl mx-auto p-4 md:p-8 pb-nav-space">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-4 md:px-8 md:pt-8 pb-nav-space">
         {!selectedPlan && (
           <button
             onClick={() => navigate("/")}

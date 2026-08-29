@@ -39,9 +39,16 @@ BEGIN
     COALESCE(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)),
     v_days
   )
+  -- NOTE: inside ON CONFLICT DO UPDATE the existing row must be referenced by
+  -- the bare table name (schema-qualifying it is a syntax error).
   ON CONFLICT (id) DO UPDATE
-    SET days_per_week = COALESCE(public.profiles.days_per_week, EXCLUDED.days_per_week);
+    SET days_per_week = COALESCE(profiles.days_per_week, EXCLUDED.days_per_week);
 
+  RETURN new;
+EXCEPTION WHEN OTHERS THEN
+  -- Profile bookkeeping must never block account creation: the app recreates a
+  -- missing profile on first login.
+  RAISE WARNING 'handle_new_user failed for %: %', new.id, SQLERRM;
   RETURN new;
 END;
 $$;

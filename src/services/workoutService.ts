@@ -158,7 +158,10 @@ export interface CloudProgram {
 export async function fetchCloudProgram(userId: string): Promise<CloudProgram | null> {
   try {
     const [profileRes, statusRes, setsRes] = await Promise.all([
-      supabase.from('profiles').select('current_week, days_per_week').eq('id', userId).maybeSingle(),
+      // select('*') rather than naming columns: the profile is a single row and
+      // this keeps the read working on databases where a newer column (e.g.
+      // days_per_week) has not been migrated yet.
+      supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
       supabase.from('week_status').select('week, status').eq('user_id', userId),
       supabase
         .from('set_logs')

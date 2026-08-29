@@ -3,7 +3,7 @@ import { WorkoutDay } from '../types/workout';
 export type DaysPerWeek = 3 | 4 | 5;
 
 /** Days-per-week options currently available for selection at signup. */
-export const AVAILABLE_DAYS_PER_WEEK: DaysPerWeek[] = [5];
+export const AVAILABLE_DAYS_PER_WEEK: DaysPerWeek[] = [3, 4, 5];
 
 /** The 5-day split (currently the only finished program). */
 export const fiveDaySplit: WorkoutDay[] = [
@@ -122,7 +122,7 @@ export const fiveDaySplit: WorkoutDay[] = [
     description: 'Complete lower body development with quad, hamstring, and calf focus',
     focus: 'Legs',
     difficulty: 'Intermediate',
-    duration: '80-95 min',
+    duration: '70-85 min',
     icon: 'Activity',
     color: 'from-orange-500 to-red-500',
     backgroundImage: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80',
@@ -140,15 +140,15 @@ export const fiveDaySplit: WorkoutDay[] = [
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
-        id: 'front-squats-smith',
-        name: 'Front Squats (Smith Machine)',
-        progressionType: 'barbell_compound',
+        id: 'machine-leg-extensions-day2',
+        name: 'Machine Leg Extensions',
+        progressionType: 'machine',
         sets: 3,
         reps: '10',
-        rest: '3 min',
+        rest: '2 min',
         type: 'bodybuilding',
-        notes: 'Quad emphasis - keep torso upright, elbows high',
-        videoUrl: 'https://www.youtube.com/watch?v=Vf8zJc2j8g4',
+        notes: 'Quad isolation - squeeze at top, control descent',
+        videoUrl: 'https://www.youtube.com/watch?v=YyvSfVjQeL0',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -161,18 +161,6 @@ export const fiveDaySplit: WorkoutDay[] = [
         type: 'bodybuilding',
         notes: 'Full range of motion, feet shoulder-width apart',
         videoUrl: 'https://www.youtube.com/watch?v=IZxyjW7MPJQ',
-        imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
-      },
-      {
-        id: 'dumbbell-lunges',
-        name: 'Dumbbell Lunges',
-        progressionType: 'dumbbell',
-        sets: 3,
-        reps: '12',
-        rest: '2 min',
-        type: 'bodybuilding',
-        notes: 'Per leg - step forward, knee at 90 degrees',
-        videoUrl: 'https://www.youtube.com/watch?v=D7KaRcUTQeE',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -554,13 +542,140 @@ export const fiveDaySplit: WorkoutDay[] = [
   }
 ];
 
+/** Looks up a day of the 5-day split by id, failing loudly if it ever moves. */
+function fiveDay(id: number): WorkoutDay {
+  const day = fiveDaySplit.find((d) => d.id === id);
+  if (!day) throw new Error(`Missing day ${id} in fiveDaySplit`);
+  return day;
+}
+
 /**
- * 3-day and 4-day splits are not authored yet. They intentionally stay empty
- * until the real workouts are provided; the signup UI only lets users pick a
- * program from AVAILABLE_DAYS_PER_WEEK, so no user can land on an empty split.
+ * The 4-day split reuses Upper 1, Lower 1, Upper 2 and Lower 2 from the 5-day
+ * program with identical sets/reps/rest — only Upper 3 (arms) is dropped.
  */
-export const threeDaySplit: WorkoutDay[] = [];
-export const fourDaySplit: WorkoutDay[] = [];
+export const fourDaySplit: WorkoutDay[] = [fiveDay(1), fiveDay(2), fiveDay(3), fiveDay(4)];
+
+/**
+ * Lower Body 1 for the 3-day split. This keeps the original 8-exercise version
+ * (Smith front squats + dumbbell lunges) rather than the trimmed 7-exercise day
+ * used by the 4- and 5-day programs, since the lower frequency allows the extra
+ * volume in a single leg session.
+ */
+const threeDayLowerBody1: WorkoutDay = {
+  id: 2,
+  name: 'Lower Body 1',
+  description: 'Complete lower body development with quad, hamstring, and calf focus',
+  focus: 'Legs',
+  difficulty: 'Intermediate',
+  duration: '80-95 min',
+  icon: 'Activity',
+  color: 'from-orange-500 to-red-500',
+  backgroundImage: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80',
+  exercises: [
+    {
+      id: 'high-bar-back-squats',
+      name: 'High Bar Back Squats',
+      progressionType: 'barbell_compound',
+      sets: 3,
+      reps: '5',
+      rest: '3 min',
+      type: 'bodybuilding',
+      notes: 'Heavy compound - go to parallel or below, keep chest up',
+      videoUrl: 'https://www.youtube.com/watch?v=i7J5h7BJ07g',
+      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
+    },
+    {
+      id: 'front-squats-smith',
+      name: 'Front Squats (Smith Machine)',
+      progressionType: 'barbell_compound',
+      sets: 3,
+      reps: '10',
+      rest: '3 min',
+      type: 'bodybuilding',
+      notes: 'Quad emphasis - keep torso upright, elbows high',
+      videoUrl: 'https://www.youtube.com/watch?v=Vf8zJc2j8g4',
+      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
+    },
+    {
+      id: 'leg-press',
+      name: 'Leg Press',
+      progressionType: 'machine',
+      sets: 3,
+      reps: '12',
+      rest: '3 min',
+      type: 'bodybuilding',
+      notes: 'Full range of motion, feet shoulder-width apart',
+      videoUrl: 'https://www.youtube.com/watch?v=IZxyjW7MPJQ',
+      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
+    },
+    {
+      id: 'dumbbell-lunges',
+      name: 'Dumbbell Lunges',
+      progressionType: 'dumbbell',
+      sets: 3,
+      reps: '12',
+      rest: '2 min',
+      type: 'bodybuilding',
+      notes: 'Per leg - step forward, knee at 90 degrees',
+      videoUrl: 'https://www.youtube.com/watch?v=D7KaRcUTQeE',
+      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
+    },
+    {
+      id: 'prone-leg-curls',
+      name: 'Prone Leg Curls',
+      progressionType: 'machine',
+      sets: 3,
+      reps: '14',
+      rest: '2 min',
+      type: 'bodybuilding',
+      notes: 'Isolation - squeeze at top, control the negative',
+      videoUrl: 'https://www.youtube.com/watch?v=1Tq3QdYUuHs',
+      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
+    },
+    {
+      id: 'dumbbell-rdl',
+      name: 'Dumbbell Romanian Deadlifts',
+      progressionType: 'dumbbell',
+      sets: 3,
+      reps: '10',
+      rest: '3 min',
+      type: 'bodybuilding',
+      notes: 'Hamstring focus - slight knee bend, push hips back',
+      videoUrl: 'https://www.youtube.com/watch?v=JCXUYuzwNrM',
+      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
+    },
+    {
+      id: 'calf-raises-in',
+      name: 'Machine Standing Calf Raises (Toes In)',
+      progressionType: 'machine',
+      sets: 4,
+      reps: '8, 10, 12, 14',
+      rest: '2 min',
+      type: 'bodybuilding',
+      notes: 'Progressive reps - full stretch and contraction',
+      videoUrl: 'https://www.youtube.com/watch?v=-M4-G8p8fmc',
+      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
+    },
+    {
+      id: 'calf-raises-out',
+      name: 'Machine Standing Calf Raises (Toes Out)',
+      progressionType: 'machine',
+      sets: 4,
+      reps: '8, 10, 12, 14',
+      rest: '2 min',
+      type: 'bodybuilding',
+      notes: 'Progressive reps - targets different calf muscles',
+      videoUrl: 'https://www.youtube.com/watch?v=-M4-G8p8fmc',
+      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
+    }
+  ]
+};
+
+/**
+ * The 3-day split: Upper 1, Lower 1 and Upper 2. Upper days are shared with the
+ * 5-day program; the leg day uses the fuller 8-exercise version above.
+ */
+export const threeDaySplit: WorkoutDay[] = [fiveDay(1), threeDayLowerBody1, fiveDay(3)];
 
 export const workoutPrograms: Record<DaysPerWeek, WorkoutDay[]> = {
   3: threeDaySplit,

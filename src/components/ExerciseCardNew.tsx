@@ -113,7 +113,7 @@ export default function ExerciseCardNew({
       className="overflow-hidden rounded-2xl border border-hair bg-surface-1 shadow-soft sm:rounded-3xl"
     >
       {/* Hero strip */}
-      <div className="relative h-28 overflow-hidden sm:h-32">
+      <div className="relative h-20 overflow-hidden sm:h-32">
         {exercise.imageUrl ? (
           <img src={exercise.imageUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
         ) : (
@@ -131,33 +131,33 @@ export default function ExerciseCardNew({
               setShowVideo(true);
             }}
             aria-label={`Play ${exercise.name} video`}
-            className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-grad-red text-white shadow-red"
+            className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-grad-red text-white shadow-red sm:right-3 sm:top-3 sm:h-10 sm:w-10"
           >
-            <Play className="h-4 w-4 fill-current" />
+            <Play className="h-3.5 w-3.5 fill-current sm:h-4 sm:w-4" />
           </motion.button>
         )}
 
-        <div className="absolute bottom-3 left-3 right-3">
+        <div className="absolute bottom-2 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3">
           <div className="flex items-end justify-between gap-2">
-            <div className="min-w-0">
-              <span className="inline-flex rounded-md bg-brand/90 px-2 py-0.5 font-display text-[10px] font-black italic uppercase text-white">
+            <div className="flex min-w-0 items-center gap-2 sm:block">
+              <span className="inline-flex shrink-0 rounded bg-brand/90 px-1.5 py-0.5 font-display text-[9px] font-black italic uppercase text-white sm:rounded-md sm:px-2 sm:text-[10px]">
                 {t('log.set')} {index + 1}
               </span>
-              <h3 className="mt-1 line-clamp-2 font-display text-lg font-black italic uppercase leading-tight text-txt-hi sm:text-xl">
+              <h3 className="line-clamp-1 font-display text-base font-black italic uppercase leading-tight text-txt-hi sm:mt-1 sm:line-clamp-2 sm:text-xl">
                 {exercise.name}
               </h3>
             </div>
-            <div className="shrink-0 rounded-xl border border-hair bg-surface-2/90 px-2.5 py-1.5 text-center backdrop-blur-sm">
-              <div className="stat text-lg font-bold leading-none text-brand">{completedCount}</div>
+            <div className="shrink-0 rounded-lg border border-hair bg-surface-2/90 px-2 py-1 text-center backdrop-blur-sm sm:rounded-xl sm:px-2.5 sm:py-1.5">
+              <div className="stat text-sm font-bold leading-none text-brand sm:text-lg">{completedCount}</div>
               <div className="text-[8px] font-bold uppercase tracking-wider text-txt-lo">/{sets.length}</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="space-y-3 p-3 sm:p-4">
+      <div className="space-y-2.5 p-2.5 sm:space-y-3 sm:p-4">
         {/* Target + rest chips */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2">
           {(targetWeight && !isCalisthenics) && (
             <Chip icon={<TrendingUp className="h-3.5 w-3.5" />} label={t('log.target')} value={`${targetWeight} kg`} tone="brand" />
           )}
@@ -170,11 +170,10 @@ export default function ExerciseCardNew({
         </div>
 
         {/* Sets */}
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           <AnimatePresence initial={false}>
             {sets.map((set, i) => {
               const prev = prevSets?.find((p) => p.setNumber === set.setNumber);
-              const isLast = i === sets.length - 1;
               return (
                 <motion.div
                   key={set.setNumber}
@@ -183,7 +182,7 @@ export default function ExerciseCardNew({
                   animate={{ opacity: 1, y: 0 }}
                   transition={spring.smooth}
                   className={cn(
-                    'relative overflow-hidden rounded-2xl border p-3 transition-colors',
+                    'relative overflow-hidden rounded-xl border p-2 transition-colors sm:rounded-2xl sm:p-3',
                     set.completed
                       ? 'border-emerald/40 bg-emerald/10 shadow-[0_0_24px_rgba(52,211,153,0.12)]'
                       : 'border-hair bg-surface-2'
@@ -196,22 +195,22 @@ export default function ExerciseCardNew({
                     />
                   )}
 
-                  <div className="relative flex items-center gap-3">
+                  <div className="relative flex items-center gap-2 sm:gap-3">
                     <motion.button
                       type="button"
                       whileTap={{ scale: 0.9 }}
                       onClick={() => toggleComplete(i)}
                       className={cn(
-                        'grid h-11 w-11 shrink-0 place-items-center rounded-xl font-display text-sm font-black italic transition-colors',
+                        'grid h-10 w-9 shrink-0 place-items-center rounded-lg font-display text-sm font-black italic transition-colors sm:h-11 sm:w-11 sm:rounded-xl',
                         set.completed
                           ? 'bg-emerald text-white shadow-[0_0_16px_rgba(52,211,153,0.4)]'
                           : 'bg-surface-3 text-txt-mid ring-1 ring-hair hover:text-brand'
                       )}
                     >
-                      {set.completed ? <Check className="h-5 w-5" strokeWidth={3} /> : set.setNumber}
+                      {set.completed ? <Check className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={3} /> : set.setNumber}
                     </motion.button>
 
-                    <div className="grid flex-1 grid-cols-2 gap-2">
+                    <div className="grid flex-1 grid-cols-2 gap-1.5 sm:gap-2">
                       <StepperField
                         label={t('log.reps')}
                         value={set.reps}
@@ -232,21 +231,12 @@ export default function ExerciseCardNew({
                   </div>
 
                   {prev && (
-                    <p className="relative mt-2 pl-14 text-[10px] text-txt-lo">
+                    <p className="relative mt-1.5 pl-11 text-[10px] leading-none text-txt-lo sm:mt-2 sm:pl-14">
                       {t('log.lastWeek')}:{' '}
                       <span className="stat font-semibold text-coral">
                         {isCalisthenics ? `${prev.reps} ${t('log.reps').toLowerCase()}` : `${prev.reps} × ${prev.weight} kg`}
                       </span>
                     </p>
-                  )}
-
-                  {!isLast && exercise.rest && (
-                    <div className="relative mt-3 flex items-center justify-center gap-2 border-t border-dashed border-hair pt-2">
-                      <Timer className="h-3 w-3 text-emerald" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald">
-                        {t('log.restBetween')}: {exercise.rest}
-                      </span>
-                    </div>
                   )}
                 </motion.div>
               );
@@ -260,7 +250,7 @@ export default function ExerciseCardNew({
           onClick={handleSave}
           disabled={isSaving}
           className={cn(
-            'relative flex h-13 w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-3.5 text-sm font-black uppercase tracking-[0.2em] transition-all',
+            'relative flex h-11 w-full items-center justify-center gap-2 overflow-hidden rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all sm:h-13 sm:rounded-2xl sm:py-3.5 sm:text-sm',
             isSaved
               ? 'bg-emerald text-white shadow-[0_8px_28px_rgba(52,211,153,0.35)]'
               : 'bg-grad-red text-white shadow-red',
@@ -310,10 +300,10 @@ function Chip({
     emerald: 'border-emerald/30 bg-emerald/10 text-emerald',
   };
   return (
-    <div className={cn('inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5', styles[tone])}>
+    <div className={cn('inline-flex items-center gap-1 rounded-lg border px-2 py-1 sm:gap-1.5 sm:rounded-xl sm:px-2.5 sm:py-1.5', styles[tone])}>
       {icon}
-      <span className="text-[9px] font-bold uppercase tracking-wider opacity-80">{label}</span>
-      <span className="stat text-xs font-bold text-txt-hi">{value}</span>
+      <span className="text-[8px] font-bold uppercase tracking-wider opacity-80 sm:text-[9px]">{label}</span>
+      <span className="stat text-[11px] font-bold text-txt-hi sm:text-xs">{value}</span>
     </div>
   );
 }
@@ -339,9 +329,9 @@ function StepperField({
   const labelColor = tone === 'brand' ? 'text-brand' : 'text-coral';
 
   return (
-    <div className={cn('rounded-xl bg-surface-3/80 p-2 ring-1 ring-hair transition-shadow focus-within:ring-2', ring)}>
-      <div className={cn('mb-1 text-[9px] font-black uppercase tracking-wider', labelColor)}>{label}</div>
-      <div className="flex items-center gap-1">
+    <div className={cn('rounded-lg bg-surface-3/80 p-1.5 ring-1 ring-hair transition-shadow focus-within:ring-2 sm:rounded-xl sm:p-2', ring)}>
+      <div className={cn('mb-0.5 truncate text-[8px] font-black uppercase tracking-wider sm:mb-1 sm:text-[9px]', labelColor)}>{label}</div>
+      <div className="flex items-center gap-0.5 sm:gap-1">
         <StepBtn onClick={() => onBump(-1)} aria-label={`decrease ${label}`}>
           <Minus className="h-3.5 w-3.5" />
         </StepBtn>
@@ -357,7 +347,7 @@ function StepperField({
             const parsed = parseFloat(raw);
             if (!Number.isNaN(parsed)) onChange(parsed);
           }}
-          className="stat h-10 min-w-0 flex-1 bg-transparent text-center text-xl font-bold text-txt-hi outline-none placeholder:text-txt-lo [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="stat h-8 min-w-0 flex-1 bg-transparent text-center text-lg font-bold text-txt-hi outline-none placeholder:text-txt-lo [appearance:textfield] sm:h-10 sm:text-xl [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
         <StepBtn onClick={() => onBump(1)} aria-label={`increase ${label}`}>
           <Plus className="h-3.5 w-3.5" />
@@ -375,7 +365,7 @@ function StepBtn({ children, onClick, ...props }: React.ButtonHTMLAttributes<HTM
       whileTap={{ scale: 0.88 }}
       transition={spring.snappy}
       onClick={onClick}
-      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-2 text-txt-mid ring-1 ring-hair hover:text-txt-hi"
+      className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-surface-2 text-txt-mid ring-1 ring-hair hover:text-txt-hi sm:h-8 sm:w-8 sm:rounded-lg"
       {...props}
     >
       {children}
