@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Loader2, Play, Timer, Minus, Plus, TrendingUp } from 'lucide-react';
 import { Exercise, ExerciseSet } from '../types/workout';
@@ -8,6 +8,7 @@ import { spring } from '../design/motion';
 import { haptic } from '../lib/haptics';
 import { cn } from '../lib/utils';
 import { VideoModal } from './ui/VideoModal';
+import { getYouTubeThumbnails } from '../lib/youtube';
 
 interface ExerciseCardNewProps {
   exercise: Exercise;
@@ -50,6 +51,21 @@ export default function ExerciseCardNew({
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [coverIndex, setCoverIndex] = useState(0);
+
+  // Prefer the video's own thumbnail: it always depicts this exercise, unlike
+  // the stock photos, which were generic and in several cases had gone 404.
+  const coverCandidates = useMemo(() => {
+    const candidates = getYouTubeThumbnails(exercise.videoUrl);
+    if (exercise.imageUrl) candidates.push(exercise.imageUrl);
+    return candidates;
+  }, [exercise.videoUrl, exercise.imageUrl]);
+
+  const cover = coverCandidates[coverIndex] ?? null;
+
+  useEffect(() => {
+    setCoverIndex(0);
+  }, [exercise.id]);
 
   useEffect(() => {
     setSets(build());
@@ -114,8 +130,14 @@ export default function ExerciseCardNew({
     >
       {/* Hero strip */}
       <div className="relative h-20 overflow-hidden sm:h-32">
-        {exercise.imageUrl ? (
-          <img src={exercise.imageUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+        {cover ? (
+          <img
+            src={cover}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="lazy"
+            onError={() => setCoverIndex((i) => i + 1)}
+          />
         ) : (
           <div className="h-full bg-gradient-to-br from-surface-3 to-surface-2" />
         )}
@@ -219,7 +241,7 @@ export default function ExerciseCardNew({
                         onBump={(d) => bump(i, 'reps', d, 1)}
                       />
                       <StepperField
-                        label={isCalisthenics ? `${t('log.weight')} (${t('log.optional')})` : t('log.weight')}
+                        label={t('log.weight')}
                         value={set.weight}
                         tone="brand"
                         suffix="kg"

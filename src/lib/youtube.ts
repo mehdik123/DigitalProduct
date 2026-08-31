@@ -32,6 +32,23 @@ export function getYouTubeId(input?: string | null): string | null {
   return match ? match[1] : null;
 }
 
+/**
+ * Thumbnail candidates for a stored video URL, best quality first.
+ *
+ * maxresdefault/hq720 are sharp and 16:9 but YouTube does not generate them for
+ * every video, so callers should fall through the list on load error.
+ * mqdefault always exists and is 16:9 (unlike hqdefault, which is letterboxed).
+ */
+export function getYouTubeThumbnails(input?: string | null): string[] {
+  const id = getYouTubeId(input);
+  if (!id) return [];
+  return [
+    `https://img.youtube.com/vi/${id}/maxresdefault.jpg`,
+    `https://img.youtube.com/vi/${id}/hq720.jpg`,
+    `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
+  ];
+}
+
 /** Build a privacy-friendly embed URL that autoplays inline. */
 export function getYouTubeEmbedUrl(input?: string | null): string | null {
   const id = getYouTubeId(input);
