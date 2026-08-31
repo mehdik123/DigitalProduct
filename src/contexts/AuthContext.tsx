@@ -17,6 +17,31 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/** How long to wait for auth init before continuing without the server. */
+const AUTH_INIT_TIMEOUT_MS = 8000;
+
+/**
+ * Reads the session Supabase persisted in localStorage. Used only when the auth
+ * server is unreachable, so an offline user keeps access to their local program
+ * instead of being locked out behind the loading screen.
+ */
+const readCachedSession = (): Session | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+        for (const key of Object.keys(window.localStorage)) {
+            if (!key.startsWith('sb-') || !key.includes('auth-token')) continue;
+            const raw = window.localStorage.getItem(key);
+            if (!raw) continue;
+            const parsed = JSON.parse(raw);
+            const cached = parsed?.currentSession ?? parsed;
+            if (cached?.user?.id) return cached as Session;
+        }
+    } catch (error) {
+        console.warn('Could not read cached session:', error);
+    }
+    return null;
+};
+
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
@@ -122,15 +147,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Initialize auth state
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                fetchProfile(session.user.id, session.user.email, session.user.user_metadata);
-            }
+        let settled = false;
+
+        const finish = () => {
+            settled = true;
             setLoading(false);
-        });
+        };
+
+        // getSession() hits the network when the stored token needs refreshing.
+        // Offline that rejects, so recover the persisted session instead of
+        // leaving the whole app stuck on the loading skeleton.
+        supabase.auth
+            .getSession()
+            .then(({ data: { session } }) => {
+                setSession(session);
+                setUser(session?.user ?? null);
+                if (session?.user) {
+                    fetchProfile(session.user.id, session.user.email, session.user.user_metadata);
+                }
+                finish();
+            })
+            .catch((error) => {
+                console.warn('Could not reach auth server, falling back to cached session:', error);
+                const cached = readCachedSession();
+                if (cached) {
+                    setSession(cached);
+                    setUser(cached.user ?? null);
+                }
+                finish();
+            });
+
+        // Last-resort guard: never leave the user on a dead loading screen if
+        // getSession() neither resolves nor rejects (e.g. a hanging socket).
+        const bailout = setTimeout(() => {
+            if (settled) return;
+            console.warn('Auth initialization timed out, continuing with cached session.');
+            const cached = readCachedSession();
+            if (cached) {
+                setSession(cached);
+                setUser(cached.user ?? null);
+            }
+            finish();
+        }, AUTH_INIT_TIMEOUT_MS);
 
         // Listen for auth changes
         const {
@@ -143,10 +201,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             } else {
                 setProfile(null);
             }
-            setLoading(false);
+            finish();
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            clearTimeout(bailout);
+            subscription.unsubscribe();
+        };
     }, []);
 
     // Sign up with email and password

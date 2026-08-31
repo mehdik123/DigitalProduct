@@ -21,6 +21,7 @@ import {
   mergeCloudIntoLocal,
   collectAllSets,
   ensureLocalProgram,
+  getLocalDaysPerWeek,
 } from './services/localProgram';
 import WelcomePortal from './components/WelcomePortal';
 import ProgramIntro from './components/ProgramIntro';
@@ -52,7 +53,11 @@ function App() {
   const [lockedNotice, setLockedNotice] = useState(false);
 
   // The program a user is enrolled in (chosen once at signup, irreversible).
-  const daysPerWeek = (profile?.daysPerWeek as DaysPerWeek | undefined) ?? undefined;
+  // Falls back to the value this device recorded, so an offline user who cannot
+  // load their profile still gets their own split rather than the 5-day default.
+  const daysPerWeek =
+    (profile?.daysPerWeek as DaysPerWeek | undefined) ??
+    (user ? getLocalDaysPerWeek(user.id) : undefined);
   const split = getWorkoutSplit(daysPerWeek);
 
   const loadProgram = () => {

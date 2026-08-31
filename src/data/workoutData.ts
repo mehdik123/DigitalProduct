@@ -27,7 +27,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Compound movement - focus on controlled tempo and full range of motion',
-        videoUrl: 'https://www.youtube.com/watch?v=8iPEnn-ltC8',
+        videoUrl: 'https://www.youtube.com/watch?v=RwrLrp8dFcc',
         imageUrl: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80'
       },
       {
@@ -39,7 +39,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'calisthenics',
         notes: 'Lean forward for chest emphasis, keep elbows at 45 degrees',
-        videoUrl: 'https://www.youtube.com/watch?v=2z8Ddsql-vE',
+        videoUrl: 'https://www.youtube.com/watch?v=Oi7npYL8vPE',
         imageUrl: 'https://images.unsplash.com/photo-1598971639058-211a74a5a6b7?w=800&q=80'
       },
       {
@@ -51,7 +51,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Isolation - keep slight bend in elbows, raise to shoulder height',
-        videoUrl: 'https://www.youtube.com/watch?v=3VcKaXpzqRo',
+        videoUrl: 'https://www.youtube.com/watch?v=0pdGWALsOMs',
         imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80'
       },
       {
@@ -63,7 +63,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'calisthenics',
         notes: 'Shoulder focus - keep hips high, head between arms',
-        videoUrl: 'https://www.youtube.com/watch?v=sposDXIE0lM',
+        videoUrl: 'https://youtu.be/XckEEwa1BPI',
         imageUrl: 'https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=800&q=80'
       },
       {
@@ -75,7 +75,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Pull to upper chest, squeeze shoulder blades together',
-        videoUrl: 'https://www.youtube.com/watch?v=AO9L75rGbf0',
+        videoUrl: 'https://www.youtube.com/watch?v=JqeZH7zC-Co',
         imageUrl: 'https://images.unsplash.com/photo-1598532163257-5264875b0f4a?w=800&q=80'
       },
       {
@@ -87,7 +87,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Compound - maintain flat back, pull to lower chest',
-        videoUrl: 'https://www.youtube.com/watch?v=9efgcAjQe7E',
+        videoUrl: 'https://www.youtube.com/watch?v=heIL-Gq0L1Y',
         imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80'
       },
       {
@@ -99,7 +99,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Keep elbows stationary, full range of motion',
-        videoUrl: 'https://www.youtube.com/watch?v=kwG2ipFRgfo',
+        videoUrl: 'https://www.youtube.com/watch?v=YVVGdQCM9Ss',
         imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80'
       },
       {
@@ -111,7 +111,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Isolation - lower to forehead, keep elbows tucked',
-        videoUrl: 'https://www.youtube.com/watch?v=d_KZxkY_0cM',
+        videoUrl: 'https://www.youtube.com/watch?v=k0kV5dmMuFw',
         imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80'
       }
     ]
@@ -136,7 +136,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Heavy compound - go to parallel or below, keep chest up',
-        videoUrl: 'https://www.youtube.com/watch?v=i7J5h7BJ07g',
+        videoUrl: 'https://www.youtube.com/watch?v=NqK95Xz1XLo',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -148,7 +148,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Quad isolation - squeeze at top, control descent',
-        videoUrl: 'https://www.youtube.com/watch?v=YyvSfVjQeL0',
+        videoUrl: 'https://www.youtube.com/watch?v=O5NyZqgUwm8',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -160,7 +160,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Full range of motion, feet shoulder-width apart',
-        videoUrl: 'https://www.youtube.com/watch?v=IZxyjW7MPJQ',
+        videoUrl: 'https://www.youtube.com/watch?v=L_bJce83XBQ',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -172,7 +172,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Isolation - squeeze at top, control the negative',
-        videoUrl: 'https://www.youtube.com/watch?v=1Tq3QdYUuHs',
+        videoUrl: 'https://www.youtube.com/watch?v=fF3iCzliY1E',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -184,7 +184,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Hamstring focus - slight knee bend, push hips back',
-        videoUrl: 'https://www.youtube.com/watch?v=JCXUYuzwNrM',
+        videoUrl: 'https://www.youtube.com/watch?v=7bWERGtRquU',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -196,7 +196,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Progressive reps - full stretch and contraction',
-        videoUrl: 'https://www.youtube.com/watch?v=-M4-G8p8fmc',
+        videoUrl: 'https://www.youtube.com/watch?v=zn65KYJTF2I',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -208,7 +208,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Progressive reps - targets different calf muscles',
-        videoUrl: 'https://www.youtube.com/watch?v=-M4-G8p8fmc',
+        videoUrl: 'https://www.youtube.com/watch?v=uyP4VIxrYKY',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       }
     ]
@@ -233,7 +233,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Compound - retract shoulder blades, bar to mid-chest',
-        videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg',
+        videoUrl: 'https://www.youtube.com/watch?v=F85dAlCEra0',
         imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80'
       },
       {
@@ -245,7 +245,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'calisthenics',
         notes: 'Full range - dead hang to chin over bar',
-        videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
+        videoUrl: 'https://www.youtube.com/watch?v=sWuxGz5O-QE',
         imageUrl: 'https://images.unsplash.com/photo-1598971639058-211a74a5a6b7?w=800&q=80'
       },
       {
@@ -257,7 +257,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Underhand grip - targets lower lats and biceps',
-        videoUrl: 'https://www.youtube.com/watch?v=34d1-8TjEw8',
+        videoUrl: 'https://www.youtube.com/watch?v=heIL-Gq0L1Y',
         imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80'
       },
       {
@@ -269,7 +269,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Isolation - prevents momentum, strict form',
-        videoUrl: 'https://www.youtube.com/watch?v=3VcKaXpzqRo',
+        videoUrl: 'https://www.youtube.com/watch?v=qNJP_MefuHc',
         imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80'
       },
       {
@@ -281,7 +281,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Bend forward, raise arms back and out',
-        videoUrl: 'https://www.youtube.com/watch?v=ZO81bExngMI',
+        videoUrl: 'https://www.youtube.com/watch?v=LBwJ_FvC664',
         imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80'
       },
       {
@@ -293,7 +293,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'calisthenics',
         notes: 'Underhand grip - bicep and back emphasis',
-        videoUrl: 'https://www.youtube.com/watch?v=brhRXlOhsAM',
+        videoUrl: 'https://www.youtube.com/watch?v=uxG_NTtiR1E',
         imageUrl: 'https://images.unsplash.com/photo-1598971639058-211a74a5a6b7?w=800&q=80'
       },
       {
@@ -305,7 +305,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Keep elbows close to head, full extension',
-        videoUrl: 'https://www.youtube.com/watch?v=nRiJVZDpdL0',
+        videoUrl: 'https://www.youtube.com/watch?v=BYKk7QvAXXE',
         imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80'
       },
       {
@@ -317,7 +317,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'calisthenics',
         notes: 'Hands form diamond shape - tricep emphasis',
-        videoUrl: 'https://www.youtube.com/watch?v=J0DnG1_S92I',
+        videoUrl: 'https://www.youtube.com/watch?v=Scvl5pKtY_4',
         imageUrl: 'https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=800&q=80'
       }
     ]
@@ -342,7 +342,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Heavy - maintain upright torso, core tight',
-        videoUrl: 'https://www.youtube.com/watch?v=Vf8zJc2j8g4',
+        videoUrl: 'https://www.youtube.com/watch?v=MXm6PuRB3mk',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -354,7 +354,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Quad isolation - squeeze at top, control descent',
-        videoUrl: 'https://www.youtube.com/watch?v=YyvSfVjQeL0',
+        videoUrl: 'https://www.youtube.com/watch?v=O5NyZqgUwm8',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -366,7 +366,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'calisthenics',
         notes: 'Explosive power - land softly, full squat depth',
-        videoUrl: 'https://www.youtube.com/watch?v=CVaEhXotL7M',
+        videoUrl: 'https://www.youtube.com/watch?v=WL6IYVxUoT0',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -378,7 +378,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'King of compounds - neutral spine, drive through heels',
-        videoUrl: 'https://www.youtube.com/watch?v=op9kVnSso6Q',
+        videoUrl: 'https://www.youtube.com/watch?v=3P8iTOXwqXU',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -390,7 +390,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Hamstring isolation - full contraction',
-        videoUrl: 'https://www.youtube.com/watch?v=1Tq3QdYUuHs',
+        videoUrl: 'https://www.youtube.com/watch?v=fF3iCzliY1E',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -402,7 +402,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Progressive reps - pause at top',
-        videoUrl: 'https://www.youtube.com/watch?v=-M4-G8p8fmc',
+        videoUrl: 'https://www.youtube.com/watch?v=zn65KYJTF2I',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -414,7 +414,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Progressive reps - full range of motion',
-        videoUrl: 'https://www.youtube.com/watch?v=-M4-G8p8fmc',
+        videoUrl: 'https://www.youtube.com/watch?v=uyP4VIxrYKY',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
@@ -426,7 +426,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Inner thigh - controlled movement, squeeze',
-        videoUrl: 'https://www.youtube.com/watch?v=1Tq3QdYUuHs',
+        videoUrl: 'https://www.youtube.com/shorts/BmMmt-c9aNM',
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       }
     ]
@@ -451,7 +451,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'bodybuilding',
         notes: 'Upper chest focus - 30-45 degree incline',
-        videoUrl: 'https://www.youtube.com/watch?v=8iPEnn-ltC8',
+        videoUrl: 'https://www.youtube.com/watch?v=d23M3gmkVPc',
         imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80'
       },
       {
@@ -463,7 +463,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'calisthenics',
         notes: 'Bodyweight - chest to ground, full extension',
-        videoUrl: 'https://www.youtube.com/watch?v=IODxDxX7oi4',
+        videoUrl: 'https://www.youtube.com/watch?v=KbB4foryo0k',
         imageUrl: 'https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=800&q=80'
       },
       {
@@ -475,7 +475,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'calisthenics',
         notes: 'Overhand grip - full range of motion',
-        videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
+        videoUrl: 'https://www.youtube.com/watch?v=sWuxGz5O-QE',
         imageUrl: 'https://images.unsplash.com/photo-1598971639058-211a74a5a6b7?w=800&q=80'
       },
       {
@@ -487,7 +487,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '3 min',
         type: 'calisthenics',
         notes: 'Palms facing - targets brachialis and forearms',
-        videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
+        videoUrl: 'https://youtu.be/cd_38C6LuvY',
         imageUrl: 'https://images.unsplash.com/photo-1598971639058-211a74a5a6b7?w=800&q=80'
       },
       {
@@ -499,7 +499,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Shoulder isolation - controlled tempo',
-        videoUrl: 'https://www.youtube.com/watch?v=3VcKaXpzqRo',
+        videoUrl: 'https://www.youtube.com/watch?v=0pdGWALsOMs',
         imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80'
       },
       {
@@ -511,7 +511,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Bicep focus - no swinging, strict form',
-        videoUrl: 'https://www.youtube.com/watch?v=kwG2ipFRgfo',
+        videoUrl: 'https://www.youtube.com/watch?v=CUZUV8rDP90',
         imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80'
       },
       {
@@ -523,7 +523,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Neutral grip - targets brachialis',
-        videoUrl: 'https://www.youtube.com/watch?v=zC3nLlEvin4',
+        videoUrl: 'https://www.youtube.com/watch?v=6ZT1S3K9Bsg',
         imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80'
       },
       {
@@ -535,7 +535,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         rest: '2 min',
         type: 'bodybuilding',
         notes: 'Long head emphasis - full stretch and contraction',
-        videoUrl: 'https://www.youtube.com/watch?v=nRiJVZDpdL0',
+        videoUrl: 'https://www.youtube.com/watch?v=BYKk7QvAXXE',
         imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80'
       }
     ]
@@ -581,7 +581,7 @@ const threeDayLowerBody1: WorkoutDay = {
       rest: '3 min',
       type: 'bodybuilding',
       notes: 'Heavy compound - go to parallel or below, keep chest up',
-      videoUrl: 'https://www.youtube.com/watch?v=i7J5h7BJ07g',
+      videoUrl: 'https://www.youtube.com/watch?v=NqK95Xz1XLo',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     },
     {
@@ -593,7 +593,7 @@ const threeDayLowerBody1: WorkoutDay = {
       rest: '3 min',
       type: 'bodybuilding',
       notes: 'Quad emphasis - keep torso upright, elbows high',
-      videoUrl: 'https://www.youtube.com/watch?v=Vf8zJc2j8g4',
+      videoUrl: 'https://www.youtube.com/watch?v=MXm6PuRB3mk',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     },
     {
@@ -605,7 +605,7 @@ const threeDayLowerBody1: WorkoutDay = {
       rest: '3 min',
       type: 'bodybuilding',
       notes: 'Full range of motion, feet shoulder-width apart',
-      videoUrl: 'https://www.youtube.com/watch?v=IZxyjW7MPJQ',
+      videoUrl: 'https://www.youtube.com/watch?v=L_bJce83XBQ',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     },
     {
@@ -617,7 +617,7 @@ const threeDayLowerBody1: WorkoutDay = {
       rest: '2 min',
       type: 'bodybuilding',
       notes: 'Per leg - step forward, knee at 90 degrees',
-      videoUrl: 'https://www.youtube.com/watch?v=D7KaRcUTQeE',
+      videoUrl: 'https://www.youtube.com/watch?v=wq1blpqrEFY',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     },
     {
@@ -629,7 +629,7 @@ const threeDayLowerBody1: WorkoutDay = {
       rest: '2 min',
       type: 'bodybuilding',
       notes: 'Isolation - squeeze at top, control the negative',
-      videoUrl: 'https://www.youtube.com/watch?v=1Tq3QdYUuHs',
+      videoUrl: 'https://www.youtube.com/watch?v=fF3iCzliY1E',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     },
     {
@@ -641,7 +641,7 @@ const threeDayLowerBody1: WorkoutDay = {
       rest: '3 min',
       type: 'bodybuilding',
       notes: 'Hamstring focus - slight knee bend, push hips back',
-      videoUrl: 'https://www.youtube.com/watch?v=JCXUYuzwNrM',
+      videoUrl: 'https://www.youtube.com/watch?v=7bWERGtRquU',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     },
     {
@@ -653,7 +653,7 @@ const threeDayLowerBody1: WorkoutDay = {
       rest: '2 min',
       type: 'bodybuilding',
       notes: 'Progressive reps - full stretch and contraction',
-      videoUrl: 'https://www.youtube.com/watch?v=-M4-G8p8fmc',
+      videoUrl: 'https://www.youtube.com/watch?v=zn65KYJTF2I',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     },
     {
@@ -665,7 +665,7 @@ const threeDayLowerBody1: WorkoutDay = {
       rest: '2 min',
       type: 'bodybuilding',
       notes: 'Progressive reps - targets different calf muscles',
-      videoUrl: 'https://www.youtube.com/watch?v=-M4-G8p8fmc',
+      videoUrl: 'https://www.youtube.com/watch?v=uyP4VIxrYKY',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     }
   ]
