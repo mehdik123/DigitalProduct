@@ -256,7 +256,6 @@ function App() {
         {isHome && (
           <WelcomePortal
               onSelectTraining={() => setView('intro')}
-              onSelectNutrition={() => navigate('/nutrition')}
               onSignup={() => setShowSignupForm(true)}
               userName={profile?.fullName || user?.user_metadata?.full_name || user?.email}
             />

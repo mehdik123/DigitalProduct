@@ -1,13 +1,11 @@
 import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import App from './App.tsx';
 import LoginPage from './components/LoginPage.tsx';
-import NutritionApp from './nutrition/NutritionApp';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { initKeyboardViewport } from './lib/keyboardViewport';
-import './nutrition/index.css';
 import './index.css';
 
 function Root() {
@@ -18,7 +16,8 @@ function Root() {
         <HashRouter>
           <Routes>
             <Route path="/" element={<App />} />
-            <Route path="/nutrition/*" element={<NutritionApp />} />
+            {/* Nutrition hidden for launch; code kept under src/nutrition for a future Fuel Guide. */}
+            <Route path="/nutrition/*" element={<Navigate to="/" replace />} />
             <Route path="/login/returning" element={<LoginPage />} />
             <Route path="/login/:userId" element={<LoginPage />} />
           </Routes>

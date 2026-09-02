@@ -1,16 +1,15 @@
-import { Activity, Zap, ChevronRight } from 'lucide-react';
+import { Zap, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { BrandMark, Eyebrow } from './ui';
 import { cn } from '../lib/utils';
 
 interface WelcomePortalProps {
     onSelectTraining: () => void;
-    onSelectNutrition: () => void;
     onSignup: () => void;
     userName?: string;
 }
 
-export default function WelcomePortal({ onSelectTraining, onSelectNutrition, userName }: WelcomePortalProps) {
+export default function WelcomePortal({ onSelectTraining, userName }: WelcomePortalProps) {
     const { t } = useLanguage();
 
     return (
@@ -45,7 +44,7 @@ export default function WelcomePortal({ onSelectTraining, onSelectNutrition, use
                 </header>
 
                 {/* No flex-1 on mobile: stretching the rows is what made these cards huge. */}
-                <div className="grid grid-cols-1 content-start gap-3 pb-2 sm:flex-1 sm:gap-6 sm:pb-4 md:grid-cols-2 md:gap-8">
+                <div className="mx-auto w-full max-w-lg content-start pb-2 sm:pb-4">
                     <PortalCard
                         onClick={onSelectTraining}
                         image="/images/upper_body_3.jpg"
@@ -55,16 +54,6 @@ export default function WelcomePortal({ onSelectTraining, onSelectNutrition, use
                         description={t('welcome.training.description')}
                         cta={t('welcome.startWorkout')}
                         delay=".2s"
-                    />
-                    <PortalCard
-                        onClick={onSelectNutrition}
-                        image="/images/lower_body_2.jpg"
-                        tone="emerald"
-                        icon={<Activity className="h-5 w-5 fill-current sm:h-7 sm:w-7 md:h-9 md:w-9" />}
-                        title={t('welcome.nutrition')}
-                        description={t('welcome.nutrition.description')}
-                        cta={t('welcome.openKitchen')}
-                        delay=".3s"
                     />
                 </div>
 

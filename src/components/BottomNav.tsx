@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Target, Dumbbell, Utensils, LogOut } from 'lucide-react';
+import { Target, Dumbbell, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { haptic } from '../lib/haptics';
@@ -8,14 +8,13 @@ import { spring } from '../design/motion';
 import { cn } from '../lib/utils';
 
 interface BottomNavProps {
-    activeView?: 'welcome' | 'intro' | 'workouts' | 'nutrition';
+    activeView?: 'welcome' | 'intro' | 'workouts';
     onViewChange?: (view: 'welcome' | 'intro' | 'workouts') => void;
 }
 
 const tabs = [
     { id: 'welcome' as const, icon: Target, labelKey: 'nav.home' },
     { id: 'workouts' as const, icon: Dumbbell, labelKey: 'nav.train', matchIntro: true },
-    { id: 'nutrition' as const, icon: Utensils, labelKey: 'nav.diet', route: true },
 ];
 
 export default function BottomNav({ activeView, onViewChange }: BottomNavProps) {
@@ -24,21 +23,15 @@ export default function BottomNav({ activeView, onViewChange }: BottomNavProps) 
     const { user, signOut } = useAuth();
     const { t } = useLanguage();
 
-    const isNutrition = location.pathname.startsWith('/nutrition');
-    const currentView = isNutrition ? 'nutrition' : activeView;
+    const currentView = activeView;
 
-    const handleNav = (target: 'welcome' | 'workouts' | 'nutrition') => {
+    const handleNav = (target: 'welcome' | 'workouts') => {
         haptic.light();
-        if (target === 'nutrition') {
-            navigate('/nutrition');
-            return;
-        }
         onViewChange?.(target === 'workouts' && !user ? 'intro' : target);
         if (location.pathname !== '/') navigate('/');
     };
 
     const isActive = (tab: (typeof tabs)[number]) => {
-        if (tab.id === 'nutrition') return currentView === 'nutrition';
         if (tab.matchIntro) return currentView === 'workouts' || currentView === 'intro';
         return currentView === tab.id;
     };
