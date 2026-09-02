@@ -1,12 +1,15 @@
-import { StrictMode, useEffect } from 'react';
+import { StrictMode, Suspense, lazy, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import App from './App.tsx';
-import LoginPage from './components/LoginPage.tsx';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { initKeyboardViewport } from './lib/keyboardViewport';
+import PageLoader from './components/PageLoader';
+import { Toaster } from 'sonner';
 import './index.css';
+
+const App = lazy(() => import('./App.tsx'));
+const LoginPage = lazy(() => import('./components/LoginPage.tsx'));
 
 function Root() {
   useEffect(() => initKeyboardViewport(), []);
@@ -14,13 +17,21 @@ function Root() {
     <AuthProvider>
       <LanguageProvider>
         <HashRouter>
-          <Routes>
-            <Route path="/" element={<App />} />
-            {/* Nutrition hidden for launch; code kept under src/nutrition for a future Fuel Guide. */}
-            <Route path="/nutrition/*" element={<Navigate to="/" replace />} />
-            <Route path="/login/returning" element={<LoginPage />} />
-            <Route path="/login/:userId" element={<LoginPage />} />
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<App />} />
+              <Route path="/nutrition/*" element={<Navigate to="/" replace />} />
+              <Route path="/login/returning" element={<LoginPage />} />
+              <Route path="/login/:userId" element={<LoginPage />} />
+            </Routes>
+          </Suspense>
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              className: 'font-sans text-sm',
+              style: { background: '#14151c', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' },
+            }}
+          />
         </HashRouter>
       </LanguageProvider>
     </AuthProvider>

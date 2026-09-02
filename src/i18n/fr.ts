@@ -66,6 +66,27 @@ export const frenchTranslations: Record<string, string> = {
         'Important : ceci crée une copie personnelle du programme rien que pour toi. Ta progression est privée et enregistrée sur ton compte.',
     'howItWorks.gotIt': 'Compris !',
 
+    // Workout coach
+    'coach.title': 'Comment progresser',
+    'coach.subtitle': '3 étapes. 30 secondes pour comprendre.',
+    'coach.step1.title': 'Choisis une séance',
+    'coach.step1.desc': 'Appuie sur une carte de jour (ex. Upper Body 1) pour l\u2019ouvrir.',
+    'coach.step2.title': 'Enregistre chaque série',
+    'coach.step2.desc': 'Saisis reps et charge pour chaque série, puis appuie sur Enregistrer.',
+    'coach.step3.title': 'Débloque la semaine suivante',
+    'coach.step3.desc':
+        'Termine tous les jours de la semaine 1 avec toutes les séries enregistrées. La semaine 2 s\u2019ouvre automatiquement.',
+    'coach.tip': 'Astuce : l\u2019anneau en haut montre combien de séries tu as enregistrées cette semaine.',
+    'coach.start': 'Commencer',
+
+    'feed.setsProgress': '{done}/{total} séries enregistrées cette semaine',
+    'feed.nextUp': 'Prochaine séance : {workout}',
+    'feed.howProgress': 'Comment progresser',
+    'feed.week6Banner': 'Mi parcours. La semaine 6 est une phase de décharge. Reste régulier.',
+    'toast.firstSet': 'Première série enregistrée. Continue.',
+    'toast.dayComplete': 'Séance du jour terminée. Beau travail.',
+    'toast.emptySave': 'Saisis les reps et la charge réelles avant d\u2019enregistrer.',
+
     // Signup result
     'signup.success.title': 'Compte créé !',
     'signup.success.message':
@@ -213,11 +234,11 @@ export const frenchTranslations: Record<string, string> = {
     'week.label': 'Semaine',
     'week.locked.title': 'Semaine verrouillée',
     'week.locked.message':
-        'Termine l\u2019enregistrement de la semaine en cours pour débloquer celle-ci.',
+        'Termine toutes les séances de ta semaine en cours et enregistre toutes les séries. La semaine suivante s\u2019ouvre automatiquement.',
     'week.active': 'En cours',
     'week.completed': 'Terminée',
     'week.lockedNotice':
-        'Cette semaine est verrouillée. Termine toutes les séances de ta semaine en cours et enregistre les charges utilisées — dès que la semaine entière est faite, la suivante se débloque automatiquement.',
+        'Enregistre chaque série de ta semaine en cours. Quand la semaine est terminée, la suivante se débloque automatiquement.',
 
     // Logging
     'log.target': 'Objectif de cette semaine',
@@ -247,7 +268,7 @@ export const frenchTranslations: Record<string, string> = {
     // Unlock
     'unlock.title': 'Semaine terminée !',
     'unlock.message': 'Semaine suivante débloquée. De nouveaux objectifs sont prêts.',
-    'unlock.weekReady': 'Bien joué — la semaine {week} est maintenant débloquée.',
+    'unlock.weekReady': 'Bien joué. La semaine {week} est maintenant débloquée.',
     'unlock.whatChanged': 'Ce qui change cette semaine',
     'unlock.point1':
         'Tes objectifs ont augmenté : tu verras plus de reps ou un peu plus de charge que la semaine dernière.',

@@ -2,11 +2,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// vite-plugin-pwa: run `npm install vite-plugin-pwa` then enable the block in pwa-shell skill.
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true, // expose on the local network (0.0.0.0) for phone testing
+    host: true,
     port: 5173,
     strictPort: true,
   },
@@ -15,7 +14,22 @@ export default defineConfig({
       '@nutrition': path.resolve(__dirname, './src/nutrition'),
     },
   },
-  optimizeDeps: {
-    exclude: ['lucide-react'],
+  build: {
+    target: 'es2020',
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (id.includes('framer-motion')) return 'vendor-motion';
+          if (id.includes('@supabase')) return 'vendor-supabase';
+          if (id.includes('react-router') || id.includes('react-dom') || id.includes('/react/')) {
+            return 'vendor-react';
+          }
+          if (id.includes('lucide-react')) return 'vendor-icons';
+          if (id.includes('sonner')) return 'vendor-ui';
+        },
+      },
+    },
   },
 });

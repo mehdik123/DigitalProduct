@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, TrendingUp, Trophy } from 'lucide-react';
+import { TrendingUp, Trophy } from 'lucide-react';
 import { KEY_LIFTS, KEY_LIFT_LABELS } from '../data/programConfig';
 import { getWorkoutSplit, DaysPerWeek } from '../data/workoutData';
 import { WorkoutDay } from '../types/workout';
@@ -26,7 +26,7 @@ const dayIdFor = (split: WorkoutDay[], exerciseId: string): number => {
   return 1;
 };
 
-export default function RetestScreen({ profileId, daysPerWeek, onBack }: RetestScreenProps) {
+export default function RetestScreen({ profileId, daysPerWeek }: RetestScreenProps) {
   const { t } = useLanguage();
   const split = getWorkoutSplit(daysPerWeek);
   const [values, setValues] = useState<Record<string, { weight: number; reps: number }>>(
@@ -91,21 +91,10 @@ export default function RetestScreen({ profileId, daysPerWeek, onBack }: RetestS
   const hasResults = (comparison ?? []).some((r) => r.currentWeight > 0 && r.baselineWeight > 0);
 
   return (
-    <div className="bg-app min-h-screen text-txt-hi">
-      <div className="sticky top-0 z-40 border-b border-hair bg-bg/60 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-2xl items-center gap-4 px-4 py-4">
-          <button
-            onClick={onBack}
-            className="grid h-10 w-10 place-items-center rounded-full border border-hair bg-surface-2 active:scale-95 rtl:rotate-180"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <div>
-            <h1 className="font-display text-2xl font-black italic uppercase tracking-tight">{t('retest.title')}</h1>
-            <p className="text-xs text-txt-lo">{t('retest.subtitle')}</p>
-          </div>
-        </div>
+    <div className="bg-app min-h-screen text-txt-hi pb-nav-space">
+      <div className="mx-auto max-w-2xl border-b border-hair px-4 py-4">
+        <h1 className="font-display text-2xl font-black italic uppercase tracking-tight">{t('retest.title')}</h1>
+        <p className="text-xs text-txt-lo">{t('retest.subtitle')}</p>
       </div>
 
       <motion.div

@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from './components/Header';
+import AppChrome from './components/AppChrome';
 import WorkoutCard from './components/WorkoutCard';
-import WorkoutPageNew from './components/WorkoutPageNew';
 import WeekSelector from './components/WeekSelector';
-import RetestScreen from './components/RetestScreen';
 import { getWorkoutSplit, DaysPerWeek } from './data/workoutData';
 import { WorkoutDay } from './types/workout';
-import { Info, Lock, Circle, Trophy, ArrowLeft } from 'lucide-react';
+import { Info, Lock, Circle, Trophy } from 'lucide-react';
 import {
   ensureProgramStarted,
   fetchCloudProgram,
@@ -26,15 +24,22 @@ import {
 import WelcomePortal from './components/WelcomePortal';
 import ProgramIntro from './components/ProgramIntro';
 import AuthChoiceModal from './components/AuthChoiceModal';
-import SignupModal from './components/SignupModal';
-import HowItWorksModal from './components/HowItWorksModal';
+import { hasSeenWorkoutCoach, hasDismissedWeek6Banner, dismissWeek6Banner } from './lib/onboarding';
+import { getWeekSetProgress, getNextWorkoutName } from './lib/weekProgress';
 import BottomNav from './components/BottomNav';
 import { useLanguage } from './contexts/LanguageContext';
 import { useAuth } from './contexts/AuthContext';
 import { isTimeoutError } from './lib/supabaseClient';
-import { Pill, Button, ScreenTransition, WorkoutFeedSkeleton, Skeleton } from './components/ui';
+import { Button, ScreenTransition, WorkoutFeedSkeleton, Skeleton } from './components/ui';
 import { listVariants } from './design/motion';
 import { motion } from 'framer-motion';
+
+const WorkoutPageNew = lazy(() => import('./components/WorkoutPageNew'));
+const RetestScreen = lazy(() => import('./components/RetestScreen'));
+const SignupModal = lazy(() => import('./components/SignupModal'));
+const HowItWorksModal = lazy(() => import('./components/HowItWorksModal'));
+const WorkoutCoachModal = lazy(() => import('./components/WorkoutCoachModal'));
+const LockedWeekModal = lazy(() => import('./components/LockedWeekModal'));
 
 function App() {
   const navigate = useNavigate();
@@ -45,12 +50,14 @@ function App() {
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutDay | null>(null);
   const [view, setView] = useState<'welcome' | 'intro' | 'workouts'>('welcome');
   const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [showWorkoutCoach, setShowWorkoutCoach] = useState(false);
   const [showSignupForm, setShowSignupForm] = useState(false);
   const [showAuthChoice, setShowAuthChoice] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [programState, setProgramState] = useState<ProgramState | null>(null);
   const [showRetest, setShowRetest] = useState(false);
-  const [lockedNotice, setLockedNotice] = useState(false);
+  const [lockedWeekTarget, setLockedWeekTarget] = useState<number | null>(null);
+  const [week6Dismissed, setWeek6Dismissed] = useState(() => hasDismissedWeek6Banner());
 
   // The program a user is enrolled in (chosen once at signup, irreversible).
   // Falls back to the value this device recorded, so an offline user who cannot
@@ -118,6 +125,19 @@ function App() {
     }
   }, [profile, view]);
 
+  // Show coach the first time user lands on the train tab (e.g. via bottom nav).
+  useEffect(() => {
+    if (user && view === 'workouts' && !hasSeenWorkoutCoach()) {
+      setShowWorkoutCoach(true);
+    }
+  }, [user, view]);
+
+  useEffect(() => {
+    if (!selectedWorkout && user) {
+      setProgramState(getLocalProgramState(user.id, profile?.daysPerWeek));
+    }
+  }, [selectedWorkout, user?.id, profile?.daysPerWeek]);
+
   // Show loading spinner while checking auth session
   if (loading) {
     return (
@@ -180,6 +200,9 @@ function App() {
   const handleStartProgram = () => {
     if (user) {
       setView('workouts');
+      if (!hasSeenWorkoutCoach()) {
+        setShowWorkoutCoach(true);
+      }
     } else {
       setShowAuthChoice(true);
     }
@@ -187,13 +210,13 @@ function App() {
 
   const handleWeekSelect = (week: number) => {
     const status = weekStatuses[week] ?? 'locked';
-    if (status === 'locked') return; // gating: cannot open locked weeks
-    setLockedNotice(false);
+    if (status === 'locked') return;
+    setLockedWeekTarget(null);
     setCurrentWeek(week);
   };
 
-  const handleLockedWeek = () => {
-    setLockedNotice(true);
+  const handleLockedWeek = (week: number) => {
+    setLockedWeekTarget(week);
   };
 
   // Individual workout page - restricted to authenticated users
@@ -204,20 +227,38 @@ function App() {
       return null;
     }
     return (
-      <WorkoutPageNew
-        workout={selectedWorkout}
-        weekNumber={currentWeek}
-        onBack={() => setSelectedWorkout(null)}
-        profile={profile || { id: user.id }}
-        daysPerWeek={daysPerWeek}
-        onWeekUnlocked={() => loadProgram()}
-      />
+      <>
+        <AppChrome showBack onBack={() => setSelectedWorkout(null)} />
+        <div className="pt-chrome">
+          <Suspense fallback={<WorkoutFeedSkeleton />}>
+            <WorkoutPageNew
+              workout={selectedWorkout}
+              weekNumber={currentWeek}
+              onBack={() => setSelectedWorkout(null)}
+              profile={profile || { id: user.id }}
+              daysPerWeek={daysPerWeek}
+              onWeekUnlocked={() => loadProgram()}
+            />
+          </Suspense>
+        </div>
+        <BottomNav activeView="workouts" onViewChange={setView} />
+      </>
     );
   }
 
   // Week 12 retest & comparison screen
   if (showRetest && user) {
-    return <RetestScreen profileId={user.id} daysPerWeek={daysPerWeek} onBack={() => setShowRetest(false)} />;
+    return (
+      <>
+        <AppChrome showBack onBack={() => setShowRetest(false)} />
+        <div className="pt-chrome">
+          <Suspense fallback={<WorkoutFeedSkeleton />}>
+            <RetestScreen profileId={user.id} daysPerWeek={daysPerWeek} onBack={() => setShowRetest(false)} />
+          </Suspense>
+        </div>
+        <BottomNav activeView="workouts" onViewChange={setView} />
+      </>
+    );
   }
 
   const isHome = view === 'welcome';
@@ -237,20 +278,27 @@ function App() {
 
         {/* Signup Modal */}
         {showSignupForm && (
-          <SignupModal
-            onClose={() => setShowSignupForm(false)}
-            onSubmit={handleSignupSubmit}
-            loading={isSubmitting}
-          />
+          <Suspense fallback={null}>
+            <SignupModal
+              onClose={() => setShowSignupForm(false)}
+              onSubmit={handleSignupSubmit}
+              loading={isSubmitting}
+            />
+          </Suspense>
         )}
       </div>
     );
   }
 
-  return (
-    <div className="min-h-dvh overflow-x-hidden bg-app selection:bg-red-500/30">
-      <div className={`transition-all duration-500 ${selectedWorkout ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
+  const handleChromeBack = () => {
+    if (isIntro || isWorkouts) setView('welcome');
+  };
 
+  return (
+    <div className="min-h-dvh bg-app selection:bg-red-500/30">
+      <AppChrome showBack={!isHome} onBack={handleChromeBack} />
+
+      <main className={`pt-chrome transition-all duration-500 ${selectedWorkout ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
         <ScreenTransition screenKey={view}>
         {/* Home / Welcome Portal - Only shown to authenticated users */}
         {isHome && (
@@ -264,7 +312,6 @@ function App() {
         {/* Program Intro */}
         {isIntro && (
           <ProgramIntro
-              onBack={() => setView('welcome')}
               onStart={handleStartProgram}
               daysPerWeek={daysPerWeek}
             />
@@ -272,8 +319,10 @@ function App() {
 
         {/* Workouts Feed - Authenticated users only */}
         {isWorkouts && (
-          <div className="mx-auto max-w-7xl px-4 pt-5 pb-nav-space sm:px-6 sm:pt-6 md:pt-12">
-            {/* Redirect if not logged in */}
+          <div className="relative mx-auto max-w-lg px-3 pb-nav-space pt-2 sm:max-w-7xl sm:px-6 sm:pt-4 md:pt-8">
+            {/* Subtle ambient on workouts feed */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-brand/[0.06] to-transparent" />
+
             {!user ? (
               <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-8">
                 <div className="w-20 h-20 bg-brand-soft rounded-full flex items-center justify-center text-brand border border-brand/20">
@@ -289,57 +338,31 @@ function App() {
               </div>
             ) : (
               <>
-                <div className={`mb-4 relative z-50 sm:mb-8`}>
-                  <Header
-                    onSignup={() => setShowSignupForm(true)}
-                    showAuthButtons={false}
-                  />
-                </div>
-
-                <div className="space-y-3.5 px-1 sm:space-y-8 sm:px-0">
-                  {/* Title Section — greeting and status share a row on mobile */}
-                  <div className="space-y-2 px-1 sm:space-y-4 sm:px-2">
-                    <div className="flex items-end justify-between gap-2.5 sm:gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setView('welcome')}
-                        aria-label={t('common.backToHome')}
-                        className="grid h-9 w-9 shrink-0 place-items-center self-center rounded-full border border-hair bg-surface-2 text-txt-mid transition-colors hover:text-txt-hi active:scale-95 rtl:rotate-180 sm:h-10 sm:w-10"
-                      >
-                        <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </button>
-
-                      <div className="min-w-0 flex-1 space-y-1 sm:space-y-2">
-                        {(profile?.fullName || user?.user_metadata?.full_name || user?.email) && (
-                          <div className="hidden sm:block">
-                            <Pill tone="brand" dot>
-                              {(profile?.fullName || user?.user_metadata?.full_name || user?.email)?.split(' ')[0]}
-                            </Pill>
-                          </div>
-                        )}
-                        <h2 className="font-display text-2xl font-black italic tracking-tight uppercase leading-[0.95] text-txt-hi sm:text-display-lg">
-                          {t('app.hello')} <span className="text-brand">{(profile?.fullName || user?.user_metadata?.full_name || user?.email)?.split(' ')[0] || t('app.athlete')}</span>
-                        </h2>
-                        <h3 className="font-display text-[11px] font-black italic tracking-tight uppercase leading-none text-txt-lo sm:text-xl md:text-2xl">
-                          {t('workout.title')}
-                        </h3>
-                      </div>
-
-                      <div className="flex shrink-0 items-center gap-1.5 rounded-lg bg-grad-red px-2.5 py-1.5 shadow-red sm:hidden">
-                        <span className="h-1 w-1 rounded-full bg-white animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-white">{t('workout.week')} {currentWeek}</span>
-                      </div>
+                <div className="relative space-y-2.5 sm:space-y-6">
+                  {/* Compact header */}
+                  <div className="flex items-center justify-between gap-2 px-0.5">
+                    <div className="min-w-0 flex-1">
+                      <h2 className="font-display text-lg font-black italic uppercase leading-none tracking-tight text-txt-hi sm:text-display-lg">
+                        {t('app.hello')}{' '}
+                        <span className="text-brand">
+                          {(profile?.fullName || user?.user_metadata?.full_name || user?.email)?.split(' ')[0] || t('app.athlete')}
+                        </span>
+                      </h2>
+                      <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-txt-lo sm:text-[11px]">
+                        {t('workout.title')}
+                      </p>
                     </div>
 
-                    <div className="hidden flex-wrap items-center gap-2 sm:flex">
-                      <div className="flex items-center gap-2 bg-grad-red px-4 py-2 rounded-xl shadow-red">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                        <span className="text-[11px] font-black uppercase tracking-widest text-white">{t('workout.week')} {currentWeek}</span>
-                      </div>
-                      <div className="flex items-center gap-2 bg-glass px-4 py-2 rounded-xl border border-hair">
-                        <span className="text-[11px] font-black uppercase tracking-widest text-txt-mid italic">{t('app.activeSystem')}</span>
-                      </div>
-                    </div>
+                    <motion.div
+                      className="flex shrink-0 items-center gap-1 rounded-full bg-grad-red px-2 py-1 shadow-red"
+                      animate={{ scale: [1, 1.03, 1] }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      <span className="h-1 w-1 rounded-full bg-white" />
+                      <span className="text-[8px] font-black uppercase tracking-widest text-white sm:text-[9px]">
+                        {t('workout.week')} {currentWeek}
+                      </span>
+                    </motion.div>
                   </div>
 
                   {!programState ? (
@@ -356,28 +379,52 @@ function App() {
                         />
                       </div>
 
-                      {lockedNotice && (
-                        <div className="flex items-start gap-3 rounded-2xl border border-brand/30 bg-brand-soft px-4 py-3">
-                          <Lock className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-xs font-semibold leading-relaxed text-txt-hi">
-                              {t('week.lockedNotice')}
+                      {user && (() => {
+                        const { done, total } = getWeekSetProgress(user.id, currentWeek, daysPerWeek);
+                        const nextWorkout = getNextWorkoutName(user.id, currentWeek, daysPerWeek, t);
+                        return (
+                          <div className="space-y-1 px-0.5">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-txt-mid">
+                              {t('feed.setsProgress', { done, total })}
                             </p>
-                            <button
-                              type="button"
-                              onClick={() => setLockedNotice(false)}
-                              className="mt-2 text-[10px] font-black uppercase tracking-wider text-brand"
-                            >
-                              {t('common.gotIt')}
-                            </button>
+                            {nextWorkout && (
+                              <p className="text-[10px] font-black uppercase tracking-wide text-brand">
+                                {t('feed.nextUp', { workout: nextWorkout })}
+                              </p>
+                            )}
                           </div>
-                        </div>
+                        );
+                      })()}
+
+                      {currentWeek === 6 && !week6Dismissed && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-start justify-between gap-2 rounded-2xl border border-brand/25 bg-brand/10 px-3 py-2.5"
+                        >
+                          <p className="text-[10px] leading-relaxed text-txt-mid sm:text-xs">
+                            {t('feed.week6Banner')}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              dismissWeek6Banner();
+                              setWeek6Dismissed(true);
+                            }}
+                            className="shrink-0 text-[9px] font-black uppercase tracking-wider text-brand"
+                          >
+                            {t('common.gotIt')}
+                          </button>
+                        </motion.div>
                       )}
 
                       {currentWeek === 12 && (
-                        <button
+                        <motion.button
+                          type="button"
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() => setShowRetest(true)}
-                          className="flex w-full items-center justify-between rounded-2xl border border-brand/30 bg-brand-soft px-5 py-4 transition-colors hover:bg-brand/20"
+                          className="flex w-full items-center justify-between rounded-2xl border border-brand/30 bg-brand-soft/60 px-4 py-3 backdrop-blur-sm transition-colors hover:bg-brand/15"
                         >
                           <span className="flex items-center gap-3">
                             <Trophy className="h-5 w-5 text-brand" />
@@ -386,14 +433,14 @@ function App() {
                             </span>
                           </span>
                           <span className="text-brand rtl:rotate-180">→</span>
-                        </button>
+                        </motion.button>
                       )}
 
                       <motion.div
                         variants={listVariants}
                         initial="hidden"
                         animate="show"
-                        className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
+                        className="flex flex-col gap-2 sm:grid sm:grid-cols-2 sm:gap-3 lg:grid-cols-3 lg:gap-4"
                       >
                         {split.map((workout) => (
                           <WorkoutCard
@@ -409,10 +456,18 @@ function App() {
                     </>
                   )}
 
-                  <div className="pt-4 flex justify-center sm:pt-10">
+                  <div className="flex flex-col items-center gap-2 pt-2 sm:pt-6">
                     <button
+                      type="button"
+                      onClick={() => setShowWorkoutCoach(true)}
+                      className="text-[8px] font-black uppercase tracking-[0.25em] text-txt-lo transition-colors hover:text-brand"
+                    >
+                      {t('feed.howProgress')}
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => setShowHowItWorks(true)}
-                      className="flex items-center gap-2 text-[9px] font-black text-txt-lo hover:text-txt-hi uppercase tracking-[0.4em] transition-all"
+                      className="flex items-center gap-1.5 rounded-full border border-hair bg-surface-2/50 px-3 py-1.5 text-[8px] font-black uppercase tracking-[0.3em] text-txt-lo transition-all hover:border-brand/30 hover:text-txt-hi active:scale-95"
                     >
                       <Circle className="w-3.5 h-3.5" />
                       <Info className="w-3.5 h-3.5" />
@@ -425,14 +480,10 @@ function App() {
           </div>
         )}
         </ScreenTransition>
-      </div>
+      </main>
 
-      {/* Persistent Bottom Navigation.
-          Must stay outside the scaled wrapper above: a CSS transform on an ancestor
-          makes `fixed` resolve against that element instead of the viewport. */}
-      {!isHome && (
-        <BottomNav activeView={view} onViewChange={setView} />
-      )}
+      {/* Persistent bottom navigation on every authenticated screen. */}
+      <BottomNav activeView={view} onViewChange={setView} />
 
       {/* Auth Choice Modal */}
       {showAuthChoice && (
@@ -452,17 +503,31 @@ function App() {
 
       {/* Signup Modal */}
       {showSignupForm && (
-        <SignupModal
-          onClose={() => setShowSignupForm(false)}
-          onSubmit={handleSignupSubmit}
-          loading={isSubmitting}
-        />
+        <Suspense fallback={null}>
+          <SignupModal
+            onClose={() => setShowSignupForm(false)}
+            onSubmit={handleSignupSubmit}
+            loading={isSubmitting}
+          />
+        </Suspense>
       )}
 
       {showHowItWorks && (
-        <HowItWorksModal
-          onClose={() => setShowHowItWorks(false)}
-        />
+        <Suspense fallback={null}>
+          <HowItWorksModal onClose={() => setShowHowItWorks(false)} />
+        </Suspense>
+      )}
+
+      {showWorkoutCoach && (
+        <Suspense fallback={null}>
+          <WorkoutCoachModal onClose={() => setShowWorkoutCoach(false)} />
+        </Suspense>
+      )}
+
+      {lockedWeekTarget !== null && (
+        <Suspense fallback={null}>
+          <LockedWeekModal week={lockedWeekTarget} onClose={() => setLockedWeekTarget(null)} />
+        </Suspense>
       )}
     </div>
   );

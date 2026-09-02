@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
-import { Mail, KeyRound, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, KeyRound, ShieldCheck, ArrowRight, Loader2, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button, Eyebrow, Input, Field, BrandMark } from './ui';
+import LanguageToggle from './LanguageToggle';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -93,7 +94,19 @@ export default function LoginPage() {
             <div className="ambient-streak pointer-events-none absolute -left-[30%] -top-[10%] h-[46%] w-[160%]" />
 
             <div className="relative z-10 w-full max-w-md">
-                <div className="mb-7 flex animate-rise justify-center opacity-0" style={{ animationDelay: '.05s' }}>
+                <div className="mb-6 flex animate-rise items-center justify-between opacity-0" style={{ animationDelay: '.05s' }}>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/')}
+                        aria-label={t('common.back')}
+                        className="grid h-9 w-9 place-items-center rounded-full border border-hair bg-surface-2 text-txt-mid transition-colors hover:text-txt-hi active:scale-95 rtl:rotate-180"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                    </button>
+                    <LanguageToggle />
+                </div>
+
+                <div className="mb-7 flex animate-rise justify-center opacity-0" style={{ animationDelay: '.08s' }}>
                     <BrandMark />
                 </div>
 

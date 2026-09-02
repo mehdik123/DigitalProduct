@@ -205,6 +205,95 @@ export const translations: Translations = {
         ar: 'فهمت!'
     },
 
+    // First-time workout coach (train tab)
+    'coach.title': {
+        en: 'How to progress',
+        ar: 'كيفاش تتقدم',
+        fr: 'Comment progresser',
+    },
+    'coach.subtitle': {
+        en: '3 steps. Takes 30 seconds to learn.',
+        ar: '3 خطوات. 30 ثانية باش تفهم.',
+        fr: '3 étapes. 30 secondes pour comprendre.',
+    },
+    'coach.step1.title': {
+        en: 'Pick a workout',
+        ar: 'اختار التمرين',
+        fr: 'Choisis une séance',
+    },
+    'coach.step1.desc': {
+        en: 'Tap any day card (e.g. Upper Body 1) to open it.',
+        ar: 'كليكي على أي يوم (مثلا Upper Body 1) باش تفتحو.',
+        fr: 'Appuie sur une carte de jour (ex. Upper Body 1) pour l\u2019ouvrir.',
+    },
+    'coach.step2.title': {
+        en: 'Log every set',
+        ar: 'سجل كل السلسلة',
+        fr: 'Enregistre chaque série',
+    },
+    'coach.step2.desc': {
+        en: 'Enter reps and weight for each set, then tap Save on that exercise.',
+        ar: 'دخل العدات والوزن لكل سلسلة، ومن بعد كليكي Save فذاك التمرين.',
+        fr: 'Saisis reps et charge pour chaque série, puis appuie sur Enregistrer.',
+    },
+    'coach.step3.title': {
+        en: 'Unlock next week',
+        ar: 'فتح السيمانة الجاية',
+        fr: 'Débloque la semaine suivante',
+    },
+    'coach.step3.desc': {
+        en: 'Complete every workout day in Week 1 with all sets logged. Week 2 opens automatically.',
+        ar: 'كمل كل أيام السيمانة 1 وسجل كل السلاسل. السيمانة 2 كتفتح بوحدها.',
+        fr: 'Termine tous les jours de la semaine 1 avec toutes les séries enregistrées. La semaine 2 s\u2019ouvre automatiquement.',
+    },
+    'coach.tip': {
+        en: 'Tip: the ring at the top shows how many sets you\u2019ve logged this week.',
+        ar: 'نصيحة: الدائرة فالفوق كتوريك شحال من سلسلة سجلتي هاد السيمانة.',
+        fr: 'Astuce : l\u2019anneau en haut montre combien de séries tu as enregistrées cette semaine.',
+    },
+    'coach.start': {
+        en: 'Start training',
+        ar: 'بدا التمرين',
+        fr: 'Commencer',
+    },
+
+    'feed.setsProgress': {
+        en: '{done}/{total} sets logged this week',
+        ar: '{done}/{total} سلسلة مسجلة هاد السيمانة',
+        fr: '{done}/{total} séries enregistrées cette semaine',
+    },
+    'feed.nextUp': {
+        en: 'Next up: {workout}',
+        ar: 'الجاي: {workout}',
+        fr: 'Prochaine séance : {workout}',
+    },
+    'feed.howProgress': {
+        en: 'How progress works',
+        ar: 'كيفاش التقدم',
+        fr: 'Comment progresser',
+    },
+    'feed.week6Banner': {
+        en: 'Halfway through the program. Week 6 is your deload phase. Stay consistent.',
+        ar: 'نص البرنامج. السيمانة 6 فاز ديلود. كمل بنفس الروتين.',
+        fr: 'Mi parcours. La semaine 6 est une phase de décharge. Reste régulier.',
+    },
+
+    'toast.firstSet': {
+        en: 'First set logged. Keep going.',
+        ar: 'أول سلسلة تسجلت. كمل.',
+        fr: 'Première série enregistrée. Continue.',
+    },
+    'toast.dayComplete': {
+        en: 'Workout day complete. Nice work.',
+        ar: 'نهيت هاد اليوم. مزيان.',
+        fr: 'Séance du jour terminée. Beau travail.',
+    },
+    'toast.emptySave': {
+        en: 'Enter the reps and weight you actually used before saving.',
+        ar: 'دخل العدات والوزن اللي استعملتي قبل ما تسجل.',
+        fr: 'Saisis les reps et la charge réelles avant d\u2019enregistrer.',
+    },
+
     // Success Modal
     'signup.success.title': {
         en: 'Account Created!',
@@ -666,14 +755,16 @@ export const translations: Translations = {
     'week.label': { en: 'Week', ar: 'السيمانة' },
     'week.locked.title': { en: 'Week Locked', ar: 'السيمانة مقفولة' },
     'week.locked.message': {
-        en: 'Finish logging the current week to unlock this one.',
-        ar: 'كمل تسجيل السيمانة الحالية باش تفتح هادي.'
+        en: 'Finish every workout in your current week and log all sets. The next week opens automatically.',
+        ar: 'كمل كل التمارين فالسيمانة الحالية وسجل كل السلاسل. السيمانة الجاية كتفتح بوحدها.',
+        fr: 'Termine toutes les séances de ta semaine en cours et enregistre toutes les séries. La semaine suivante s\u2019ouvre automatiquement.',
     },
     'week.active': { en: 'In Progress', ar: 'خدّامة دابا' },
     'week.completed': { en: 'Completed', ar: 'سالات' },
     'week.lockedNotice': {
-        en: 'This week is locked. Complete every workout of your current week and log the weights you used — once the whole week is done, the next week unlocks automatically.',
-        ar: 'هاد السيمانة مقفولة. كمل جميع تمارين السيمانة الحالية وسجّل الأثقال اللي استعملتي — منين تكمل السيمانة كاملة، السيمانة الجاية كتفتح بوحدها.'
+        en: 'Log every set in your current week. When the full week is done, the next week unlocks automatically.',
+        ar: 'سجل كل سلسلة فالسيمانة الحالية. منين تكمل السيمانة كاملة، السيمانة الجاية كتفتح بوحدها.',
+        fr: 'Enregistre chaque série de ta semaine en cours. Quand la semaine est terminée, la suivante se débloque automatiquement.',
     },
 
     // Targets & logging
@@ -705,8 +796,9 @@ export const translations: Translations = {
     'unlock.title': { en: 'Week Complete!', ar: 'كملتي السيمانة!' },
     'unlock.message': { en: 'Next week unlocked. New targets are ready.', ar: 'السيمانة الجاية تفتحات. الأهداف الجديدة واجدة.' },
     'unlock.weekReady': {
-        en: 'Nice work — Week {week} is now unlocked.',
-        ar: 'مبروك — السيمانة {week} تفتحات دابا.'
+        en: 'Nice work. Week {week} is now unlocked.',
+        ar: 'مبروك. السيمانة {week} تفتحات دابا.',
+        fr: 'Bien joué. La semaine {week} est maintenant débloquée.',
     },
     'unlock.whatChanged': { en: "What's new this week", ar: 'أشنو الجديد فهاد السيمانة' },
     'unlock.point1': {

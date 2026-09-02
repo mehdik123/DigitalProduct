@@ -5,6 +5,8 @@ import { TOTAL_WEEKS, getPhase } from '../data/programConfig';
 import { WeekStatus } from '../services/workoutService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LockBadge } from './ui';
+import { haptic } from '../lib/haptics';
+import { spring, tapSubtle } from '../design/motion';
 import { cn } from '../lib/utils';
 
 interface WeekSelectorProps {
@@ -21,7 +23,7 @@ export default function WeekSelector({ currentWeek, weeks, onWeekSelect, onLocke
 
     const scroll = (direction: 'left' | 'right') => {
         scrollRef.current?.scrollBy({
-            left: direction === 'left' ? -160 : 160,
+            left: direction === 'left' ? -120 : 120,
             behavior: 'smooth',
         });
     };
@@ -31,16 +33,17 @@ export default function WeekSelector({ currentWeek, weeks, onWeekSelect, onLocke
     return (
         <div className="relative w-full">
             <button
+                type="button"
                 onClick={() => scroll('left')}
-                className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center bg-surface-1/70 backdrop-blur-xl hover:bg-brand rounded-full border border-hair transition-all active:scale-90 rtl:rotate-180"
+                className="absolute -left-1 top-1/2 z-20 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-hair bg-surface-1/80 backdrop-blur-xl transition-all hover:border-brand/40 hover:bg-brand active:scale-90 md:flex rtl:rotate-180"
                 aria-label="Scroll left"
             >
-                <ChevronLeft className="w-5 h-5 text-white" />
+                <ChevronLeft className="h-4 w-4 text-txt-hi" />
             </button>
 
             <div
                 ref={scrollRef}
-                className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth snap-x py-4 px-2 md:px-0"
+                className="scrollbar-hide flex snap-x gap-2 overflow-x-auto scroll-smooth px-0.5 py-1"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {list.map((week) => {
@@ -52,29 +55,50 @@ export default function WeekSelector({ currentWeek, weeks, onWeekSelect, onLocke
                     return (
                         <motion.button
                             key={week}
-                            whileTap={{ scale: 0.94 }}
-                            onClick={() => (isLocked ? onLockedSelect?.(week) : onWeekSelect(week))}
+                            type="button"
+                            whileHover={!isLocked ? { y: -2, scale: 1.04 } : undefined}
+                            whileTap={isLocked ? { scale: 0.96 } : tapSubtle}
+                            transition={spring.snappy}
+                            onClick={() => {
+                                haptic.light();
+                                if (isLocked) onLockedSelect?.(week);
+                                else onWeekSelect(week);
+                            }}
                             aria-disabled={isLocked}
+                            aria-current={isSelected ? 'true' : undefined}
                             className={cn(
-                                'relative flex-shrink-0 snap-center w-[72px] h-24 rounded-2xl border p-2 sm:w-[80px] sm:h-28 sm:rounded-3xl sm:p-2.5',
-                                'flex flex-col items-center justify-between text-center transition-colors duration-300',
+                                'relative flex h-[4.5rem] w-[3.4rem] shrink-0 snap-center flex-col items-center justify-between rounded-[1.1rem] border p-1.5 text-center transition-colors duration-300 sm:h-[4.75rem] sm:w-[3.6rem]',
                                 isSelected
-                                    ? 'bg-brand border-white/20 shadow-[0_0_28px_rgba(255,45,85,0.4)]'
+                                    ? 'border-white/25 bg-grad-red shadow-[0_6px_24px_rgba(255,45,85,0.35)]'
                                     : status === 'completed'
-                                        ? 'bg-success/10 border-success/25'
+                                        ? 'border-success/30 bg-success/[0.08]'
                                         : isLocked
-                                            ? 'bg-white/[0.03] border-hair cursor-not-allowed opacity-60'
-                                            : 'bg-surface-2 border-hair hover:border-white/25'
+                                            ? 'cursor-not-allowed border-hair bg-white/[0.02] opacity-55'
+                                            : 'border-white/10 bg-surface-2/80 hover:border-brand/30'
                             )}
                         >
+                            {isSelected && (
+                                <motion.span
+                                    layoutId="week-pill"
+                                    className="pointer-events-none absolute inset-0 rounded-[1.1rem] ring-1 ring-white/20"
+                                    transition={spring.smooth}
+                                />
+                            )}
+
                             <div className="self-end rtl:self-start">
-                                <LockBadge state={isSelected ? 'active' : status} size={12} />
+                                <LockBadge state={isSelected ? 'active' : status} size={10} />
                             </div>
 
                             <span
                                 className={cn(
-                                    'font-display tabular-nums text-2xl font-black italic leading-none sm:text-3xl',
-                                    isSelected ? 'text-white' : status === 'completed' ? 'text-success' : isLocked ? 'text-txt-lo' : 'text-white'
+                                    'font-display text-xl font-black italic leading-none tabular-nums sm:text-2xl',
+                                    isSelected
+                                        ? 'text-white'
+                                        : status === 'completed'
+                                            ? 'text-success'
+                                            : isLocked
+                                                ? 'text-txt-lo'
+                                                : 'text-txt-hi'
                                 )}
                             >
                                 {week}
@@ -82,8 +106,8 @@ export default function WeekSelector({ currentWeek, weeks, onWeekSelect, onLocke
 
                             <span
                                 className={cn(
-                                    'text-[8px] font-bold uppercase tracking-wider leading-tight line-clamp-2',
-                                    isSelected ? 'text-white/90' : 'text-txt-lo'
+                                    'line-clamp-2 text-[6.5px] font-bold uppercase leading-tight tracking-wide sm:text-[7px]',
+                                    isSelected ? 'text-white/85' : 'text-txt-lo'
                                 )}
                             >
                                 {t(phase.phaseLabelKey)}
@@ -94,11 +118,12 @@ export default function WeekSelector({ currentWeek, weeks, onWeekSelect, onLocke
             </div>
 
             <button
+                type="button"
                 onClick={() => scroll('right')}
-                className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center bg-surface-1/70 backdrop-blur-xl hover:bg-brand rounded-full border border-hair transition-all active:scale-90 rtl:rotate-180"
+                className="absolute -right-1 top-1/2 z-20 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-hair bg-surface-1/80 backdrop-blur-xl transition-all hover:border-brand/40 hover:bg-brand active:scale-90 md:flex rtl:rotate-180"
                 aria-label="Scroll right"
             >
-                <ChevronRight className="w-5 h-5 text-white" />
+                <ChevronRight className="h-4 w-4 text-txt-hi" />
             </button>
         </div>
     );

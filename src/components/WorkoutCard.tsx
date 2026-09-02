@@ -1,7 +1,7 @@
-import { Dumbbell, Clock, Zap, ArrowRight, Check } from 'lucide-react';
+import { Dumbbell, Clock, Zap, ChevronRight, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { WorkoutDay } from '../types/workout';
-import { itemVariants, spring } from '../design/motion';
+import { itemVariants, spring, tapSubtle } from '../design/motion';
 import { haptic } from '../lib/haptics';
 import { useLanguage } from '../contexts/LanguageContext';
 import { dayName, difficultyLabel, localizeMinutes } from '../i18n/content';
@@ -15,83 +15,91 @@ interface WorkoutCardProps {
 
 export default function WorkoutCard({ workout, onClick, completed = false }: WorkoutCardProps) {
   const { t } = useLanguage();
+
   return (
     <motion.button
       type="button"
       variants={itemVariants}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -3, scale: 1.01 }}
+      whileTap={tapSubtle}
       transition={spring.snappy}
       onClick={() => {
         haptic.light();
         onClick();
       }}
       className={cn(
-        'press group relative w-full overflow-hidden rounded-2xl border text-left transition-colors duration-300 sm:rounded-3xl',
+        'group relative w-full overflow-hidden rounded-[1.35rem] border text-left backdrop-blur-sm transition-[border-color,box-shadow] duration-300',
         completed
-          ? 'border-success/40 bg-success/[0.06] hover:border-success/60'
-          : 'border-hair bg-surface-1 hover:border-brand/40 active:border-brand/30'
+          ? 'border-success/35 bg-success/[0.07] shadow-[0_4px_24px_rgba(34,197,94,0.08)]'
+          : 'border-white/10 bg-surface-1/80 shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:border-brand/45 hover:shadow-[0_8px_32px_rgba(255,45,85,0.15)]'
       )}
     >
-      <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-brand-soft opacity-0 blur-[60px] transition-opacity duration-500 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-brand/25 opacity-0 blur-3xl transition-all duration-500 group-hover:opacity-100 group-hover:scale-110" />
 
-      <div className="relative z-10 space-y-2.5 p-3 sm:space-y-5 sm:p-5">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0 flex-1 space-y-1 sm:space-y-1.5">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="rounded-md border border-brand/20 bg-brand-soft px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.15em] text-brand sm:text-[9px]">
-                {t('workout.series')} {workout.id % 2 === 0 ? 'B' : 'A'}
-              </span>
-              <span className="rounded-md border border-hair bg-glass px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider text-txt-mid sm:text-[9px]">
-                {difficultyLabel(t, workout.difficulty)}
-              </span>
-              {completed && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-success/40 bg-success/15 px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.15em] text-success sm:text-[9px]">
-                  <Check className="h-3 w-3" strokeWidth={3} />
-                  {t('workout.done')}
-                </span>
-              )}
-            </div>
-            <h3 className="font-display text-xl font-black uppercase italic tracking-tight text-txt-hi transition-colors group-hover:text-brand sm:text-display-md">
-              {dayName(t, workout.name)}
-            </h3>
-          </div>
-          <div
-            className={cn(
-              'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border shadow-soft transition-transform group-hover:scale-105 sm:h-12 sm:w-12 sm:rounded-2xl',
-              completed
-                ? 'border-success/40 bg-success/15 text-success'
-                : 'border-hair bg-surface-3 text-brand'
-            )}
-          >
-            {completed ? (
-              <Check className="h-4 w-4 sm:h-6 sm:w-6" strokeWidth={3} />
-            ) : (
-              <Dumbbell className="h-4 w-4 fill-current sm:h-6 sm:w-6" />
-            )}
-          </div>
-        </div>
+      <div className="relative z-10 flex items-center gap-2.5 p-2.5 sm:gap-3 sm:p-3.5">
+        {/* Icon tile */}
+        <motion.div
+          className={cn(
+            'flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border shadow-soft sm:h-11 sm:w-11',
+            completed
+              ? 'border-success/40 bg-success/15 text-success'
+              : 'border-brand/25 bg-gradient-to-br from-brand/20 to-brand/5 text-brand'
+          )}
+          whileHover={{ rotate: completed ? 0 : [-2, 2, 0] }}
+          transition={{ duration: 0.4 }}
+        >
+          {completed ? (
+            <Check className="h-4 w-4" strokeWidth={3} />
+          ) : (
+            <Dumbbell className="h-4 w-4 fill-current" />
+          )}
+        </motion.div>
 
-        <div className="flex items-center justify-between gap-2 border-t border-hair pt-2 sm:pt-4">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-txt-lo">
-            <div className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5 shrink-0 text-brand" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{localizeMinutes(t, workout.duration)}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Zap className="h-3.5 w-3.5 shrink-0 text-brand" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{workout.exercises.length} {t('workout.drills')}</span>
-            </div>
-          </div>
-
-          <div className={cn('flex shrink-0 items-center gap-1.5', completed ? 'text-success' : 'text-brand')}>
-            <span className="hidden text-[9px] font-black uppercase tracking-[0.15em] sm:inline">
-              {completed ? t('workout.review') : t('workout.start')}
+        {/* Main content */}
+        <div className="min-w-0 flex-1 space-y-1">
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="rounded-full border border-brand/25 bg-brand/10 px-1.5 py-px text-[7px] font-black uppercase tracking-[0.14em] text-brand sm:text-[8px]">
+              {t('workout.series')} {workout.id % 2 === 0 ? 'B' : 'A'}
             </span>
-            <div className={cn('rounded-full p-1.5', completed ? 'bg-success/15' : 'bg-brand-soft')}>
-              <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180 sm:h-4 sm:w-4" />
-            </div>
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-1.5 py-px text-[7px] font-bold uppercase tracking-wider text-txt-lo sm:text-[8px]">
+              {difficultyLabel(t, workout.difficulty)}
+            </span>
+            {completed && (
+              <span className="inline-flex items-center gap-0.5 rounded-full border border-success/35 bg-success/10 px-1.5 py-px text-[7px] font-black uppercase tracking-[0.12em] text-success">
+                <Check className="h-2.5 w-2.5" strokeWidth={3} />
+                {t('workout.done')}
+              </span>
+            )}
+          </div>
+
+          <h3 className="truncate font-display text-base font-black uppercase italic leading-none tracking-tight text-txt-hi transition-colors group-hover:text-brand sm:text-lg">
+            {dayName(t, workout.name)}
+          </h3>
+
+          <div className="flex items-center gap-2.5 text-txt-lo">
+            <span className="inline-flex items-center gap-0.5 text-[9px] font-bold uppercase tracking-wide">
+              <Clock className="h-3 w-3 shrink-0 text-brand/80" />
+              {localizeMinutes(t, workout.duration)}
+            </span>
+            <span className="h-0.5 w-0.5 rounded-full bg-txt-lo/50" />
+            <span className="inline-flex items-center gap-0.5 text-[9px] font-bold uppercase tracking-wide">
+              <Zap className="h-3 w-3 shrink-0 text-brand/80" />
+              {workout.exercises.length} {t('workout.drills')}
+            </span>
           </div>
         </div>
+
+        {/* CTA arrow */}
+        <motion.div
+          className={cn(
+            'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
+            completed ? 'bg-success/15 text-success' : 'bg-grad-red text-white shadow-red'
+          )}
+          whileHover={{ scale: 1.08, x: 2 }}
+          transition={spring.snappy}
+        >
+          <ChevronRight className="h-3.5 w-3.5 rtl:rotate-180" strokeWidth={3} />
+        </motion.div>
       </div>
     </motion.button>
   );

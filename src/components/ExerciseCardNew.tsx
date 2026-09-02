@@ -2,14 +2,14 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Loader2, Play, Timer, Minus, Plus, TrendingUp } from 'lucide-react';
 import { Exercise, ExerciseSet } from '../types/workout';
-import { getPhase } from '../data/programConfig';
 import { useLanguage } from '../contexts/LanguageContext';
 import { exerciseName, localizeMinutes } from '../i18n/content';
-import { spring } from '../design/motion';
+import { itemVariants, listVariants, spring, tapSubtle } from '../design/motion';
 import { haptic } from '../lib/haptics';
 import { cn } from '../lib/utils';
 import { VideoModal } from './ui/VideoModal';
 import { getYouTubeThumbnails } from '../lib/youtube';
+import { toast } from 'sonner';
 
 interface ExerciseCardNewProps {
   exercise: Exercise;
@@ -30,7 +30,6 @@ export default function ExerciseCardNew({
 }: ExerciseCardNewProps) {
   const { t } = useLanguage();
   const localizedName = exerciseName(t, exercise.name);
-  const phase = getPhase(weekNumber);
   const isCalisthenics = exercise.type === 'calisthenics';
 
   const build = (): ExerciseSet[] => {
@@ -55,8 +54,6 @@ export default function ExerciseCardNew({
   const [showVideo, setShowVideo] = useState(false);
   const [coverIndex, setCoverIndex] = useState(0);
 
-  // Prefer the video's own thumbnail: it always depicts this exercise, unlike
-  // the stock photos, which were generic and in several cases had gone 404.
   const coverCandidates = useMemo(() => {
     const candidates = getYouTubeThumbnails(exercise.videoUrl);
     if (exercise.imageUrl) candidates.push(exercise.imageUrl);
@@ -76,7 +73,6 @@ export default function ExerciseCardNew({
   }, [savedSets, weekNumber]);
 
   const targetWeight = sets[0]?.targetWeight;
-  const repRange = phase.repRange;
 
   const updateSet = (i: number, field: 'reps' | 'weight', value: number) => {
     setSets((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
@@ -102,7 +98,12 @@ export default function ExerciseCardNew({
   };
 
   const handleSave = async () => {
-    // 0 is a valid value. Saving logs every set in the exercise.
+    const allEmpty = sets.every((s) => s.reps === 0 && s.weight === 0);
+    if (allEmpty) {
+      toast.error(t('toast.emptySave'));
+      return;
+    }
+
     const payload = sets.map((s) => ({
       ...s,
       rpe: 8,
@@ -116,8 +117,9 @@ export default function ExerciseCardNew({
       setSets(payload);
       setIsSaved(true);
       haptic.success();
-    } catch (e: any) {
-      alert(e.message || 'Failed to save');
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Failed to save';
+      alert(message);
     } finally {
       setIsSaving(false);
     }
@@ -128,26 +130,26 @@ export default function ExerciseCardNew({
   return (
     <motion.div
       layout
-      className="overflow-hidden rounded-2xl border border-hair bg-surface-1 shadow-soft sm:rounded-3xl"
+      variants={itemVariants}
+      whileHover={{ y: -2 }}
+      transition={spring.snappy}
+      className="group overflow-hidden rounded-[1.35rem] border border-white/10 bg-surface-1/90 shadow-[0_4px_24px_rgba(0,0,0,0.2)] backdrop-blur-sm transition-[border-color,box-shadow] hover:border-brand/30 hover:shadow-[0_8px_28px_rgba(255,45,85,0.12)]"
     >
-      {/* Cover — 16:9 like a YouTube thumbnail, and tappable to play. */}
-      <div className="group relative aspect-video overflow-hidden">
+      {/* Cover */}
+      <div className="relative aspect-video overflow-hidden">
         {cover ? (
           <img
             src={cover}
             alt=""
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
             loading="lazy"
             onError={() => setCoverIndex((i) => i + 1)}
           />
         ) : (
           <div className="h-full bg-gradient-to-br from-surface-3 to-surface-2" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-surface-1 via-surface-1/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand/20 to-transparent opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface-1 via-surface-1/50 to-transparent" />
 
-        {/* Full-cover tap target. The overlay above it is click-through so the
-            whole image plays the video, not just the play button. */}
         {exercise.videoUrl && (
           <button
             type="button"
@@ -161,45 +163,48 @@ export default function ExerciseCardNew({
         )}
 
         {exercise.videoUrl && (
-          <span className="pointer-events-none absolute left-1/2 top-1/2 z-20 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-grad-red text-white shadow-red transition-transform duration-300 group-active:scale-90 sm:h-14 sm:w-14">
-            <Play className="h-5 w-5 fill-current sm:h-6 sm:w-6" />
-          </span>
+          <motion.span
+            className="pointer-events-none absolute left-1/2 top-1/2 z-20 grid h-10 w-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-grad-red text-white shadow-red sm:h-11 sm:w-11"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            transition={spring.snappy}
+          >
+            <Play className="h-4 w-4 fill-current sm:h-5 sm:w-5" />
+          </motion.span>
         )}
 
-        <div className="pointer-events-none absolute bottom-2 left-2.5 right-2.5 z-20 sm:bottom-3 sm:left-3 sm:right-3">
+        <div className="pointer-events-none absolute bottom-2 left-2 right-2 z-20 sm:bottom-2.5 sm:left-2.5 sm:right-2.5">
           <div className="flex items-end justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2 sm:block">
-              <span className="inline-flex shrink-0 rounded bg-brand/90 px-1.5 py-0.5 font-display text-[9px] font-black italic uppercase text-white sm:rounded-md sm:px-2 sm:text-[10px]">
+            <div className="min-w-0 flex-1">
+              <span className="inline-flex rounded-full bg-brand/90 px-1.5 py-px text-[7px] font-black uppercase tracking-wider text-white sm:text-[8px]">
                 {t('log.set')} {index + 1}
               </span>
-              <h3 className="line-clamp-1 font-display text-base font-black italic uppercase leading-tight text-txt-hi sm:mt-1 sm:line-clamp-2 sm:text-xl">
+              <h3 className="mt-0.5 line-clamp-1 font-display text-sm font-black uppercase italic leading-tight text-txt-hi sm:text-base">
                 {localizedName}
               </h3>
             </div>
-            <div className="shrink-0 rounded-lg border border-hair bg-surface-2/90 px-2 py-1 text-center backdrop-blur-sm sm:rounded-xl sm:px-2.5 sm:py-1.5">
-              <div className="stat text-sm font-bold leading-none text-brand sm:text-lg">{completedCount}</div>
-              <div className="text-[8px] font-bold uppercase tracking-wider text-txt-lo">/{sets.length}</div>
+            <div className="flex shrink-0 items-center gap-0.5 rounded-full border border-white/15 bg-surface-2/90 px-2 py-1 backdrop-blur-sm">
+              <span className="stat text-xs font-bold leading-none text-brand sm:text-sm">{completedCount}</span>
+              <span className="text-[8px] font-bold text-txt-lo">/{sets.length}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="space-y-2.5 p-2.5 sm:space-y-3 sm:p-4">
-        {/* Target + rest chips */}
-        <div className="flex flex-wrap gap-1.5 sm:gap-2">
-          {(targetWeight && !isCalisthenics) && (
-            <Chip icon={<TrendingUp className="h-3.5 w-3.5" />} label={t('log.target')} value={`${targetWeight} kg`} tone="brand" />
-          )}
-          {repRange && (
-            <Chip label={t('log.reps')} value={`${repRange[0]} ${t('log.to')} ${repRange[1]}`} tone="coral" />
-          )}
-          {exercise.rest && (
-            <Chip icon={<Timer className="h-3.5 w-3.5" />} label={t('log.rest')} value={localizeMinutes(t, exercise.rest)} tone="emerald" />
-          )}
-        </div>
+      <div className="space-y-2 p-2 sm:p-2.5">
+        {(targetWeight && !isCalisthenics) || exercise.rest ? (
+          <div className="flex flex-wrap gap-1">
+            {targetWeight && !isCalisthenics && (
+              <Chip icon={<TrendingUp className="h-3 w-3" />} label={t('log.target')} value={`${targetWeight} kg`} tone="brand" />
+            )}
+            {exercise.rest && (
+              <Chip icon={<Timer className="h-3 w-3" />} label={t('log.rest')} value={localizeMinutes(t, exercise.rest)} tone="emerald" />
+            )}
+          </div>
+        ) : null}
 
-        {/* Sets */}
-        <div className="space-y-1.5 sm:space-y-2">
+        {/* Set rows */}
+        <motion.div className="space-y-1.5" variants={listVariants} initial="hidden" animate="show">
           <AnimatePresence initial={false}>
             {sets.map((set, i) => {
               const prev = prevSets?.find((p) => p.setNumber === set.setNumber);
@@ -207,39 +212,39 @@ export default function ExerciseCardNew({
                 <motion.div
                   key={set.setNumber}
                   layout
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={spring.smooth}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.005 }}
+                  whileTap={tapSubtle}
+                  transition={spring.snappy}
                   className={cn(
-                    'relative overflow-hidden rounded-xl border p-2 transition-colors sm:rounded-2xl sm:p-3',
+                    'relative overflow-hidden rounded-[1.1rem] border px-1.5 py-1.5 transition-colors sm:px-2',
                     set.completed
-                      ? 'border-emerald/40 bg-emerald/10 shadow-[0_0_24px_rgba(52,211,153,0.12)]'
-                      : 'border-hair bg-surface-2'
+                      ? 'border-success/35 bg-success/[0.08] shadow-[0_4px_16px_rgba(34,197,94,0.1)]'
+                      : 'border-white/10 bg-surface-2/80 hover:border-brand/25'
                   )}
                 >
                   {set.completed && (
-                    <motion.div
-                      layoutId={`glow-${exercise.id}-${set.setNumber}`}
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-r from-emerald/5 to-transparent"
-                    />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-success/5 to-transparent" />
                   )}
 
-                  <div className="relative flex items-center gap-2 sm:gap-3">
+                  <div className="relative flex items-center gap-1.5 sm:gap-2">
                     <motion.button
                       type="button"
+                      whileHover={{ scale: 1.06 }}
                       whileTap={{ scale: 0.9 }}
+                      transition={spring.snappy}
                       onClick={() => toggleComplete(i)}
                       className={cn(
-                        'grid h-10 w-9 shrink-0 place-items-center rounded-lg font-display text-sm font-black italic transition-colors sm:h-11 sm:w-11 sm:rounded-xl',
+                        'grid h-8 w-8 shrink-0 place-items-center rounded-full font-display text-xs font-black italic transition-colors sm:h-9 sm:w-9',
                         set.completed
-                          ? 'bg-emerald text-white shadow-[0_0_16px_rgba(52,211,153,0.4)]'
-                          : 'bg-surface-3 text-txt-mid ring-1 ring-hair hover:text-brand'
+                          ? 'bg-success text-white shadow-[0_0_12px_rgba(52,211,153,0.35)]'
+                          : 'border border-white/10 bg-surface-3 text-txt-mid hover:border-brand/30 hover:text-brand'
                       )}
                     >
-                      {set.completed ? <Check className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={3} /> : set.setNumber}
+                      {set.completed ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : set.setNumber}
                     </motion.button>
 
-                    <div className="grid flex-1 grid-cols-2 gap-1.5 sm:gap-2">
+                    <div className="grid min-w-0 flex-1 grid-cols-2 gap-1 sm:gap-1.5">
                       <StepperField
                         label={t('log.reps')}
                         value={set.reps}
@@ -260,7 +265,7 @@ export default function ExerciseCardNew({
                   </div>
 
                   {prev && (
-                    <p className="relative mt-1.5 pl-11 text-[10px] leading-none text-txt-lo sm:mt-2 sm:pl-14">
+                    <p className="relative mt-1 pl-9 text-[9px] leading-none text-txt-lo sm:pl-10">
                       {t('log.lastWeek')}:{' '}
                       <span className="stat font-semibold text-coral">
                         {isCalisthenics ? `${prev.reps} ${t('log.reps').toLowerCase()}` : `${prev.reps} × ${prev.weight} kg`}
@@ -271,34 +276,45 @@ export default function ExerciseCardNew({
               );
             })}
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         <motion.button
-          whileTap={{ scale: 0.97 }}
+          type="button"
+          whileHover={{ scale: 1.01 }}
+          whileTap={tapSubtle}
           transition={spring.snappy}
           onClick={handleSave}
           disabled={isSaving}
           className={cn(
-            'relative flex h-11 w-full items-center justify-center gap-2 overflow-hidden rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all sm:h-13 sm:rounded-2xl sm:py-3.5 sm:text-sm',
+            'relative flex h-10 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full text-[10px] font-black uppercase tracking-[0.18em] transition-all sm:h-11 sm:text-[11px]',
             isSaved
-              ? 'bg-emerald text-white shadow-[0_8px_28px_rgba(52,211,153,0.35)]'
+              ? 'bg-success text-white shadow-[0_6px_20px_rgba(52,211,153,0.3)]'
               : 'bg-grad-red text-white shadow-red',
             isSaving && 'opacity-80'
           )}
         >
-          {isSaving ? (
-            <>
-              <Loader2 className="h-5 w-5 animate-spin" /> {t('log.saving')}
-            </>
-          ) : isSaved ? (
-            <>
-              <Check className="h-5 w-5" /> {t('log.saved')}
-            </>
-          ) : savedSets?.length ? (
-            t('log.update')
-          ) : (
-            t('log.save')
+          {!isSaved && !isSaving && (
+            <motion.span
+              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              animate={{ x: ['-120%', '120%'] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1.5 }}
+            />
           )}
+          <span className="relative flex items-center gap-1.5">
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> {t('log.saving')}
+              </>
+            ) : isSaved ? (
+              <>
+                <Check className="h-4 w-4" /> {t('log.saved')}
+              </>
+            ) : savedSets?.length ? (
+              t('log.update')
+            ) : (
+              t('log.save')
+            )}
+          </span>
         </motion.button>
       </div>
 
@@ -324,16 +340,16 @@ function Chip({
   tone: 'brand' | 'coral' | 'emerald';
 }) {
   const styles = {
-    brand: 'border-brand/30 bg-brand-soft text-brand',
-    coral: 'border-coral/30 bg-coral/10 text-coral',
-    emerald: 'border-emerald/30 bg-emerald/10 text-emerald',
+    brand: 'border-brand/25 bg-brand/10 text-brand',
+    coral: 'border-coral/25 bg-coral/10 text-coral',
+    emerald: 'border-emerald/25 bg-emerald/10 text-emerald',
   };
   return (
-    <div className={cn('inline-flex items-center gap-1 rounded-lg border px-2 py-1 sm:gap-1.5 sm:rounded-xl sm:px-2.5 sm:py-1.5', styles[tone])}>
+    <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5', styles[tone])}>
       {icon}
-      <span className="text-[8px] font-bold uppercase tracking-wider opacity-80 sm:text-[9px]">{label}</span>
-      <span className="stat text-[11px] font-bold text-txt-hi sm:text-xs">{value}</span>
-    </div>
+      <span className="text-[7px] font-bold uppercase tracking-wider opacity-80 sm:text-[8px]">{label}</span>
+      <span className="stat text-[10px] font-bold text-txt-hi sm:text-[11px]">{value}</span>
+    </span>
   );
 }
 
@@ -354,15 +370,16 @@ function StepperField({
   onChange: (v: number) => void;
   onBump: (delta: number) => void;
 }) {
-  const ring = tone === 'brand' ? 'focus-within:ring-brand/50 focus-within:border-brand/60' : 'focus-within:ring-coral/50 focus-within:border-coral/60';
-  const labelColor = tone === 'brand' ? 'text-brand' : 'text-coral';
+  const accent = tone === 'brand' ? 'text-brand' : 'text-coral';
 
   return (
-    <div className={cn('rounded-lg bg-surface-3/80 p-1.5 ring-1 ring-hair transition-shadow focus-within:ring-2 sm:rounded-xl sm:p-2', ring)}>
-      <div className={cn('mb-0.5 truncate text-[8px] font-black uppercase tracking-wider sm:mb-1 sm:text-[9px]', labelColor)}>{label}</div>
-      <div className="flex items-center gap-0.5 sm:gap-1">
-        <StepBtn onClick={() => onBump(-1)} aria-label={`decrease ${label}`}>
-          <Minus className="h-3.5 w-3.5" />
+    <div className="rounded-[0.9rem] border border-white/8 bg-surface-3/60 px-1 py-1 transition-colors focus-within:border-white/20 sm:rounded-xl">
+      <div className={cn('mb-0.5 truncate text-center text-[7px] font-black uppercase tracking-wider sm:text-[8px]', accent)}>
+        {label}
+      </div>
+      <div className="flex items-center gap-0.5">
+        <StepBtn tone={tone} onClick={() => onBump(-1)} aria-label={`decrease ${label}`}>
+          <Minus className="h-3 w-3" strokeWidth={3} />
         </StepBtn>
         <input
           type="number"
@@ -376,25 +393,42 @@ function StepperField({
             const parsed = parseFloat(raw);
             if (!Number.isNaN(parsed)) onChange(parsed);
           }}
-          className="stat h-8 min-w-0 flex-1 bg-transparent text-center text-lg font-bold text-txt-hi outline-none placeholder:text-txt-lo [appearance:textfield] sm:h-10 sm:text-xl [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="stat h-7 min-w-0 flex-1 bg-transparent text-center text-sm font-bold text-txt-hi outline-none placeholder:text-txt-lo [appearance:textfield] sm:h-8 sm:text-base [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
-        <StepBtn onClick={() => onBump(1)} aria-label={`increase ${label}`}>
-          <Plus className="h-3.5 w-3.5" />
+        <StepBtn tone={tone} onClick={() => onBump(1)} aria-label={`increase ${label}`}>
+          <Plus className="h-3 w-3" strokeWidth={3} />
         </StepBtn>
-        {suffix && <span className="pr-1 text-[10px] font-bold text-txt-lo">{suffix}</span>}
+        {suffix && <span className="w-5 shrink-0 text-center text-[8px] font-bold text-txt-lo">{suffix}</span>}
       </div>
     </div>
   );
 }
 
-function StepBtn({ children, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+function StepBtn({
+  children,
+  tone,
+  onClick,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { tone: 'brand' | 'coral' }) {
+  const hover =
+    tone === 'brand'
+      ? 'hover:border-brand/40 hover:bg-brand/15 hover:text-brand'
+      : 'hover:border-coral/40 hover:bg-coral/15 hover:text-coral';
+
   return (
     <motion.button
       type="button"
+      whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.88 }}
       transition={spring.snappy}
-      onClick={onClick}
-      className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-surface-2 text-txt-mid ring-1 ring-hair hover:text-txt-hi sm:h-8 sm:w-8 sm:rounded-lg"
+      onClick={(e) => {
+        haptic.light();
+        onClick?.(e);
+      }}
+      className={cn(
+        'grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/10 bg-surface-2/80 text-txt-mid transition-colors sm:h-7 sm:w-7',
+        hover
+      )}
       {...props}
     >
       {children}

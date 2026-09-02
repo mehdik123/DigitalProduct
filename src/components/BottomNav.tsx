@@ -1,6 +1,6 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Target, Dumbbell } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Target, Dumbbell, LogOut } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { haptic } from '../lib/haptics';
@@ -20,7 +20,7 @@ const tabs = [
 export default function BottomNav({ activeView, onViewChange }: BottomNavProps) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, signOut } = useAuth();
+    const { user } = useAuth();
     const { t } = useLanguage();
 
     const currentView = activeView;
@@ -70,27 +70,6 @@ export default function BottomNav({ activeView, onViewChange }: BottomNavProps) 
                         </motion.button>
                     );
                 })}
-
-                {user && (
-                    <>
-                        <div className="mx-0.5 h-8 w-px bg-hair" />
-                        <motion.button
-                            type="button"
-                            whileTap={{ scale: 0.94 }}
-                            transition={spring.snappy}
-                            onClick={async () => {
-                                haptic.light();
-                                await signOut();
-                                navigate('/');
-                                onViewChange?.('welcome');
-                            }}
-                            aria-label={t('nav.logout')}
-                            className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[1.25rem] text-txt-lo transition-colors hover:bg-brand-soft hover:text-brand"
-                        >
-                            <LogOut className="h-5 w-5" />
-                        </motion.button>
-                    </>
-                )}
             </div>
         </nav>
     );

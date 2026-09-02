@@ -1,12 +1,14 @@
-import { ArrowLeft, Zap, Dumbbell, Target, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { Zap, Dumbbell, Target, CheckCircle2, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button, Card, Eyebrow } from './ui';
 import { cn } from '../lib/utils';
 import { useLanguage } from '../contexts/LanguageContext';
+import { haptic } from '../lib/haptics';
+import { itemVariants, listVariants, spring, tapSubtle } from '../design/motion';
 
 interface ProgramIntroProps {
-    onBack: () => void;
     onStart: () => void;
-    /** The user's chosen training frequency; omitted before a choice is made. */
     daysPerWeek?: number;
 }
 
@@ -17,10 +19,11 @@ const INSIDE_KEYS = [
     'intro.inside.records',
     'intro.inside.mobile',
     'intro.inside.fatigue',
-];
+] as const;
 
-export default function ProgramIntro({ onBack, onStart, daysPerWeek }: ProgramIntroProps) {
+export default function ProgramIntro({ onStart, daysPerWeek }: ProgramIntroProps) {
     const { t } = useLanguage();
+    const [activeSpec, setActiveSpec] = useState(0);
 
     const specs = [
         {
@@ -46,87 +49,180 @@ export default function ProgramIntro({ onBack, onStart, daysPerWeek }: ProgramIn
     ];
 
     return (
-        <div className="bg-app relative min-h-dvh overflow-x-hidden font-sans text-txt-hi">
-            <div className="ambient-grid pointer-events-none fixed inset-0 opacity-30" />
-            <div className="ambient-streak pointer-events-none fixed -left-[30%] -top-[5%] h-[46%] w-[160%]" />
+        <div className="relative min-h-[calc(100dvh-var(--chrome-height))] overflow-x-hidden font-sans text-txt-hi">
+            {/* Animated ambient layer */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <div className="ambient-grid absolute inset-0 opacity-25" />
+                <motion.div
+                    className="ambient-streak absolute -left-[30%] -top-[5%] h-[46%] w-[160%]"
+                    animate={{ opacity: [0.25, 0.5, 0.25], x: ['0%', '2%', '0%'] }}
+                    transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+                />
+                <motion.div
+                    className="absolute -right-16 top-1/4 h-48 w-48 rounded-full bg-brand/20 blur-3xl"
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.55, 0.3] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                />
+                <motion.div
+                    className="absolute -left-10 bottom-1/4 h-36 w-36 rounded-full bg-brand/10 blur-3xl"
+                    animate={{ scale: [1.1, 0.95, 1.1], opacity: [0.2, 0.4, 0.2] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+                />
+            </div>
 
-            {/* Use pt-* only: a py-* utility would also set padding-bottom and cancel pb-nav-space. */}
-            <div className="relative z-10 mx-auto flex min-h-dvh max-w-4xl flex-col px-5 pt-6 pb-nav-space sm:px-6 sm:pt-12 md:pt-16">
-                <button
-                    onClick={onBack}
-                    className="group mb-4 flex items-center gap-2 self-start text-txt-lo transition-colors hover:text-txt-hi sm:mb-12 sm:gap-3"
+            <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-var(--chrome-height))] max-w-4xl flex-col px-5 pb-nav-space pt-2 sm:px-6 sm:pt-4">
+                <motion.div
+                    className="flex flex-1 flex-col space-y-4 sm:space-y-8"
+                    variants={listVariants}
+                    initial="hidden"
+                    animate="show"
                 >
-                    <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1 sm:h-5 sm:w-5" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] sm:text-xs">{t('intro.backToPortal')}</span>
-                </button>
-
-                <div className="space-y-4 sm:space-y-12">
                     {/* Hero */}
-                    <div className="animate-rise space-y-2.5 opacity-0 sm:space-y-5" style={{ animationDelay: '.05s' }}>
+                    <motion.div variants={itemVariants} className="space-y-2.5 sm:space-y-4">
                         <Eyebrow>{t('intro.eyebrow')}</Eyebrow>
                         <h1 className="font-display text-display-lg font-black uppercase italic leading-none tracking-tight sm:text-display-hero">
                             {t('intro.headline.line1')}{' '}
-                            <span className="text-grad-coral">{t('intro.headline.accent')}</span>{' '}
+                            <motion.span
+                                className="inline-block text-grad-coral"
+                                animate={{ scale: [1, 1.03, 1] }}
+                                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                            >
+                                {t('intro.headline.accent')}
+                            </motion.span>{' '}
                             {t('intro.headline.line2')}
                         </h1>
-                        <p className="max-w-2xl text-xs font-medium leading-relaxed text-txt-mid sm:text-lg md:text-xl">
+                        <p className="max-w-2xl text-xs font-medium leading-relaxed text-txt-mid sm:text-base md:text-lg">
                             {t('intro.tagline')}
                         </p>
-                    </div>
+                    </motion.div>
 
-                    {/* Specifications */}
-                    <div className="grid animate-rise grid-cols-3 gap-2 opacity-0 sm:gap-4 md:grid-cols-3" style={{ animationDelay: '.15s' }}>
-                        {specs.map(({ icon: Icon, title, sub, solid }) => (
-                            <Card key={title} interactive className="group space-y-2 sm:space-y-4">
-                                <div
-                                    className={cn(
-                                        'flex h-8 w-8 items-center justify-center rounded-lg transition-transform group-hover:scale-110 sm:h-12 sm:w-12 sm:rounded-xl',
-                                        solid
-                                            ? 'bg-grad-red text-white shadow-red'
-                                            : 'border border-hair bg-surface-3 text-brand'
-                                    )}
+                    {/* Interactive spec cards */}
+                    <motion.div variants={itemVariants} className="grid grid-cols-3 gap-2 sm:gap-3">
+                        {specs.map(({ icon: Icon, title, sub, solid }, index) => {
+                            const active = activeSpec === index;
+                            return (
+                                <motion.button
+                                    key={title}
+                                    type="button"
+                                    onClick={() => {
+                                        haptic.light();
+                                        setActiveSpec(index);
+                                    }}
+                                    whileHover={{ y: -4, scale: 1.03 }}
+                                    whileTap={tapSubtle}
+                                    transition={spring.snappy}
+                                    className="text-left"
                                 >
-                                    <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
-                                </div>
-                                <div>
-                                    <h3 className="font-display text-sm font-extrabold uppercase italic leading-tight tracking-tight sm:text-xl">
-                                        {title}
-                                    </h3>
-                                    <p className="text-[8px] font-bold uppercase tracking-wider text-txt-lo sm:text-xs">{sub}</p>
-                                </div>
-                            </Card>
-                        ))}
-                    </div>
+                                    <Card
+                                        interactive
+                                        className={cn(
+                                            'relative h-full space-y-2 overflow-hidden transition-all duration-300 sm:space-y-3',
+                                            active && 'border-brand/50 shadow-red ring-1 ring-brand/30'
+                                        )}
+                                    >
+                                        {active && (
+                                            <motion.div
+                                                layoutId="spec-glow"
+                                                className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand/10 to-transparent"
+                                                transition={spring.smooth}
+                                            />
+                                        )}
+                                        <div
+                                            className={cn(
+                                                'relative flex h-8 w-8 items-center justify-center rounded-lg transition-transform sm:h-11 sm:w-11 sm:rounded-xl',
+                                                solid || active
+                                                    ? 'bg-grad-red text-white shadow-red'
+                                                    : 'border border-hair bg-surface-3 text-brand'
+                                            )}
+                                        >
+                                            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                                        </div>
+                                        <div className="relative">
+                                            <h3 className="font-display text-[11px] font-extrabold uppercase italic leading-tight tracking-tight sm:text-base">
+                                                {title}
+                                            </h3>
+                                            <p className="mt-0.5 text-[7px] font-bold uppercase tracking-wider text-txt-lo sm:text-[10px]">
+                                                {sub}
+                                            </p>
+                                        </div>
+                                    </Card>
+                                </motion.button>
+                            );
+                        })}
+                    </motion.div>
 
-                    {/* What's Inside */}
-                    <div className="animate-rise opacity-0" style={{ animationDelay: '.25s' }}>
-                        <Card className="relative space-y-3 overflow-hidden p-4 sm:space-y-8 sm:p-8 md:p-10">
-                            <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-brand-soft blur-3xl" />
-                            <h2 className="font-display text-base font-black uppercase italic tracking-tight sm:text-2xl">
+                    {/* What's inside — staggered checklist */}
+                    <motion.div variants={itemVariants}>
+                        <Card className="relative space-y-3 overflow-hidden p-4 sm:space-y-6 sm:p-7">
+                            <motion.div
+                                className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-brand-soft blur-3xl"
+                                animate={{ opacity: [0.4, 0.7, 0.4] }}
+                                transition={{ duration: 4, repeat: Infinity }}
+                            />
+                            <h2 className="relative font-display text-base font-black uppercase italic tracking-tight sm:text-xl">
                                 {t('intro.inside.title')}
                             </h2>
-                            <div className="grid grid-cols-1 gap-2 sm:gap-5 md:grid-cols-2">
-                                {INSIDE_KEYS.map((key) => (
-                                    <div key={key} className="group flex items-center gap-2.5 sm:gap-4">
-                                        <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-brand-soft transition-colors group-hover:bg-brand sm:h-6 sm:w-6">
-                                            <CheckCircle2 className="h-2.5 w-2.5 text-brand group-hover:text-white sm:h-3.5 sm:w-3.5" />
-                                        </div>
-                                        <span className="text-[9px] font-black uppercase tracking-[0.15em] text-txt-mid transition-colors group-hover:text-txt-hi sm:text-[11px] sm:tracking-[0.2em]">
+                            <motion.div
+                                className="relative grid grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2"
+                                variants={listVariants}
+                                initial="hidden"
+                                animate="show"
+                            >
+                                {INSIDE_KEYS.map((key, i) => (
+                                    <motion.div
+                                        key={key}
+                                        variants={itemVariants}
+                                        custom={i}
+                                        whileHover={{ x: 4 }}
+                                        className="group flex items-center gap-2.5 rounded-xl border border-transparent px-1 py-1 transition-colors hover:border-hair hover:bg-white/[0.03] sm:gap-3"
+                                    >
+                                        <motion.div
+                                            className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-soft sm:h-6 sm:w-6"
+                                            whileHover={{ scale: 1.15, backgroundColor: 'var(--color-brand)' }}
+                                            transition={spring.snappy}
+                                        >
+                                            <CheckCircle2 className="h-3 w-3 text-brand group-hover:text-white sm:h-3.5 sm:w-3.5" />
+                                        </motion.div>
+                                        <span className="text-[9px] font-black uppercase tracking-[0.12em] text-txt-mid transition-colors group-hover:text-txt-hi sm:text-[10px] sm:tracking-[0.18em]">
                                             {t(key)}
                                         </span>
-                                    </div>
+                                    </motion.div>
                                 ))}
-                            </div>
+                            </motion.div>
                         </Card>
-                    </div>
+                    </motion.div>
 
-                    {/* Action */}
-                    <div className="flex animate-rise justify-center opacity-0" style={{ animationDelay: '.35s' }}>
-                        <Button variant="primary" size="lg" arrow onClick={onStart} className="w-full px-12 md:w-auto">
-                            <span className="tracking-[0.3em]">{t('intro.accessProgram')}</span>
-                        </Button>
-                    </div>
-                </div>
+                    {/* CTA */}
+                    <motion.div variants={itemVariants} className="mt-auto flex justify-center pt-1">
+                        <motion.div
+                            className="w-full md:w-auto"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={tapSubtle}
+                            transition={spring.snappy}
+                        >
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                fullWidth
+                                onClick={() => {
+                                    haptic.medium();
+                                    onStart();
+                                }}
+                                className="relative overflow-hidden px-10 tracking-[0.25em] md:min-w-[20rem]"
+                            >
+                                <motion.span
+                                    className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                                    animate={{ x: ['-120%', '120%'] }}
+                                    transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
+                                />
+                                <span className="relative flex items-center justify-center gap-2">
+                                    {t('intro.accessProgram')}
+                                    <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+                                </span>
+                            </Button>
+                        </motion.div>
+                    </motion.div>
+                </motion.div>
             </div>
         </div>
     );

@@ -2,6 +2,7 @@ import { X, UserPlus, LogIn, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button, Eyebrow, StatStrip, IconButton, BrandMark } from './ui';
+import LanguageToggle from './LanguageToggle';
 
 interface AuthChoiceModalProps {
     onClose: () => void;
@@ -29,15 +30,18 @@ export default function AuthChoiceModal({ onClose, onJoin, onLogin, dismissible 
                 {/* Top bar */}
                 <div className="flex animate-rise items-center justify-between opacity-0" style={{ animationDelay: '.05s' }}>
                     <BrandMark />
-                    {dismissible && (
-                        <IconButton aria-label="close" onClick={onClose}>
-                            <X className="h-4 w-4" />
-                        </IconButton>
-                    )}
+                    <div className="flex items-center gap-2">
+                        <LanguageToggle />
+                        {dismissible && (
+                            <IconButton aria-label="close" onClick={onClose}>
+                                <X className="h-4 w-4" />
+                            </IconButton>
+                        )}
+                    </div>
                 </div>
 
-                {/* Hero */}
-                <div className="flex flex-col justify-center py-4 sm:flex-1 sm:py-6">
+                {/* Hero — no flex-1 on mobile so content stays compact; CTAs sit just below. */}
+                <div className="flex flex-col py-2 sm:flex-1 sm:justify-center sm:py-6">
                     <Eyebrow className="animate-rise opacity-0" style={{ animationDelay: '.1s' }}>
                         {t('welcome.eyebrow')}
                     </Eyebrow>
@@ -56,7 +60,7 @@ export default function AuthChoiceModal({ onClose, onJoin, onLogin, dismissible 
                     </p>
 
                     <StatStrip
-                        className="mt-6 animate-rise opacity-0"
+                        className="mt-4 animate-rise opacity-0 sm:mt-6"
                         style={{ animationDelay: '.5s' }}
                         items={[
                             { value: '12', unit: 'wk', label: t('welcome.stat.program'), accent: true },
@@ -65,8 +69,8 @@ export default function AuthChoiceModal({ onClose, onJoin, onLogin, dismissible 
                     />
                 </div>
 
-                {/* CTAs */}
-                <div className="mt-auto flex animate-rise flex-col gap-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] opacity-0 sm:gap-3" style={{ animationDelay: '.6s' }}>
+                {/* CTAs — mt-auto only on larger screens; on phones sit right under the stats. */}
+                <div className="mt-5 flex animate-rise flex-col gap-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] opacity-0 sm:mt-auto sm:gap-3" style={{ animationDelay: '.6s' }}>
                     <Button
                         variant="primary"
                         fullWidth
