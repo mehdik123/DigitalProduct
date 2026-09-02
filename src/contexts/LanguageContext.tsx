@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Language, t as translate } from '../i18n/translations';
+import { Language, isLanguage, t as translate } from '../i18n/translations';
 
 interface LanguageContextType {
     language: Language;
@@ -49,8 +49,8 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
                         .eq('id', session.user.id)
                         .maybeSingle();
 
-                    if (profileData && profileData.language_preference) {
-                        setLanguageState(profileData.language_preference as Language);
+                    if (profileData && isLanguage(profileData.language_preference)) {
+                        setLanguageState(profileData.language_preference);
                     }
                 } catch (err) {
                     console.warn('Could not load language preference from Supabase (column might be missing):', err);
@@ -58,7 +58,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
             } else {
                 // Load from localStorage for non-authenticated users
                 const savedLang = localStorage.getItem('language_preference');
-                if (savedLang === 'en' || savedLang === 'ar') {
+                if (isLanguage(savedLang)) {
                     setLanguageState(savedLang);
                 }
             }
@@ -79,8 +79,8 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
                         .eq('id', session.user.id)
                         .maybeSingle();
 
-                    if (profileData && profileData.language_preference) {
-                        setLanguageState(profileData.language_preference as Language);
+                    if (profileData && isLanguage(profileData.language_preference)) {
+                        setLanguageState(profileData.language_preference);
                     }
                 } catch (err) {
                     console.warn('Could not load language preference from Supabase:', err);
@@ -96,15 +96,18 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     const setLanguage = async (lang: Language) => {
         setLanguageState(lang);
 
+        // Always keep a local copy: it survives a failed or offline profile
+        // write, so the choice is not silently lost on the next reload.
+        localStorage.setItem('language_preference', lang);
+
         if (userId) {
-            // Save to Supabase if user is logged in
-            await supabase
+            const { error } = await supabase
                 .from('profiles')
                 .update({ language_preference: lang })
                 .eq('id', userId);
-        } else {
-            // Save to localStorage if not logged in
-            localStorage.setItem('language_preference', lang);
+            if (error) {
+                console.warn('Could not save language preference to profile:', error.message);
+            }
         }
     };
 

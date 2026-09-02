@@ -384,11 +384,31 @@ export const mealAlternatives: Record<string, Meal[]> = {
   ],
 };
 
-// Helper function to get alternatives for a meal
-export const getAlternativesForMeal = (meal: Meal): Meal[] => {
-  const calorieRange = Math.floor(meal.calories / 100) * 100;
-  const nextRange = calorieRange + 100;
-  const key = `${meal.type}-${calorieRange}-${nextRange}`;
+const ALL_ALTERNATIVES: Meal[] = Object.values(mealAlternatives).flat();
 
-  return mealAlternatives[key] || [];
+/** How far a substitute may drift from the original meal's calories. */
+const CALORIE_TOLERANCE = 0.2;
+
+/**
+ * Alternatives are matched by meal type and calorie proximity.
+ *
+ * This previously looked up a key built from a 100-kcal floor bucket
+ * (`Lunch-600-700`), but the bucket names above use irregular widths
+ * (`Lunch-650-750`), so almost every meal missed and the swap dialog showed an
+ * empty state. Filtering the flat list removes that coupling entirely.
+ */
+export const getAlternativesForMeal = (meal: Meal): Meal[] => {
+  const distance = (candidate: Meal) => Math.abs(candidate.calories - meal.calories);
+  const closest = (a: Meal, b: Meal) => distance(a) - distance(b);
+  const isSubstitute = (candidate: Meal) =>
+    candidate.name !== meal.name && distance(candidate) <= meal.calories * CALORIE_TOLERANCE;
+
+  const sameType = ALL_ALTERNATIVES.filter(
+    (candidate) => candidate.type === meal.type && isSubstitute(candidate)
+  );
+  if (sameType.length > 0) return sameType.sort(closest);
+
+  // Types such as "Mid-Morning" have no dedicated alternatives, so fall back to
+  // any meal carrying a similar calorie load rather than showing nothing.
+  return ALL_ALTERNATIVES.filter(isSubstitute).sort(closest);
 };

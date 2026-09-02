@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Target, Dumbbell, Utensils, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { haptic } from '../lib/haptics';
 import { spring } from '../design/motion';
 import { cn } from '../lib/utils';
@@ -12,15 +13,16 @@ interface BottomNavProps {
 }
 
 const tabs = [
-    { id: 'welcome' as const, icon: Target, label: 'Home' },
-    { id: 'workouts' as const, icon: Dumbbell, label: 'Train', matchIntro: true },
-    { id: 'nutrition' as const, icon: Utensils, label: 'Diet', route: true },
+    { id: 'welcome' as const, icon: Target, labelKey: 'nav.home' },
+    { id: 'workouts' as const, icon: Dumbbell, labelKey: 'nav.train', matchIntro: true },
+    { id: 'nutrition' as const, icon: Utensils, labelKey: 'nav.diet', route: true },
 ];
 
 export default function BottomNav({ activeView, onViewChange }: BottomNavProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, signOut } = useAuth();
+    const { t } = useLanguage();
 
     const isNutrition = location.pathname.startsWith('/nutrition');
     const currentView = isNutrition ? 'nutrition' : activeView;
@@ -59,7 +61,7 @@ export default function BottomNav({ activeView, onViewChange }: BottomNavProps) 
                             whileTap={{ scale: 0.94 }}
                             transition={spring.snappy}
                             onClick={() => handleNav(tab.id)}
-                            aria-label={tab.label}
+                            aria-label={t(tab.labelKey)}
                             aria-current={active ? 'page' : undefined}
                             className={cn(
                                 'relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-[1.25rem] py-2.5 min-h-[52px] transition-colors',
@@ -70,7 +72,7 @@ export default function BottomNav({ activeView, onViewChange }: BottomNavProps) 
                         >
                             <Icon className={cn('h-5 w-5', active && 'drop-shadow-sm')} />
                             <span className="text-[9px] font-black uppercase tracking-[0.15em]">
-                                {tab.label}
+                                {t(tab.labelKey)}
                             </span>
                         </motion.button>
                     );
@@ -89,7 +91,7 @@ export default function BottomNav({ activeView, onViewChange }: BottomNavProps) 
                                 navigate('/');
                                 onViewChange?.('welcome');
                             }}
-                            aria-label="Logout"
+                            aria-label={t('nav.logout')}
                             className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[1.25rem] text-txt-lo transition-colors hover:bg-brand-soft hover:text-brand"
                         >
                             <LogOut className="h-5 w-5" />

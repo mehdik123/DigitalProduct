@@ -4,6 +4,7 @@ import { Check, Loader2, Play, Timer, Minus, Plus, TrendingUp } from 'lucide-rea
 import { Exercise, ExerciseSet } from '../types/workout';
 import { getPhase } from '../data/programConfig';
 import { useLanguage } from '../contexts/LanguageContext';
+import { exerciseName, localizeMinutes } from '../i18n/content';
 import { spring } from '../design/motion';
 import { haptic } from '../lib/haptics';
 import { cn } from '../lib/utils';
@@ -28,6 +29,7 @@ export default function ExerciseCardNew({
   onSave,
 }: ExerciseCardNewProps) {
   const { t } = useLanguage();
+  const localizedName = exerciseName(t, exercise.name);
   const phase = getPhase(weekNumber);
   const isCalisthenics = exercise.type === 'calisthenics';
 
@@ -128,8 +130,8 @@ export default function ExerciseCardNew({
       layout
       className="overflow-hidden rounded-2xl border border-hair bg-surface-1 shadow-soft sm:rounded-3xl"
     >
-      {/* Hero strip */}
-      <div className="relative h-20 overflow-hidden sm:h-32">
+      {/* Cover — 16:9 like a YouTube thumbnail, and tappable to play. */}
+      <div className="group relative aspect-video overflow-hidden">
         {cover ? (
           <img
             src={cover}
@@ -141,32 +143,37 @@ export default function ExerciseCardNew({
         ) : (
           <div className="h-full bg-gradient-to-br from-surface-3 to-surface-2" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-surface-1 via-surface-1/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface-1 via-surface-1/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-brand/20 to-transparent opacity-60" />
 
+        {/* Full-cover tap target. The overlay above it is click-through so the
+            whole image plays the video, not just the play button. */}
         {exercise.videoUrl && (
-          <motion.button
+          <button
             type="button"
-            whileTap={{ scale: 0.92 }}
             onClick={() => {
               haptic.light();
               setShowVideo(true);
             }}
-            aria-label={`Play ${exercise.name} video`}
-            className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-grad-red text-white shadow-red sm:right-3 sm:top-3 sm:h-10 sm:w-10"
-          >
-            <Play className="h-3.5 w-3.5 fill-current sm:h-4 sm:w-4" />
-          </motion.button>
+            aria-label={t('log.playVideo', { name: localizedName })}
+            className="absolute inset-0 z-10 cursor-pointer active:bg-black/10"
+          />
         )}
 
-        <div className="absolute bottom-2 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3">
+        {exercise.videoUrl && (
+          <span className="pointer-events-none absolute left-1/2 top-1/2 z-20 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-grad-red text-white shadow-red transition-transform duration-300 group-active:scale-90 sm:h-14 sm:w-14">
+            <Play className="h-5 w-5 fill-current sm:h-6 sm:w-6" />
+          </span>
+        )}
+
+        <div className="pointer-events-none absolute bottom-2 left-2.5 right-2.5 z-20 sm:bottom-3 sm:left-3 sm:right-3">
           <div className="flex items-end justify-between gap-2">
             <div className="flex min-w-0 items-center gap-2 sm:block">
               <span className="inline-flex shrink-0 rounded bg-brand/90 px-1.5 py-0.5 font-display text-[9px] font-black italic uppercase text-white sm:rounded-md sm:px-2 sm:text-[10px]">
                 {t('log.set')} {index + 1}
               </span>
               <h3 className="line-clamp-1 font-display text-base font-black italic uppercase leading-tight text-txt-hi sm:mt-1 sm:line-clamp-2 sm:text-xl">
-                {exercise.name}
+                {localizedName}
               </h3>
             </div>
             <div className="shrink-0 rounded-lg border border-hair bg-surface-2/90 px-2 py-1 text-center backdrop-blur-sm sm:rounded-xl sm:px-2.5 sm:py-1.5">
@@ -187,7 +194,7 @@ export default function ExerciseCardNew({
             <Chip label={t('log.reps')} value={`${repRange[0]} ${t('log.to')} ${repRange[1]}`} tone="coral" />
           )}
           {exercise.rest && (
-            <Chip icon={<Timer className="h-3.5 w-3.5" />} label={t('log.rest')} value={exercise.rest} tone="emerald" />
+            <Chip icon={<Timer className="h-3.5 w-3.5" />} label={t('log.rest')} value={localizeMinutes(t, exercise.rest)} tone="emerald" />
           )}
         </div>
 
@@ -299,7 +306,7 @@ export default function ExerciseCardNew({
         open={showVideo}
         onClose={() => setShowVideo(false)}
         videoUrl={exercise.videoUrl}
-        title={exercise.name}
+        title={localizedName}
       />
     </motion.div>
   );

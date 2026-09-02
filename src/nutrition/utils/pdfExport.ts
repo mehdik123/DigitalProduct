@@ -40,15 +40,16 @@ export const exportMealPlanToPDF = async (mealPlan: MealPlan) => {
   const margin = 15;
   let yPosition = margin;
 
-  // Colors (Dark Theme)
+  // Colors mirror the app's dark/red theme from src/index.css, so the exported
+  // PDF looks like the product rather than a generic blue report.
   const colors = {
-    background: [17, 24, 39], // #111827
-    surface: [31, 41, 55],    // #1F2937
-    primary: [59, 130, 246],  // #3B82F6 (Blue-500)
-    text: [243, 244, 246],    // #F3F4F6
-    textMuted: [156, 163, 175], // #9CA3AF
-    accent: [16, 185, 129],   // #10B981 (Green - for Fiber)
-    border: [55, 65, 81],     // #374151
+    background: [10, 11, 16],   // --background 228 24% 5%
+    surface: [22, 24, 31],
+    primary: [255, 46, 84],     // --brand 349 100% 59%
+    text: [243, 244, 246],
+    textMuted: [156, 163, 175],
+    accent: [16, 185, 129],     // fiber gauge stays green: it reads as "good"
+    border: [46, 49, 58],
   };
 
   // Set Background
@@ -77,7 +78,8 @@ export const exportMealPlanToPDF = async (mealPlan: MealPlan) => {
   doc.text("HYBRID ATHLETE", margin, 20);
 
   doc.setTextColor(255, 255, 255);
-  doc.text("BLUEPRINT", margin + 65, 20); // Quick offset
+  // Measured rather than a fixed offset, so it stays aligned if the font changes.
+  doc.text("BLUEPRINT", margin + doc.getTextWidth("HYBRID ATHLETE ") + 2, 20);
 
   doc.setFontSize(10);
   doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);

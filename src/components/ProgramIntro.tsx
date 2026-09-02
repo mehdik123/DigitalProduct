@@ -1,6 +1,7 @@
 import { ArrowLeft, Zap, Dumbbell, Target, CheckCircle2 } from 'lucide-react';
 import { Button, Card, Eyebrow } from './ui';
 import { cn } from '../lib/utils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ProgramIntroProps {
     onBack: () => void;
@@ -9,28 +10,40 @@ interface ProgramIntroProps {
     daysPerWeek?: number;
 }
 
-const buildSpecs = (daysPerWeek?: number) => [
-    {
-        icon: Dumbbell,
-        title: daysPerWeek ? `${daysPerWeek} Day Split` : 'Your Split',
-        sub: 'Optimized Frequency',
-        solid: true,
-    },
-    { icon: Zap, title: 'Progression', sub: 'Scientific Overload', solid: false },
-    { icon: Target, title: 'Full Support', sub: 'Video Drill Guides', solid: false },
-];
-
-const INSIDE = [
-    'Advanced 12 Week Microcycles',
-    'Weight Tracking and Logging',
-    'Exercise Video Demonstrations',
-    'Personal Record Dashboard',
-    'Mobile First Interaction',
-    'Progressive Fatigue Management',
+const INSIDE_KEYS = [
+    'intro.inside.microcycles',
+    'intro.inside.tracking',
+    'intro.inside.videos',
+    'intro.inside.records',
+    'intro.inside.mobile',
+    'intro.inside.fatigue',
 ];
 
 export default function ProgramIntro({ onBack, onStart, daysPerWeek }: ProgramIntroProps) {
-    const specs = buildSpecs(daysPerWeek);
+    const { t } = useLanguage();
+
+    const specs = [
+        {
+            icon: Dumbbell,
+            title: daysPerWeek
+                ? t('intro.spec.splitDays', { days: daysPerWeek })
+                : t('intro.spec.split.title'),
+            sub: t('intro.spec.split.sub'),
+            solid: true,
+        },
+        {
+            icon: Zap,
+            title: t('intro.spec.progression.title'),
+            sub: t('intro.spec.progression.sub'),
+            solid: false,
+        },
+        {
+            icon: Target,
+            title: t('intro.spec.support.title'),
+            sub: t('intro.spec.support.sub'),
+            solid: false,
+        },
+    ];
 
     return (
         <div className="bg-app relative min-h-dvh overflow-x-hidden font-sans text-txt-hi">
@@ -44,19 +57,20 @@ export default function ProgramIntro({ onBack, onStart, daysPerWeek }: ProgramIn
                     className="group mb-4 flex items-center gap-2 self-start text-txt-lo transition-colors hover:text-txt-hi sm:mb-12 sm:gap-3"
                 >
                     <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1 sm:h-5 sm:w-5" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] sm:text-xs">Back to Portal</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] sm:text-xs">{t('intro.backToPortal')}</span>
                 </button>
 
                 <div className="space-y-4 sm:space-y-12">
                     {/* Hero */}
                     <div className="animate-rise space-y-2.5 opacity-0 sm:space-y-5" style={{ animationDelay: '.05s' }}>
-                        <Eyebrow>Hybrid Training System</Eyebrow>
+                        <Eyebrow>{t('intro.eyebrow')}</Eyebrow>
                         <h1 className="font-display text-display-lg font-black uppercase italic leading-none tracking-tight sm:text-display-hero">
-                            12 Week <span className="text-grad-coral">Elite</span> Program
+                            {t('intro.headline.line1')}{' '}
+                            <span className="text-grad-coral">{t('intro.headline.accent')}</span>{' '}
+                            {t('intro.headline.line2')}
                         </h1>
                         <p className="max-w-2xl text-xs font-medium leading-relaxed text-txt-mid sm:text-lg md:text-xl">
-                            A high-performance progressive overload system designed to build functional power,
-                            elite aesthetics, and hybrid work capacity.
+                            {t('intro.tagline')}
                         </p>
                     </div>
 
@@ -89,16 +103,16 @@ export default function ProgramIntro({ onBack, onStart, daysPerWeek }: ProgramIn
                         <Card className="relative space-y-3 overflow-hidden p-4 sm:space-y-8 sm:p-8 md:p-10">
                             <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-brand-soft blur-3xl" />
                             <h2 className="font-display text-base font-black uppercase italic tracking-tight sm:text-2xl">
-                                The Athlete Experience
+                                {t('intro.inside.title')}
                             </h2>
                             <div className="grid grid-cols-1 gap-2 sm:gap-5 md:grid-cols-2">
-                                {INSIDE.map((item) => (
-                                    <div key={item} className="group flex items-center gap-2.5 sm:gap-4">
+                                {INSIDE_KEYS.map((key) => (
+                                    <div key={key} className="group flex items-center gap-2.5 sm:gap-4">
                                         <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-brand-soft transition-colors group-hover:bg-brand sm:h-6 sm:w-6">
                                             <CheckCircle2 className="h-2.5 w-2.5 text-brand group-hover:text-white sm:h-3.5 sm:w-3.5" />
                                         </div>
                                         <span className="text-[9px] font-black uppercase tracking-[0.15em] text-txt-mid transition-colors group-hover:text-txt-hi sm:text-[11px] sm:tracking-[0.2em]">
-                                            {item}
+                                            {t(key)}
                                         </span>
                                     </div>
                                 ))}
@@ -109,7 +123,7 @@ export default function ProgramIntro({ onBack, onStart, daysPerWeek }: ProgramIn
                     {/* Action */}
                     <div className="flex animate-rise justify-center opacity-0" style={{ animationDelay: '.35s' }}>
                         <Button variant="primary" size="lg" arrow onClick={onStart} className="w-full px-12 md:w-auto">
-                            <span className="tracking-[0.3em]">Access Program</span>
+                            <span className="tracking-[0.3em]">{t('intro.accessProgram')}</span>
                         </Button>
                     </div>
                 </div>

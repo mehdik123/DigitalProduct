@@ -19,6 +19,7 @@ const mealTypeKey = (type: string): string => {
     lunch: "nutrition.mealType.lunch",
     dinner: "nutrition.mealType.dinner",
     snack: "nutrition.mealType.snack",
+    "mid-morning": "nutrition.mealType.midMorning",
   };
   return map[key] || "";
 };

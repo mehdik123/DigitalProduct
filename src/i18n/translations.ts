@@ -1,9 +1,20 @@
-export type Language = 'en' | 'ar';
+import { frenchTranslations } from './fr';
+import { programContentTranslations } from './programContent';
+
+export type Language = 'en' | 'ar' | 'fr';
+
+/** Every language the UI can be switched to, in switcher order. */
+export const LANGUAGES: readonly Language[] = ['en', 'ar', 'fr'] as const;
+
+export const isLanguage = (value: unknown): value is Language =>
+    typeof value === 'string' && (LANGUAGES as readonly string[]).includes(value);
 
 export interface Translations {
     [key: string]: {
         en: string;
         ar: string;
+        /** Filled from ./fr at module load, so French lives in one reviewable file. */
+        fr?: string;
     };
 }
 
@@ -748,8 +759,75 @@ export const translations: Translations = {
     'app.hello': { en: 'Hello,', ar: 'أهلا،' },
     'app.athlete': { en: 'Athlete', ar: 'الرياضي' },
     'app.activeSystem': { en: 'Active System', ar: 'النظام خدّام' },
-    'app.systemSpec': { en: 'System Specification', ar: 'مواصفات النظام' }
+    'app.systemSpec': { en: 'System Specification', ar: 'مواصفات النظام' },
+
+    // Program intro
+    'intro.backToPortal': { en: 'Back to Portal', ar: 'رجع للبورطال' },
+    'intro.eyebrow': { en: 'Hybrid Training System', ar: 'نظام التدريب الهجين' },
+    // Headline is split in three so each language can order the words itself.
+    'intro.headline.line1': { en: '12 Week', ar: 'برنامج' },
+    'intro.headline.accent': { en: 'Elite', ar: 'النخبة' },
+    'intro.headline.line2': { en: 'Program', ar: '12 أسبوع' },
+    'intro.tagline': {
+        en: 'A high-performance progressive overload system designed to build functional power, elite aesthetics, and hybrid work capacity.',
+        ar: 'نظام تدريب قوي بالزيادة التدريجية، مصمم باش تبني قوة حقيقية، جسم رياضي، وقدرة تحمل عالية.'
+    },
+    'intro.spec.splitDays': { en: '{days} Day Split', ar: 'سبليت {days} أيام' },
+    'intro.spec.split.title': { en: 'Your Split', ar: 'السبليت ديالك' },
+    'intro.spec.split.sub': { en: 'Optimized Frequency', ar: 'وتيرة محسّنة' },
+    'intro.spec.progression.title': { en: 'Progression', ar: 'التدرّج' },
+    'intro.spec.progression.sub': { en: 'Scientific Overload', ar: 'زيادة علمية' },
+    'intro.spec.support.title': { en: 'Full Support', ar: 'دعم كامل' },
+    'intro.spec.support.sub': { en: 'Video Drill Guides', ar: 'فيديوهات الشرح' },
+    'intro.inside.title': { en: 'The Athlete Experience', ar: 'تجربة الرياضي' },
+    'intro.inside.microcycles': { en: 'Advanced 12 Week Microcycles', ar: 'دورات صغيرة متقدمة على 12 أسبوع' },
+    'intro.inside.tracking': { en: 'Weight Tracking and Logging', ar: 'تتبع وتسجيل الأوزان' },
+    'intro.inside.videos': { en: 'Exercise Video Demonstrations', ar: 'فيديوهات شرح التمارين' },
+    'intro.inside.records': { en: 'Personal Record Dashboard', ar: 'لوحة الأرقام القياسية' },
+    'intro.inside.mobile': { en: 'Mobile First Interaction', ar: 'تجربة مصممة للتيليفون' },
+    'intro.inside.fatigue': { en: 'Progressive Fatigue Management', ar: 'تدبير التعب بالتدريج' },
+    'intro.accessProgram': { en: 'Access Program', ar: 'دخل للبرنامج' },
+
+    // Bottom navigation
+    'nav.home': { en: 'Home', ar: 'الرئيسية' },
+    'nav.train': { en: 'Train', ar: 'تدريب' },
+    'nav.diet': { en: 'Diet', ar: 'تغذية' },
+    'nav.logout': { en: 'Logout', ar: 'خروج' },
+
+    'common.back': { en: 'Back', ar: 'رجوع', fr: 'Retour' },
+    'nutrition.mealType.midMorning': { en: 'Mid-Morning', ar: 'وجبة الصباح', fr: 'Collation matinale' },
+    'nutrition.notFound': { en: 'Page not found', ar: 'الصفحة ما كاينة', fr: 'Page introuvable' },
+    'log.playVideo': { en: 'Play {name} video', ar: 'شغل فيديو {name}', fr: 'Lire la vidéo de {name}' },
+    'progress.ringLabel': { en: 'Week progress {percent}%', ar: 'تقدم الأسبوع {percent}%', fr: 'Progression de la semaine {percent} %' },
+
+    // Units. "min" and "kg" are left as-is in every language on purpose:
+    // they are universal gym shorthand, not prose.
+    'unit.min': { en: 'min', ar: 'min', fr: 'min' },
+    'workout.series': { en: 'Series', ar: 'مجموعة', fr: 'Série' },
+    'workout.drills': { en: 'Drills', ar: 'تمارين', fr: 'exercices' }
 };
+
+// Program content (exercise/day names) is authored per-language in its own
+// file and folded in here so `t()` resolves it like any other key.
+Object.assign(translations, programContentTranslations);
+
+// Attach French from its own file. Unknown keys would be silently unreachable,
+// so they are reported rather than ignored.
+for (const [key, value] of Object.entries(frenchTranslations)) {
+    if (translations[key]) {
+        translations[key].fr = value;
+    } else {
+        console.warn(`French translation for unknown key: ${key}`);
+    }
+}
+
+export const hasTranslation = (key: string): boolean =>
+    Object.prototype.hasOwnProperty.call(translations, key);
+
+/** Keys that have no French value yet (used by the translation check script). */
+export function missingFrenchKeys(): string[] {
+    return Object.keys(translations).filter((key) => !translations[key].fr);
+}
 
 // Helper function to get translation, with optional {placeholder} interpolation
 export function t(key: string, lang: Language = 'en', vars?: Record<string, string | number>): string {

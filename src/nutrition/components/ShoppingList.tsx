@@ -17,7 +17,34 @@ interface IngredientItem {
     name: string;
     amount: string;
     category: string;
-    checked: boolean;
+}
+
+/**
+ * Adds up the amounts of an ingredient that appears in several meals.
+ *
+ * Amounts are free text ("250g", "200ml", "1 large"), so quantities are summed
+ * only when every entry shares the same unit. Mixed units are listed side by
+ * side rather than silently dropped.
+ */
+function combineAmounts(amounts: string[]): string {
+    if (amounts.length === 1) return amounts[0];
+
+    const parsed = amounts.map((amount) => {
+        const match = amount.trim().match(/^([\d.]+)\s*(.*)$/);
+        return match ? { value: Number(match[1]), unit: match[2].trim() } : null;
+    });
+
+    if (parsed.every((p) => p !== null)) {
+        const units = new Set(parsed.map((p) => p!.unit.toLowerCase()));
+        if (units.size === 1) {
+            const total = parsed.reduce((sum, p) => sum + p!.value, 0);
+            const unit = parsed[0]!.unit;
+            const rounded = Math.round(total * 100) / 100;
+            return unit ? `${rounded}${/^[a-z]/i.test(unit) ? '' : ' '}${unit}` : String(rounded);
+        }
+    }
+
+    return amounts.join(' + ');
 }
 
 const CATEGORY_KEYS: Record<string, string> = {
@@ -40,6 +67,10 @@ export const ShoppingList = ({ mealPlan, isOpen, onClose }: ShoppingListProps) =
             "Other": []
         };
 
+        // An ingredient used by several meals must appear once with the total,
+        // otherwise the same item is listed two or three times.
+        const totals = new Map<string, { name: string; category: string; amounts: string[] }>();
+
         mealPlan.meals.forEach(meal => {
             meal.ingredients.forEach(ing => {
                 // Simple categorization logic based on keywords
@@ -54,14 +85,20 @@ export const ShoppingList = ({ mealPlan, isOpen, onClose }: ShoppingListProps) =
                     category = "Pantry";
                 }
 
-                list[category].push({
-                    name: ing.name,
-                    amount: ing.amount,
-                    category,
-                    checked: false
-                });
+                const existing = totals.get(lowerName);
+                if (existing) {
+                    existing.amounts.push(ing.amount);
+                } else {
+                    totals.set(lowerName, { name: ing.name, category, amounts: [ing.amount] });
+                }
             });
         });
+
+        totals.forEach(({ name, category, amounts }) => {
+            list[category].push({ name, category, amount: combineAmounts(amounts) });
+        });
+
+        Object.values(list).forEach(items => items.sort((a, b) => a.name.localeCompare(b.name)));
 
         return list;
     }, [mealPlan]);
@@ -108,8 +145,10 @@ export const ShoppingList = ({ mealPlan, isOpen, onClose }: ShoppingListProps) =
                                 <div key={category}>
                                     <h3 className="text-sm font-bold text-brand mb-2 uppercase tracking-wide">{t(CATEGORY_KEYS[category] || category)}</h3>
                                     <div className="space-y-2">
-                                        {items.map((item, idx) => {
-                                            const id = `${category}-${idx}`;
+                                        {items.map((item) => {
+                                            // Keyed by name, not index, so ticking an item
+                                            // survives reordering of the list.
+                                            const id = `${category}-${item.name}`;
                                             const isChecked = checkedItems.has(id);
                                             return (
                                                 <div

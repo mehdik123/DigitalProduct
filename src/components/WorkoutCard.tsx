@@ -4,6 +4,7 @@ import { WorkoutDay } from '../types/workout';
 import { itemVariants, spring } from '../design/motion';
 import { haptic } from '../lib/haptics';
 import { useLanguage } from '../contexts/LanguageContext';
+import { dayName, difficultyLabel, localizeMinutes } from '../i18n/content';
 import { cn } from '../lib/utils';
 
 interface WorkoutCardProps {
@@ -38,10 +39,10 @@ export default function WorkoutCard({ workout, onClick, completed = false }: Wor
           <div className="min-w-0 flex-1 space-y-1 sm:space-y-1.5">
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="rounded-md border border-brand/20 bg-brand-soft px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.15em] text-brand sm:text-[9px]">
-                Series {workout.id % 2 === 0 ? 'B' : 'A'}
+                {t('workout.series')} {workout.id % 2 === 0 ? 'B' : 'A'}
               </span>
               <span className="rounded-md border border-hair bg-glass px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider text-txt-mid sm:text-[9px]">
-                {workout.difficulty}
+                {difficultyLabel(t, workout.difficulty)}
               </span>
               {completed && (
                 <span className="inline-flex items-center gap-1 rounded-md border border-success/40 bg-success/15 px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.15em] text-success sm:text-[9px]">
@@ -51,7 +52,7 @@ export default function WorkoutCard({ workout, onClick, completed = false }: Wor
               )}
             </div>
             <h3 className="font-display text-xl font-black uppercase italic tracking-tight text-txt-hi transition-colors group-hover:text-brand sm:text-display-md">
-              {workout.name}
+              {dayName(t, workout.name)}
             </h3>
           </div>
           <div
@@ -74,11 +75,11 @@ export default function WorkoutCard({ workout, onClick, completed = false }: Wor
           <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-txt-lo">
             <div className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5 shrink-0 text-brand" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{workout.duration}</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">{localizeMinutes(t, workout.duration)}</span>
             </div>
             <div className="flex items-center gap-1">
               <Zap className="h-3.5 w-3.5 shrink-0 text-brand" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{workout.exercises.length} Drills</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">{workout.exercises.length} {t('workout.drills')}</span>
             </div>
           </div>
 

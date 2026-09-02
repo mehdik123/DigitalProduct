@@ -15,6 +15,7 @@ import {
 import { getWorkoutSplit, DaysPerWeek } from '../data/workoutData';
 import { getPhase, isDeloadWeek } from '../data/programConfig';
 import { useLanguage } from '../contexts/LanguageContext';
+import { dayName, dayDescription } from '../i18n/content';
 import { ProgressRing, Button, StatCounter } from './ui';
 import { celebrateVariants } from '../design/motion';
 import { celebrateWeekUnlock } from '../lib/celebration';
@@ -116,13 +117,13 @@ export default function WorkoutPageNew({
             <button
               onClick={onBack}
               className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-hair bg-surface-2 active:scale-95 rtl:rotate-180 sm:h-10 sm:w-10"
-              aria-label="Back"
+              aria-label={t('common.back')}
             >
               <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
             <div className="min-w-0 flex-1">
               <h1 className="truncate font-display text-base font-black italic uppercase tracking-tight sm:text-2xl">
-                {workout?.name}
+                {dayName(t, workout?.name)}
               </h1>
               <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-txt-mid sm:text-xs">
                 <span className="shrink-0 text-brand">{t('week.label')} {weekNumber}</span>
@@ -140,7 +141,7 @@ export default function WorkoutPageNew({
                 value={progress}
                 size={34}
                 strokeWidth={4}
-                label={`Week progress ${Math.round(progress * 100)}%`}
+                label={t('progress.ringLabel', { percent: Math.round(progress * 100) })}
               />
             </div>
           </div>
@@ -150,7 +151,7 @@ export default function WorkoutPageNew({
               value={progress}
               size={64}
               strokeWidth={7}
-              label={`Week progress ${Math.round(progress * 100)}%`}
+              label={t('progress.ringLabel', { percent: Math.round(progress * 100) })}
             />
             <div className="min-w-0 flex-1">
               <div className="mb-0.5 flex items-center justify-between gap-2 text-[9px] font-semibold uppercase tracking-wider text-txt-lo sm:text-[10px]">
@@ -170,7 +171,7 @@ export default function WorkoutPageNew({
       <div className="mx-auto max-w-3xl space-y-2.5 px-3 pt-3 pb-nav-space sm:space-y-5 sm:px-4 sm:pt-6">
         {workout?.description && (
           <p className="rounded-xl border border-hair bg-surface-2 p-3 text-xs leading-relaxed text-txt-mid sm:rounded-2xl sm:p-4 sm:text-sm">
-            {workout.description}
+            {dayDescription(t, workout.description)}
           </p>
         )}
 

@@ -3,11 +3,12 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { haptic } from '../lib/haptics';
 import { spring } from '../design/motion';
 import { cn } from '../lib/utils';
+import { LANGUAGES, Language } from '../i18n/translations';
 
 export default function LanguageToggle() {
   const { language, setLanguage } = useLanguage();
 
-  const select = (lang: 'en' | 'ar') => {
+  const select = (lang: Language) => {
     if (lang !== language) {
       haptic.light();
       setLanguage(lang);
@@ -20,7 +21,7 @@ export default function LanguageToggle() {
       role="group"
       aria-label="Language"
     >
-      {(['en', 'ar'] as const).map((lang) => {
+      {LANGUAGES.map((lang) => {
         const active = language === lang;
         return (
           <button
@@ -29,7 +30,7 @@ export default function LanguageToggle() {
             onClick={() => select(lang)}
             aria-pressed={active}
             className={cn(
-              'relative z-10 min-h-[36px] min-w-[44px] rounded-[10px] px-3 text-[10px] font-black uppercase tracking-[0.2em] transition-colors',
+              'relative z-10 min-h-[36px] min-w-[38px] rounded-[10px] px-2.5 text-[10px] font-black uppercase tracking-[0.15em] transition-colors sm:min-w-[44px] sm:px-3 sm:tracking-[0.2em]',
               active ? 'text-white' : 'text-txt-lo hover:text-txt-hi'
             )}
           >
