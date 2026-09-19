@@ -1,57 +1,99 @@
-# Pings Supabase daily so the Free-tier project is not paused after 7 days
-# of inactivity. Supabase counts database REST requests — not dashboard visits.
+# Keeps the Free-tier Supabase project from pausing after ~7 days of low DB activity.
+# Supabase only counts real Postgres requests (REST/RPC), not dashboard visits or /auth/health.
 #
-# One-time setup (GitHub → repo → Settings → Secrets and variables → Actions):
-#   SUPABASE_URL        = https://YOUR_REF.supabase.co
-#   SUPABASE_ANON_KEY   = your anon public key (same as VITE_SUPABASE_ANON_KEY)
+# Required GitHub secrets (Settings → Secrets and variables → Actions):
+#   SUPABASE_URL      = https://YOUR_REF.supabase.co
+#   SUPABASE_ANON_KEY = anon public key (same value as VITE_SUPABASE_ANON_KEY)
 #
-# Test: Actions tab → "Supabase Keep Alive" → Run workflow.
+# After every push that changes this file, verify: Actions → Supabase Keep Alive
+# → Run workflow (manual). Then confirm a schedule run appears within 24h.
 #
-# Paid alternative: Supabase Pro never auto-pauses ($25/mo).
+# Known GitHub quirk: scheduled workflows often skip if the repo is quiet.
+# This file uses several cron slots so one missed tick does not pause the DB.
 
 name: Supabase Keep Alive
 
 on:
   schedule:
-    # Every day at 06:00 UTC (well inside the 7-day window).
-    - cron: '0 6 * * *'
+    # Twice a day, offset from :00 to reduce GitHub schedule delays.
+    - cron: '17 5 * * *'
+    - cron: '43 17 * * *'
+    # Extra midweek safety net.
+    - cron: '7 11 * * 1,3,5'
   workflow_dispatch:
+
+concurrency:
+  group: supabase-keep-alive
+  cancel-in-progress: false
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Ping Supabase database
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          # Legacy names — remove after migrating secrets.
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
-          URL="${SUPABASE_URL:-$VITE_SUPABASE_URL}"
-          KEY="${SUPABASE_ANON_KEY:-$VITE_SUPABASE_ANON_KEY}"
+          set -euo pipefail
+
+          URL="${SUPABASE_URL:-${VITE_SUPABASE_URL:-}}"
+          KEY="${SUPABASE_ANON_KEY:-${VITE_SUPABASE_ANON_KEY:-}}"
 
           if [ -z "$URL" ] || [ -z "$KEY" ]; then
-            echo "::error::Missing secrets. Add SUPABASE_URL and SUPABASE_ANON_KEY in GitHub → Settings → Secrets → Actions."
+            echo "::error::Missing secrets. Add SUPABASE_URL and SUPABASE_ANON_KEY (or the VITE_ versions) in GitHub → Settings → Secrets → Actions."
             exit 1
           fi
 
           URL="${URL%/}"
+          echo "Target: ${URL}/rest/v1/..."
 
-          # Lightweight SELECT — this is what Supabase counts as database activity.
-          # profiles is always present; anon may get an empty array under RLS, which is fine.
-          HTTP_CODE=$(curl -s -o /tmp/supabase-ping.txt -w "%{http_code}" \
-            "${URL}/rest/v1/profiles?select=id&limit=1" \
-            -H "apikey: ${KEY}" \
-            -H "Authorization: Bearer ${KEY}")
+          ping_once() {
+            local path="$1"
+            local label="$2"
+            local code
+            code=$(curl -sS -o /tmp/supabase-ping.txt -w "%{http_code}" \
+              --connect-timeout 20 --max-time 40 \
+              "${URL}${path}" \
+              -H "apikey: ${KEY}" \
+              -H "Authorization: Bearer ${KEY}" \
+              -H "Prefer: count=exact" \
+              -H "Range: 0-0" || echo "000")
+            echo "${label}: HTTP ${code}"
+            head -c 400 /tmp/supabase-ping.txt || true
+            echo
+            # 2xx or empty RLS result is fine; 401/403 means bad key; 5xx may be paused.
+            if [ "$code" = "000" ]; then
+              return 1
+            fi
+            if [ "$code" -ge 200 ] && [ "$code" -lt 300 ]; then
+              return 0
+            fi
+            if [ "$code" = "401" ] || [ "$code" = "403" ]; then
+              echo "::error::Auth failed (${code}). Check SUPABASE_ANON_KEY."
+              return 2
+            fi
+            return 1
+          }
 
-          echo "HTTP ${HTTP_CODE}"
-          cat /tmp/supabase-ping.txt
+          # Real Postgres activity via PostgREST (this is what prevents pausing).
+          # Retry a few times for cold starts / transient network blips.
+          ok=0
+          for attempt in 1 2 3; do
+            echo "Attempt ${attempt}..."
+            if ping_once "/rest/v1/profiles?select=id&limit=1" "profiles"; then
+              ok=1
+              break
+            fi
+            sleep $((attempt * 3))
+          done
 
-          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
-            echo "::error::Keep-alive ping failed"
+          if [ "$ok" -ne 1 ]; then
+            echo "::error::Keep-alive failed. If the project is paused, open Supabase Dashboard → Resume project, then re-run this workflow."
             exit 1
           fi
 
-          echo "Keep-alive OK"
+          echo "Keep-alive OK ($(date -u +%Y-%m-%dT%H:%M:%SZ))"
