@@ -88,13 +88,13 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="bg-hero relative flex min-h-dvh flex-col items-center justify-center overflow-x-hidden overflow-y-auto p-5 sm:p-6">
+        <div className="bg-hero relative min-h-dvh w-full overflow-x-hidden overflow-y-auto">
             {/* Ambient grid + diagonal speed streak (the brand signature). */}
             <div className="ambient-grid pointer-events-none absolute inset-0 opacity-40" />
             <div className="ambient-streak pointer-events-none absolute -left-[30%] -top-[10%] h-[46%] w-[160%]" />
 
-            <div className="relative z-10 w-full max-w-md">
-                <div className="mb-6 flex animate-rise items-center justify-between opacity-0" style={{ animationDelay: '.05s' }}>
+            <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-6 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6">
+                <div className="mb-5 flex animate-rise items-center justify-between opacity-0" style={{ animationDelay: '.05s' }}>
                     <button
                         type="button"
                         onClick={() => navigate('/')}
@@ -106,13 +106,13 @@ export default function LoginPage() {
                     <LanguageToggle />
                 </div>
 
-                <div className="mb-7 flex animate-rise justify-center opacity-0" style={{ animationDelay: '.08s' }}>
+                <div className="mb-5 flex animate-rise justify-center opacity-0" style={{ animationDelay: '.08s' }}>
                     <BrandMark />
                 </div>
 
-                <div className="mb-8 flex animate-rise flex-col items-center text-center opacity-0" style={{ animationDelay: '.12s' }}>
+                <div className="mb-6 flex animate-rise flex-col items-center text-center opacity-0" style={{ animationDelay: '.12s' }}>
                     <Eyebrow>{t('welcome.eyebrow')}</Eyebrow>
-                    <h1 className="mt-4 font-display text-display-lg font-black uppercase italic leading-none tracking-tight text-txt-hi">
+                    <h1 className="mt-3 font-display text-display-lg font-black uppercase italic leading-none tracking-tight text-txt-hi">
                         {t('common.login')}
                     </h1>
                 </div>
@@ -121,7 +121,7 @@ export default function LoginPage() {
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.45, delay: 0.18, ease: [0.22, 0.61, 0.36, 1] }}
-                    className="overflow-hidden rounded-3xl border border-hair bg-surface-1 p-7 shadow-soft md:p-8"
+                    className="w-full overflow-hidden rounded-3xl border border-hair bg-surface-1 p-7 shadow-soft md:p-8"
                 >
                     <form onSubmit={handleLogin} className="space-y-5 text-left rtl:text-right">
                         <Field label={t('signup.email')} htmlFor="login-email">

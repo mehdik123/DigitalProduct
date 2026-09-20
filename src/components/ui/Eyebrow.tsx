@@ -15,7 +15,7 @@ export function Eyebrow({ children, pip = true, className, style }: EyebrowProps
     <span
       style={style}
       className={cn(
-        'inline-flex items-center gap-2 self-start rounded-full border border-hair bg-glass px-3 py-1.5',
+        'inline-flex w-fit items-center gap-2 rounded-full border border-hair bg-glass px-3 py-1.5',
         'text-[11px] font-semibold uppercase tracking-[0.18em] text-txt-mid',
         className
       )}

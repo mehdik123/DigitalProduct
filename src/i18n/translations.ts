@@ -32,16 +32,18 @@ export const translations: Translations = {
         ar: 'مرحبا'
     },
     'welcome.subtitle': {
-        en: 'Choose your focus for today. Master your body through training or fuel your performance through nutrition.',
-        ar: 'ختار على أش بغيتي تركز اليوم. طوّر جسمك بالتمارين ولا قوّي الأداء ديالك بالماكلة.'
+        en: 'Build a better looking body, get stronger, and improve your endurance. One hybrid program for 12 weeks.',
+        ar: 'حسن الشكل ديال جسمك، زيد القوة، وحسن التحمل. برنامج هجين واحد لـ 12 سيمانة.',
+        fr: 'Un corps plus esthétique, plus de force et une meilleure endurance. Un programme hybride sur 12 semaines.',
     },
     'welcome.training': {
         en: 'Training',
         ar: 'التمرين'
     },
     'welcome.training.description': {
-        en: 'Access your 12 week progressive overload program, log workouts, and track PRs.',
-        ar: 'دخل للبرنامج ديالك ديال 12 سيمانة، سجل التمارين وتبّع الأرقام ديالك.'
+        en: 'Train like a hybrid athlete. Build aesthetics, strength, and endurance in one plan.',
+        ar: 'تمرن بحال رياضي هجين. بني الشكل، القوة، والتحمل فبرنامج واحد.',
+        fr: 'Entraîne-toi comme un athlète hybride. Esthétique, force et endurance dans un seul plan.',
     },
     'welcome.nutrition': {
         en: 'Nutrition',
@@ -65,20 +67,24 @@ export const translations: Translations = {
         ar: 'برنامج 12 أسبوعاً'
     },
     'welcome.tagline': {
-        en: 'Build real strength and an engine that lasts. One program, twelve weeks, no hype.',
-        ar: 'بني قوة حقيقية ولياقة تدوم. برنامج واحد، 12 سيمانة، بلا مبالغة.'
+        en: 'Aesthetics, strength, and endurance. Train as a hybrid athlete for 12 weeks.',
+        ar: 'الشكل، القوة، والتحمل. تمرن بحال رياضي هجين لمدة 12 سيمانة.',
+        fr: 'Esthétique, force et endurance. Entraîne-toi comme un athlète hybride pendant 12 semaines.',
     },
     'welcome.stat.program': {
-        en: 'Program',
-        ar: 'البرنامج'
+        en: 'Aesthetics',
+        ar: 'الشكل',
+        fr: 'Esthétique',
     },
     'welcome.stat.sessions': {
-        en: 'Sessions',
-        ar: 'الحصص'
+        en: 'Strength',
+        ar: 'القوة',
+        fr: 'Force',
     },
     'welcome.stat.focus': {
-        en: 'Strength · Engine',
-        ar: 'قوة · لياقة'
+        en: 'Endurance',
+        ar: 'التحمل',
+        fr: 'Endurance',
     },
     'welcome.join.subtitle': {
         en: 'Start your 12 weeks today',
@@ -93,12 +99,14 @@ export const translations: Translations = {
         ar: 'دخول آمن · مع تأطير المهدي'
     },
     'welcome.choosePath.line1': {
-        en: 'Choose Your',
-        ar: 'ختار'
+        en: 'Ready to',
+        ar: 'واجد باش',
+        fr: 'Prêt à',
     },
     'welcome.choosePath.line2': {
-        en: 'Path',
-        ar: 'الطريق ديالك'
+        en: 'train',
+        ar: 'تمرن',
+        fr: "t'entraîner",
     },
 
     // Signup Flow
@@ -977,14 +985,15 @@ export const translations: Translations = {
 
     // Program intro
     'intro.backToPortal': { en: 'Back to Portal', ar: 'رجع للبورطال' },
-    'intro.eyebrow': { en: 'Hybrid Training System', ar: 'نظام التدريب الهجين' },
+    'intro.eyebrow': { en: 'Hybrid Athlete Program', ar: 'برنامج الرياضي الهجين', fr: 'Programme athlète hybride' },
     // Headline is split in three so each language can order the words itself.
     'intro.headline.line1': { en: '12 Week', ar: 'برنامج' },
-    'intro.headline.accent': { en: 'Elite', ar: 'النخبة' },
+    'intro.headline.accent': { en: 'Hybrid', ar: 'هجين' },
     'intro.headline.line2': { en: 'Program', ar: '12 أسبوع' },
     'intro.tagline': {
-        en: 'A high-performance progressive overload system designed to build functional power, elite aesthetics, and hybrid work capacity.',
-        ar: 'نظام تدريب قوي بالزيادة التدريجية، مصمم باش تبني قوة حقيقية، جسم رياضي، وقدرة تحمل عالية.'
+        en: 'Simple progressive training to look better, get stronger, and last longer. Built for hybrid athletes.',
+        ar: 'تدريب بسيط ومتدرج باش تحسن الشكل، تزيد القوة، وتدوم أكثر. مصمم للرياضي الهجين.',
+        fr: 'Un entraînement simple et progressif pour mieux paraître, gagner en force et tenir plus longtemps. Fait pour les athlètes hybrides.',
     },
     'intro.spec.splitDays': { en: '{days} Day Split', ar: 'سبليت {days} أيام' },
     'intro.spec.split.title': { en: 'Your Split', ar: 'السبليت ديالك' },

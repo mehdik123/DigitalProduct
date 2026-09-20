@@ -1,4 +1,4 @@
-import { Zap, ChevronRight, Dumbbell, Timer, TrendingUp } from 'lucide-react';
+import { Zap, ChevronRight, Sparkles, Dumbbell, HeartPulse } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Eyebrow } from './ui';
@@ -13,9 +13,9 @@ interface WelcomePortalProps {
 }
 
 const perks = [
-    { icon: Dumbbell, key: 'welcome.training' as const },
-    { icon: TrendingUp, key: 'welcome.stat.program' as const },
-    { icon: Timer, key: 'welcome.stat.focus' as const },
+    { icon: Sparkles, key: 'welcome.stat.program' as const },
+    { icon: Dumbbell, key: 'welcome.stat.sessions' as const },
+    { icon: HeartPulse, key: 'welcome.stat.focus' as const },
 ];
 
 export default function WelcomePortal({ onSelectTraining, userName }: WelcomePortalProps) {
@@ -57,6 +57,9 @@ export default function WelcomePortal({ onSelectTraining, userName }: WelcomePor
                         {t('welcome.choosePath.line1')}{' '}
                         <span className="text-grad-coral">{t('welcome.choosePath.line2')}</span>
                     </h1>
+                    <p className="max-w-md text-[11px] font-medium leading-relaxed text-txt-mid sm:text-sm">
+                        {t('welcome.training.description')}
+                    </p>
                 </motion.header>
 
                 <motion.div variants={itemVariants} className="mx-auto w-full max-w-lg">

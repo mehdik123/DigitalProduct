@@ -49,7 +49,7 @@ function App() {
 
   const [currentWeek, setCurrentWeek] = useState(1);
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutDay | null>(null);
-  const [view, setView] = useState<'welcome' | 'intro' | 'workouts'>('welcome');
+  const [view, setView] = useState<'welcome' | 'intro' | 'workouts'>('workouts');
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [showWorkoutCoach, setShowWorkoutCoach] = useState(false);
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -304,7 +304,7 @@ function App() {
         {/* Home / Welcome Portal - Only shown to authenticated users */}
         {isHome && (
           <WelcomePortal
-              onSelectTraining={() => setView('intro')}
+              onSelectTraining={() => setView('workouts')}
               onSignup={() => setShowSignupForm(true)}
               userName={profile?.fullName || user?.user_metadata?.full_name || user?.email}
             />

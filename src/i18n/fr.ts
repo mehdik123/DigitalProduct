@@ -9,10 +9,10 @@ export const frenchTranslations: Record<string, string> = {
     // Welcome Portal
     'welcome.title': 'Bienvenue',
     'welcome.subtitle':
-        "Choisis ton objectif du jour. Maîtrise ton corps par l'entraînement ou alimente tes performances par la nutrition.",
+        'Un corps plus esthétique, plus de force et une meilleure endurance. Un programme hybride sur 12 semaines.',
     'welcome.training': 'Entraînement',
     'welcome.training.description':
-        'Accède à ton programme de surcharge progressive de 12 semaines, enregistre tes séances et suis tes records.',
+        'Entraîne-toi comme un athlète hybride. Esthétique, force et endurance dans un seul plan.',
     'welcome.nutrition': 'Nutrition',
     'welcome.nutrition.description':
         'Calcule tes macros, planifie tes repas et découvre des alternatives saines adaptées à tes objectifs.',
@@ -20,15 +20,15 @@ export const frenchTranslations: Record<string, string> = {
     'welcome.openKitchen': 'Ouvrir la cuisine',
     'welcome.eyebrow': 'Programme 12 semaines',
     'welcome.tagline':
-        'Construis une vraie force et un moteur qui dure. Un programme, douze semaines, sans blabla.',
-    'welcome.stat.program': 'Programme',
-    'welcome.stat.sessions': 'Séances',
-    'welcome.stat.focus': 'Force · Endurance',
+        'Esthétique, force et endurance. Entraîne-toi comme un athlète hybride pendant 12 semaines.',
+    'welcome.stat.program': 'Esthétique',
+    'welcome.stat.sessions': 'Force',
+    'welcome.stat.focus': 'Endurance',
     'welcome.join.subtitle': "Commence tes 12 semaines aujourd'hui",
     'welcome.login.subtitle': 'Tu as déjà un compte ?',
     'welcome.trust': 'Connexion sécurisée · coaché par El Mehdi',
-    'welcome.choosePath.line1': 'Choisis ta',
-    'welcome.choosePath.line2': 'voie',
+    'welcome.choosePath.line1': 'Prêt à',
+    'welcome.choosePath.line2': "t'entraîner",
 
     // Signup
     'signup.title': 'Crée ton programme',
@@ -336,12 +336,12 @@ export const frenchTranslations: Record<string, string> = {
 
     // Program intro
     'intro.backToPortal': 'Retour au portail',
-    'intro.eyebrow': "Système d'entraînement hybride",
+    'intro.eyebrow': 'Programme athlète hybride',
     'intro.headline.line1': 'Programme',
-    'intro.headline.accent': 'Élite',
+    'intro.headline.accent': 'Hybride',
     'intro.headline.line2': '12 semaines',
     'intro.tagline':
-        "Un système de surcharge progressive haute performance, conçu pour développer une puissance fonctionnelle, une esthétique d'élite et une capacité de travail hybride.",
+        'Un entraînement simple et progressif pour mieux paraître, gagner en force et tenir plus longtemps. Fait pour les athlètes hybrides.',
     'intro.spec.splitDays': 'Split {days} jours',
     'intro.spec.split.title': 'Ton split',
     'intro.spec.split.sub': 'Fréquence optimisée',
