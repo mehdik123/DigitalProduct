@@ -26,6 +26,7 @@ import ProgramIntro from './components/ProgramIntro';
 import AuthChoiceModal from './components/AuthChoiceModal';
 import { hasSeenWorkoutCoach, hasDismissedWeek6Banner, dismissWeek6Banner } from './lib/onboarding';
 import { getWeekSetProgress, getNextWorkoutName } from './lib/weekProgress';
+import { getMilestoneProgress } from './lib/milestones';
 import BottomNav from './components/BottomNav';
 import { useLanguage } from './contexts/LanguageContext';
 import { useAuth } from './contexts/AuthContext';
@@ -382,11 +383,17 @@ function App() {
                       {user && (() => {
                         const { done, total } = getWeekSetProgress(user.id, currentWeek, daysPerWeek);
                         const nextWorkout = getNextWorkoutName(user.id, currentWeek, daysPerWeek, t);
+                        const milestones = getMilestoneProgress(user.id);
                         return (
-                          <div className="space-y-1 px-0.5">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-txt-mid">
-                              {t('feed.setsProgress', { done, total })}
-                            </p>
+                          <div className="space-y-1.5 px-0.5">
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="text-[10px] font-bold uppercase tracking-wider text-txt-mid">
+                                {t('feed.setsProgress', { done, total })}
+                              </p>
+                              <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-brand">
+                                {t('milestone.feedLabel')} {milestones.done}/{milestones.total}
+                              </span>
+                            </div>
                             {nextWorkout && (
                               <p className="text-[10px] font-black uppercase tracking-wide text-brand">
                                 {t('feed.nextUp', { workout: nextWorkout })}

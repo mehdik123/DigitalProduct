@@ -15,6 +15,12 @@ import {
   isLocalDayComplete,
 } from '../services/localProgram';
 import { hasLoggedFirstSet, markFirstSetLogged } from '../lib/onboarding';
+import {
+  evaluateMilestones,
+  getMilestoneProgress,
+  type MilestoneDef,
+} from '../lib/milestones';
+import MilestoneModal from './MilestoneModal';
 import { getWorkoutSplit, DaysPerWeek } from '../data/workoutData';
 import { getPhase, isDeloadWeek } from '../data/programConfig';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -45,6 +51,8 @@ export default function WorkoutPageNew({
   const [prevSets, setPrevSets] = useState<Map<string, ExerciseSet[]>>(new Map());
   const [done, setDone] = useState(0);
   const [celebration, setCelebration] = useState<{ week: number; final: boolean } | null>(null);
+  const [milestoneQueue, setMilestoneQueue] = useState<MilestoneDef[]>([]);
+  const activeMilestone = milestoneQueue[0] ?? null;
 
   const phase = getPhase(weekNumber);
 
@@ -92,11 +100,23 @@ export default function WorkoutPageNew({
     setDone(local.completedCount);
 
     const setsAfter = getLocalCompletedCount(profile.id, weekNumber);
+    const dayJustCompleted = !dayWasComplete && isLocalDayComplete(profile.id, weekNumber, workout.id);
+
     if (!hasLoggedFirstSet() && setsBefore === 0 && setsAfter > 0) {
       markFirstSetLogged();
-      toast.success(t('toast.firstSet'));
     }
-    if (!dayWasComplete && isLocalDayComplete(profile.id, weekNumber, workout.id)) {
+
+    const newly = evaluateMilestones({
+      userId: profile.id,
+      daysPerWeek,
+      dayJustCompleted,
+      setsLoggedThisWeek: setsAfter,
+      unlockedWeek: local.unlockedWeek,
+      programFinal: local.final,
+    });
+    if (newly.length) {
+      setMilestoneQueue((q) => [...q, ...newly]);
+    } else if (dayJustCompleted) {
       toast.success(t('toast.dayComplete'));
     }
 
@@ -240,6 +260,16 @@ export default function WorkoutPageNew({
           </motion.div>
         )}
       </AnimatePresence>
+
+      <MilestoneModal
+        milestone={activeMilestone}
+        progress={
+          activeMilestone
+            ? getMilestoneProgress(profile.id)
+            : undefined
+        }
+        onClose={() => setMilestoneQueue((q) => q.slice(1))}
+      />
     </div>
   );
 }

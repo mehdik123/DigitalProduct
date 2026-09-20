@@ -294,6 +294,128 @@ export const translations: Translations = {
         fr: 'Saisis les reps et la charge réelles avant d\u2019enregistrer.',
     },
 
+    // Milestones (no em dashes)
+    'milestone.badge': {
+        en: 'Milestone unlocked',
+        ar: 'إنجاز جديد',
+        fr: 'Jalon débloqué',
+    },
+    'milestone.progress': {
+        en: 'Collection',
+        ar: 'المجموعة',
+        fr: 'Collection',
+    },
+    'milestone.continue': {
+        en: 'Keep going',
+        ar: 'كمل',
+        fr: 'Continuer',
+    },
+    'milestone.first_set.title': {
+        en: 'First set logged',
+        ar: 'أول سلسلة',
+        fr: 'Première série',
+    },
+    'milestone.first_set.body': {
+        en: 'You started tracking. Every set you log builds the next week.',
+        ar: 'بديتي التسجيل. كل سلسلة كتكمل السيمانة الجاية.',
+        fr: 'Tu as commencé le suivi. Chaque série prépare la semaine suivante.',
+    },
+    'milestone.first_day.title': {
+        en: 'Workout day done',
+        ar: 'نهاية اليوم',
+        fr: 'Séance terminée',
+    },
+    'milestone.first_day.body': {
+        en: 'Full day in the books. Finish the rest of the week to unlock what comes next.',
+        ar: 'كملتي اليوم كامل. كمل باقي السيمانة باش تفتح الجاي.',
+        fr: 'Journée complète. Finis la semaine pour débloquer la suite.',
+    },
+    'milestone.week2.title': {
+        en: 'Week 2 unlocked',
+        ar: 'السيمانة 2 تفتحات',
+        fr: 'Semaine 2 débloquée',
+    },
+    'milestone.week2.body': {
+        en: 'First microcycle complete. New targets are ready.',
+        ar: 'أول ميكروسايكل سالا. الأهداف الجديدة واجدة.',
+        fr: 'Premier microcycle terminé. Nouveaux objectifs prêts.',
+    },
+    'milestone.three_days.title': {
+        en: 'Three days complete',
+        ar: 'ثلاث أيام كاملة',
+        fr: 'Trois jours complétés',
+    },
+    'milestone.three_days.body': {
+        en: 'You cleared three different training days. Consistency is stacking.',
+        ar: 'كملتي ثلاث أيام مختلفة. الاستمرارية كتجمع.',
+        fr: 'Tu as validé trois jours différents. La régularité s\u2019installe.',
+    },
+    'milestone.week4.title': {
+        en: 'Week 4 unlocked',
+        ar: 'السيمانة 4 تفتحات',
+        fr: 'Semaine 4 débloquée',
+    },
+    'milestone.week4.body': {
+        en: 'Hypertrophy block is rolling. Keep logging every set.',
+        ar: 'بلوك التضخم خدام. كمل سجل كل سلسلة.',
+        fr: 'Le bloc hypertrophie avance. Continue d\u2019enregistrer chaque série.',
+    },
+    'milestone.deload.title': {
+        en: 'Deload week',
+        ar: 'سيمانة الديلود',
+        fr: 'Semaine de décharge',
+    },
+    'milestone.deload.body': {
+        en: 'Halfway through the program. Recover well and stay sharp.',
+        ar: 'نص البرنامج. استريح مزيان وبقى مركز.',
+        fr: 'Mi parcours. Récupère bien et reste précis.',
+    },
+    'milestone.strength.title': {
+        en: 'Strength phase',
+        ar: 'فاز القوة',
+        fr: 'Phase force',
+    },
+    'milestone.strength.body': {
+        en: 'Lower reps. Heavier intent. Trust the plan.',
+        ar: 'عدات أقل. تركيز على الثقل. تبع البرنامج.',
+        fr: 'Moins de reps. Plus d\u2019intention. Fais confiance au plan.',
+    },
+    'milestone.peak.title': {
+        en: 'Peak phase',
+        ar: 'فاز البيك',
+        fr: 'Phase de pic',
+    },
+    'milestone.peak.body': {
+        en: 'Top intensity window. Hit your targets clean.',
+        ar: 'أعلى شدة. ضرب الأهداف بنقاوة.',
+        fr: 'Fenêtre d\u2019intensité max. Atteins tes cibles proprement.',
+    },
+    'milestone.retest.title': {
+        en: 'Retest week',
+        ar: 'سيمانة الريتيست',
+        fr: 'Semaine de retest',
+    },
+    'milestone.retest.body': {
+        en: 'Measure the key lifts and see how far you came.',
+        ar: 'قيس الحركات الرئيسية وشوف شحال تقدمتي.',
+        fr: 'Mesure les lifts clés et vois le chemin parcouru.',
+    },
+    'milestone.complete.title': {
+        en: 'Program complete',
+        ar: 'البرنامج سالا',
+        fr: 'Programme terminé',
+    },
+    'milestone.complete.body': {
+        en: 'Twelve weeks done. You built the habit and the numbers.',
+        ar: '12 سيمانة سالاو. صاوبتي العادة والأرقام.',
+        fr: 'Douze semaines terminées. Habitude et chiffres sont là.',
+    },
+    'milestone.feedLabel': {
+        en: 'Milestones',
+        ar: 'الإنجازات',
+        fr: 'Jalons',
+    },
+
     // Success Modal
     'signup.success.title': {
         en: 'Account Created!',
