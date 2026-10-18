@@ -177,6 +177,7 @@ export const frenchTranslations: Record<string, string> = {
     'workout.logWeights': 'Choisis une séance pour enregistrer tes charges',
     'workout.week': 'Semaine',
     'workout.done': 'Fait',
+    'workout.openToFinish': 'Ouvre pour finir',
     'workout.start': 'Démarrer',
     'workout.review': 'Revoir',
 

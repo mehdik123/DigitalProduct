@@ -621,6 +621,11 @@ export const translations: Translations = {
         ar: 'السيمانة'
     },
     'workout.done': { en: 'Done', ar: 'سالا', fr: 'Fait' },
+    'workout.openToFinish': {
+        en: 'Tap to finish',
+        ar: 'ضغط باش تكمّل',
+        fr: 'Ouvre pour finir',
+    },
     'log.confirmDay': {
         en: 'Mark day done',
         ar: 'علّم اليوم كسالا',

@@ -268,8 +268,8 @@ export function getLocalDayExerciseProgress(
 
 /**
  * Confirm the whole day at target values (no per-set edits required).
- * Marks every unlogged set as logged using its target reps/weight.
- * Same for week 1, week 2, … week 8 — progression still needs a confirm.
+ * Always writes the full expected set count per exercise (pads short logs),
+ * so a day cannot get stuck at e.g. 7/8 because one move needed 4 sets.
  */
 export function confirmLocalDayAtTargets(
   userId: string,
@@ -284,17 +284,29 @@ export function confirmLocalDayAtTargets(
 
   let last: LocalSaveResult = { completedCount: getLocalCompletedCount(userId, week) };
   for (const ex of day.exercises) {
-    const sets = getLocalDaySets(userId, week, dayId, ex.id);
     const need = expectedSets(ex, week);
-    const logged = sets.filter((s) => s.completed).length;
-    if (logged >= need) continue;
-    last = saveLocalDaySets(
-      userId,
-      week,
-      dayId,
-      ex,
-      sets.map((s) => ({ ...s, completed: true }))
-    );
+    const existing = getLocalDaySets(userId, week, dayId, ex.id);
+    const fallbackReps = existing[0]?.targetReps ?? existing[0]?.reps ?? seedReps(ex.id);
+    const fallbackWeight = existing[0]?.targetWeight ?? existing[0]?.weight ?? 0;
+
+    const sets = Array.from({ length: need }, (_, i) => {
+      const s = existing[i];
+      const targetReps = s?.targetReps ?? fallbackReps;
+      const targetWeight = s?.targetWeight ?? fallbackWeight;
+      // Keep real logged values when present; otherwise use targets.
+      const reps = s?.completed ? (s.reps ?? targetReps) : targetReps;
+      const weight = s?.completed ? (s.weight ?? targetWeight) : targetWeight;
+      return {
+        setNumber: i + 1,
+        reps,
+        weight,
+        completed: true,
+        targetReps,
+        targetWeight: typeof targetWeight === 'number' ? targetWeight : undefined,
+      };
+    });
+
+    last = saveLocalDaySets(userId, week, dayId, ex, sets);
   }
   return last;
 }
@@ -384,24 +396,29 @@ export function saveLocalDaySets(
 ): LocalSaveResult {
   const store = load(userId);
   const cali = isCalisthenics(exercise);
+  const need = expectedSets(exercise, week);
+  const fallbackReps = sets[0]?.targetReps ?? sets[0]?.reps ?? seedReps(exercise.id);
+  const fallbackWeight = sets[0]?.targetWeight ?? sets[0]?.weight ?? 0;
 
   if (!store.logs[week]) store.logs[week] = {};
   if (!store.logs[week][dayId]) store.logs[week][dayId] = {};
 
-  store.logs[week][dayId][exercise.id] = sets.map((s) => ({
-    setNumber: s.setNumber,
-    targetReps: s.targetReps ?? seedReps(exercise.id),
-    targetWeight: s.targetWeight ?? null,
-    reps: Number.isFinite(s.reps) ? s.reps : 0,
-    weight: cali
-      ? Number.isFinite(s.weight) && s.weight > 0
-        ? s.weight
-        : null
-      : Number.isFinite(s.weight)
-        ? s.weight
-        : 0,
-    logged: true,
-  }));
+  // Always persist the full expected set count so days cannot stick at N-1.
+  store.logs[week][dayId][exercise.id] = Array.from({ length: need }, (_, i) => {
+    const s = sets[i] ?? sets[sets.length - 1];
+    const targetReps = s?.targetReps ?? fallbackReps;
+    const targetWeight = s?.targetWeight ?? fallbackWeight;
+    const reps = Number.isFinite(s?.reps) ? (s!.reps as number) : targetReps;
+    const rawWeight = Number.isFinite(s?.weight) ? (s!.weight as number) : targetWeight;
+    return {
+      setNumber: i + 1,
+      targetReps,
+      targetWeight: typeof targetWeight === 'number' ? targetWeight : null,
+      reps,
+      weight: cali ? (rawWeight > 0 ? rawWeight : null) : rawWeight ?? 0,
+      logged: true,
+    };
+  });
 
   let result: LocalSaveResult = { completedCount: 0 };
 

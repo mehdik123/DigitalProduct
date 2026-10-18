@@ -60,8 +60,8 @@ export default function WorkoutCard({
             </span>
           )}
           {partial && (
-            <span className="shrink-0 font-display text-[13px] font-semibold tabular-nums text-txt-lo">
-              {progress.done}/{progress.total}
+            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.08em] text-txt-lo">
+              {progress.done}/{progress.total} · {t('workout.openToFinish')}
             </span>
           )}
         </div>

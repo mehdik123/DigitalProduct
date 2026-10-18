@@ -9,6 +9,7 @@ import { VideoModal } from './ui/VideoModal';
 import { getYouTubeThumbnails } from '../lib/youtube';
 import { toast } from 'sonner';
 import { Button } from './ui';
+import { isDeloadWeek } from '../data/programConfig';
 
 interface ExerciseCardNewProps {
   exercise: Exercise;
@@ -32,18 +33,23 @@ export default function ExerciseCardNew({
   const localizedName = exerciseName(t, exercise.name);
   const isCalisthenics = exercise.type === 'calisthenics';
 
+  const expectedCount = isDeloadWeek(weekNumber)
+    ? Math.max(1, Math.floor(exercise.sets / 2))
+    : exercise.sets;
+
   const build = (): ExerciseSet[] => {
-    const count = savedSets?.length ? savedSets.length : exercise.sets;
-    return Array.from({ length: count }, (_, i) => {
-      const s = savedSets?.[i];
+    // Always show the full expected set count (e.g. skull crushers = 4),
+    // even if a previous save only stored 3 rows.
+    return Array.from({ length: expectedCount }, (_, i) => {
+      const s = savedSets?.[i] ?? savedSets?.[savedSets.length - 1];
       return {
         setNumber: i + 1,
-        reps: s?.reps ?? 0,
-        weight: s?.weight ?? 0,
-        rpe: s?.rpe ?? 8,
-        completed: s?.completed ?? false,
-        targetReps: s?.targetReps,
-        targetWeight: s?.targetWeight,
+        reps: savedSets?.[i]?.reps ?? s?.targetReps ?? s?.reps ?? 0,
+        weight: savedSets?.[i]?.weight ?? s?.targetWeight ?? s?.weight ?? 0,
+        rpe: savedSets?.[i]?.rpe ?? 8,
+        completed: savedSets?.[i]?.completed ?? false,
+        targetReps: savedSets?.[i]?.targetReps ?? s?.targetReps,
+        targetWeight: savedSets?.[i]?.targetWeight ?? s?.targetWeight,
       };
     });
   };
