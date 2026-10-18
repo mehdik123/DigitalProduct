@@ -1,31 +1,24 @@
-import { ReactNode } from 'react';
-import { motion, HTMLMotionProps } from 'framer-motion';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../lib/utils';
-import { tap } from '../../design/motion';
 
-interface IconButtonProps extends Omit<HTMLMotionProps<'button'>, 'ref'> {
+interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  /** Required for accessibility — describes the action. */
-  'aria-label': string;
 }
 
-/** 38px square glass button with a hairline border and press feedback. */
-export function IconButton({ className, disabled, children, ...props }: IconButtonProps) {
+/** 40×40, radius 12, surface-1 — redesign icon button. */
+export function IconButton({ children, className, ...props }: IconButtonProps) {
   return (
-    <motion.button
-      whileTap={disabled ? undefined : tap}
-      disabled={disabled}
+    <button
+      type="button"
       className={cn(
-        'flex h-[38px] w-[38px] items-center justify-center rounded-xl',
-        'border border-hair bg-glass text-txt-mid',
-        'transition-colors duration-200 hover:bg-glass-hi hover:text-txt-hi',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/60',
-        'disabled:cursor-not-allowed disabled:opacity-40',
+        'grid h-10 w-10 place-items-center rounded-xl bg-surface-1 text-txt-hi',
+        'transition-colors hover:bg-surface-2 active:scale-[0.98]',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
         className
       )}
       {...props}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }

@@ -1,0 +1,460 @@
+
+</head>
+<body>
+
+<!-- ============================ PAGE 0: COVER ============================ -->
+<section class="page wide cover">
+  <div class="pid">Hybrid Athlete  /  Design hand-off  /  Redesign v1</div>
+  <div class="ptitle">A training notebook, not a game</div>
+  <p class="psub">Same pages, same IDs, same flows as the current app (P01 to P06). What changes is the visual system: warm graphite surfaces, bone-white type, one red signal, and numbers treated as the hero. Built for a person who trains between meetings and wants the app to feel calm, precise and premium.</p>
+  <div class="thumbs" id="thumbs"></div>
+  <div class="principles">
+    <div><h5>One red</h5><p>Red appears only on the primary action, the current week, progress fill and the active input. Everything else is graphite and bone.</p></div>
+    <div><h5>Numbers lead</h5><p>Week numbers, kg and reps use Saira Condensed with tabular figures, like a scoreboard. They are the most important thing on every screen.</p></div>
+    <div><h5>Quiet surfaces</h5><p>No gradients, glows, italics or emoji. Depth comes from three surface steps and hairlines. The only gradient is the photo fade on P01.</p></div>
+    <div><h5>Progress is visible</h5><p>The automatic progression is the product. Every screen shows where you are in the 8 weeks and what the app set for you.</p></div>
+  </div>
+</section>
+
+<!-- ============================ PAGE 1: SYSTEM ============================ -->
+<section class="page wide sys">
+  <div class="pid">Design system</div>
+  <div class="ptitle">Tokens and components</div>
+  <div class="sysgrid">
+    <div>
+      <div class="swatches">
+        <div class="sw"><div style="background:#111110"></div><div><b>--bg</b>#111110<br><span>App background</span></div></div>
+        <div class="sw"><div style="background:#1A1918"></div><div><b>--s1</b>#1A1918<br><span>Cards, inputs</span></div></div>
+        <div class="sw"><div style="background:#22201E"></div><div><b>--s2</b>#22201E<br><span>Tiles, set cells</span></div></div>
+        <div class="sw"><div style="background:#2C2A27"></div><div><b>--s3</b>#2C2A27<br><span>Tracks, done cells</span></div></div>
+        <div class="sw"><div style="background:#2E2C29"></div><div><b>--line</b>#2E2C29<br><span>Hairlines</span></div></div>
+        <div class="sw"><div style="background:#F2EDE6;box-shadow:inset 0 0 0 1px #d8d3cc"></div><div><b>--tx</b>#F2EDE6<br><span>Primary text</span></div></div>
+        <div class="sw"><div style="background:#A8A29A"></div><div><b>--tx2</b>#A8A29A<br><span>Secondary text</span></div></div>
+        <div class="sw"><div style="background:#6F6A64"></div><div><b>--tx3</b>#6F6A64<br><span>Labels, disabled</span></div></div>
+        <div class="sw"><div style="background:#E8112D"></div><div><b>--red</b>#E8112D<br><span>Primary, current, progress</span></div></div>
+        <div class="sw"><div style="background:#C80E27"></div><div><b>--red-press</b>#C80E27<br><span>Pressed primary</span></div></div>
+        <div class="sw"><div style="background:#FFFFFF;box-shadow:inset 0 0 0 1px #d8d3cc"></div><div><b>--on-red</b>#FFFFFF<br><span>Text on red</span></div></div>
+        <div class="sw"><div style="background:#3E3B37"></div><div><b>--line2</b>#3E3B37<br><span>Secondary button edge</span></div></div>
+      </div>
+      <div class="typespec" style="margin-top:16px">
+        <div class="ts"><small><b>Display XL</b>Saira Condensed 700, 72/60, upper</small><div style="font:700 38px/1 var(--display);text-transform:uppercase">Hybrid athlete</div></div>
+        <div class="ts"><small><b>Display L</b>Saira Condensed 600, 42/42, upper</small><div style="font:600 28px/1 var(--display);text-transform:uppercase">Ready to train</div></div>
+        <div class="ts"><small><b>Numerals</b>Saira Condensed 600, tabular</small><div style="font:600 26px/1 var(--display);font-variant-numeric:tabular-nums">01  02  40  42.5  10</div></div>
+        <div class="ts"><small><b>Title</b>Barlow 600, 17/22</small><div style="font:600 17px/22px var(--ui)">Upper body 1</div></div>
+        <div class="ts"><small><b>Body</b>Barlow 400, 15/22</small><div style="font:400 15px/22px var(--ui)">Your loads and reps were updated from what you logged.</div></div>
+        <div class="ts"><small><b>Label</b>Barlow 600, 11, +0.14em, upper</small><div style="font:600 11px/1 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)">Your workouts</div></div>
+      </div>
+    </div>
+    <div class="darkpanel">
+      <div class="minis">
+        <div><div class="cap3">Primary button</div><div class="btn btn-primary">Start workout <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>
+        <div><div class="cap3">Secondary button</div><div class="btn btn-secondary">Log in</div></div>
+      </div>
+      <div class="minis">
+        <div><div class="cap3">Input</div><div class="input"><span class="ph">name@example.com</span></div></div>
+        <div><div class="cap3">Input, focused</div><div class="input focus"><span>mehdi@unbreak<span class="caret"></span></span></div></div>
+      </div>
+      <div>
+        <div class="cap3">Week cell: current, done, locked</div>
+        <div class="rowc">
+          <div class="wk now" style="width:44px"><span class="n">2</span><span class="s">Now</span></div>
+          <div class="wk done" style="width:44px"><span class="n">1</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span></div>
+          <div class="wk" style="width:44px"><span class="n">3</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+          <div style="width:14px"></div>
+          <div><div class="cap3">Chips</div><div class="rowc"><span class="chip red">Next</span><span class="chip mute">Anatomical adaptation</span></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="cap3">Set row: done, active, empty</div>
+        <div class="sets compact" style="margin-top:0">
+          <div class="row done"><span class="i">1</span><span class="tg">40 × 10</span><span class="cell">40</span><span class="cell">10</span></div>
+          <div class="row"><span class="i">2</span><span class="tg">40 × 10</span><span class="cell focus">40</span><span class="cell">10</span></div>
+          <div class="row"><span class="i">3</span><span class="tg">40 × 10</span><span class="cell ph">40</span><span class="cell ph">10</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="cap3">Program track (8 weeks)</div>
+        <div class="track"><i class="full"></i><i><b style="width:40%"></b></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="rowc" style="justify-content:space-between;color:var(--tx2)">
+        <div><div class="cap3">Icons, 1.75 stroke, 24 grid</div>
+          <div class="rowc" style="gap:16px;color:var(--tx)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l6-6 4 4 6-6"/><path d="M15 8h5v5"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ P01 ============================ -->
+<section class="page">
+  <div class="device"><div class="app p01">
+    <div class="hero"><img src="#" alt=""></div>
+    <div class="sb"><span>9:41</span><span class="ic"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0M4 7a6 6 0 0 1 8 0"/><circle cx="8" cy="10" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="1.8" fill="currentColor"/><rect x="23.5" y="4" width="1.8" height="4" rx=".9" fill="currentColor" opacity=".45"/></svg></span></div>
+    <div class="top"><div class="brand"><img src="#" alt=""><span>Hybrid Athlete</span></div><div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div></div>
+    <div class="content">
+      <div class="eyebrow"><i></i>8-week program</div>
+      <h1>Hybrid<br>athlete</h1>
+      <p class="lead">Aesthetics, strength and endurance in one plan. Your weights adjust every week from what you log.</p>
+      <div class="pillars"><span>Aesthetics</span><span class="sep"></span><span>Strength</span><span class="sep"></span><span>Endurance</span></div>
+      <div class="ctas">
+        <div class="btn btn-primary">Create account <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="btn btn-secondary">Log in</div>
+      </div>
+      <div class="foot">Coached by El Mehdi Kamal</div>
+    </div>
+    <div class="hi"></div>
+  </div></div>
+  <div class="spec">
+    <div class="pid">P01</div>
+    <div class="ptitle">Auth entry</div>
+    <p class="psub">First screen when logged out. The coach's photo replaces the gradient text: people buy from a person.</p>
+    <h4>Layout, top to bottom</h4>
+    <ul>
+      <li>Full-bleed photo, 500px tall, <code>object-position: 50% 30%</code>, filter <code>saturate(.82) contrast(1.06) brightness(.88)</code>. Overlay fades to <code>--bg</code> between 34% and 86% so the headline always sits on dark, plus a light top fade for the status bar.</li>
+      <li>Top bar: logo mark 22px + wordmark (Label style, +0.18em). Language switch as plain text, active in <code>--tx</code>, others <code>--tx3</code>.</li>
+      <li>Content pinned to the bottom, 24px gutters: eyebrow with 18x2 red rule, Display XL "Hybrid athlete" (72/60, upright, no italic), lead in <code>--tx2</code>, pillars row separated by 1px hairlines.</li>
+      <li>Primary "Create account" (56px, radius 14) with arrow icon. Secondary "Log in" with 1px inset border <code>--line2</code>.</li>
+    </ul>
+    <h4>Changed from current</h4>
+    <ul>
+      <li>Removed the italic gradient headline, the lightning emoji and the red glow.</li>
+      <li>The lead sentence now names the product's real value: weights that adjust from what you log.</li>
+      <li>"Already have an account?" helper text removed. The secondary button says it.</li>
+    </ul>
+    <h4>Behavior</h4>
+    <ul>
+      <li>Buttons: press scale 0.98 for 120ms, primary background <code>--red-press</code> while pressed.</li>
+      <li>Photo loads with a 400ms fade from <code>--bg</code>. Content does not move.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ P02 ============================ -->
+<section class="page">
+  <div class="device"><div class="app p02">
+    <div class="sb"><span>9:41</span><span class="ic"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0M4 7a6 6 0 0 1 8 0"/><circle cx="8" cy="10" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="1.8" fill="currentColor"/><rect x="23.5" y="4" width="1.8" height="4" rx=".9" fill="currentColor" opacity=".45"/></svg></span></div>
+    <div class="top"><div class="iconbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></div><div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div></div>
+    <div class="body">
+      <div class="eyebrow"><i></i>Welcome back</div>
+      <h1>Log in</h1>
+      <p class="lead">Pick up your 8 weeks where you left them.</p>
+      <form>
+        <div class="field"><label>Email address</label><div class="input"><span>mehdi@unbreakablesteam.com</span></div></div>
+        <div class="field"><label>Password</label><div class="input focus"><span>••••••••<span class="caret"></span></span><span style="color:var(--tx3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg></span></div></div>
+      </form>
+      <div class="forgot" style="margin-top:14px"><span class="link">Forgot password?</span></div>
+      <div class="btn btn-primary" style="margin-top:26px">Log in</div>
+    </div>
+    <div class="bottom">New here?<span class="link">Create account</span></div>
+    <div class="hi"></div>
+  </div></div>
+  <div class="spec">
+    <div class="pid">P02</div>
+    <div class="ptitle">Login</div>
+    <p class="psub">Returning users. Content starts at the top, 24px gutters, no card around the form.</p>
+    <h4>Layout, top to bottom</h4>
+    <ul>
+      <li>Top bar: back button (40x40, radius 12, <code>--s1</code>) and language switch.</li>
+      <li>Eyebrow "Welcome back", Display "Log in" (Saira Condensed 600, 46px, upper), lead in <code>--tx2</code>.</li>
+      <li>Fields: label above (Barlow 500 13, <code>--tx2</code>), input 56px, radius 12, <code>--s1</code> with 1px inset <code>--line</code>. Focus: 1.5px inset <code>--red</code>, red caret. No glow.</li>
+      <li>Password field has a show/hide eye icon on the right, <code>--tx3</code>.</li>
+      <li>Primary "Log in" 26px below the fields. "New here? Create account" pinned 48px from the bottom.</li>
+    </ul>
+    <h4>Changed from current</h4>
+    <ul>
+      <li>Removed the card around the form and the centered logo block. The form now reads as one clean column.</li>
+      <li>Labels are sentence case, not spaced capitals, so they are easier to read.</li>
+      <li>"Back to home" link replaced by the back button and the create-account link. <span class="opt">Optional</span> "Forgot password?" uses Firebase password reset.</li>
+    </ul>
+    <h4>States</h4>
+    <ul>
+      <li>Error: input border <code>--red</code>, message below in 13px <code>--red</code>: "Email or password is incorrect."</li>
+      <li>Loading: primary button keeps its size, label replaced by a 20px spinner in white.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ P03 ============================ -->
+<section class="page">
+  <div class="device"><div class="app p03">
+    <div class="sb"><span>9:41</span><span class="ic"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0M4 7a6 6 0 0 1 8 0"/><circle cx="8" cy="10" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="1.8" fill="currentColor"/><rect x="23.5" y="4" width="1.8" height="4" rx=".9" fill="currentColor" opacity=".45"/></svg></span></div>
+    <div class="top"><div class="brand"><img src="#" alt=""><span>Hybrid Athlete</span></div><div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div></div>
+    <div class="pad">
+      <div class="greet">Good evening, Mehdi</div>
+      <h1>Ready to train</h1>
+      <div class="card upnext">
+        <div class="rowsb"><span class="label" style="color:var(--red)">Up next</span><span class="label">Week 1<span class="sep"></span>Day 1</span></div>
+        <h2>Upper body 1</h2>
+        <div class="meta"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>45-60 min</span><span class="sep"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg><span>8 exercises</span></div>
+        <div class="exlist">
+          <div><span><em>01</em>Incline barbell bench</span><span>3 sets</span></div>
+          <div><span><em>02</em>Dips</span><span>3 sets</span></div>
+          <div><span><em style="opacity:0">03</em>+ 6 more</span><span></span></div>
+        </div>
+        <div class="btn btn-primary">Start workout <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
+      <div class="prog">
+        <div class="rowsb"><span class="label">Program</span><span class="label" style="color:var(--tx2)">Week 1 of 8</span></div>
+        <div class="track"><i><b style="width:4%"></b></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="foot2"><span>4 of 96 sets this week</span><span>Anatomical adaptation</span></div>
+      </div>
+    </div>
+    <div class="nav"><a class="on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><span>Train</span></a></div>
+    <div class="hi"></div>
+  </div></div>
+  <div class="spec">
+    <div class="pid">P03</div>
+    <div class="ptitle">Home</div>
+    <p class="psub">Logged-in home. Still one primary action into Train, but the screen now tells you what that action is.</p>
+    <h4>Layout, top to bottom</h4>
+    <ul>
+      <li>Greeting by time of day (Barlow 500 15, <code>--tx2</code>), then Display L "Ready to train".</li>
+      <li>"Up next" card (<code>--s1</code>, radius 18, padding 20): label row with week and day, workout name in Saira Condensed 600 36, meta row with clock and list icons, the first two exercises with set counts, then "+ N more", then the primary button.</li>
+      <li>Program block: 8-segment track (6px, gap 4). The current week's segment fills with <code>--red</code> by the share of sets logged. Below: "4 of 96 sets this week" and the phase name.</li>
+      <li>Bottom nav: Home and Train, line icons, active item in <code>--tx</code> with a 20x2 red bar above it.</li>
+    </ul>
+    <h4>Data used (already in the app)</h4>
+    <ul>
+      <li>Next workout, its duration and exercise count, sets logged out of total, current week, phase name. No new data needed.</li>
+    </ul>
+    <h4>Changed from current</h4>
+    <ul>
+      <li>Removed the dark photo with the italic "Ready to train" and the glowing CTA tile.</li>
+      <li>The button now sits inside a card that says exactly what you are starting.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ P04 ============================ -->
+<section class="page">
+  <div class="device"><div class="app p04" id="p04src">
+    <div class="sb"><span>9:41</span><span class="ic"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0M4 7a6 6 0 0 1 8 0"/><circle cx="8" cy="10" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="1.8" fill="currentColor"/><rect x="23.5" y="4" width="1.8" height="4" rx=".9" fill="currentColor" opacity=".45"/></svg></span></div>
+    <div class="top"><div class="brand"><img src="#" alt=""><span>Hybrid Athlete</span></div><div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div></div>
+    <div class="pad">
+      <div class="label">Your workouts</div>
+      <div class="wkhead">
+        <div class="bignum"><span class="n">01</span><span class="w">Week</span></div>
+        <div class="phase"><div class="label">Phase</div><div class="ph">Anatomical adaptation</div></div>
+      </div>
+      <div class="weeks">
+        <div class="wk now"><span class="n">1</span><span class="s">Now</span></div>
+        <div class="wk"><span class="n">2</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+        <div class="wk"><span class="n">3</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+        <div class="wk"><span class="n">4</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+        <div class="wk"><span class="n">5</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+        <div class="wk"><span class="n">6</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+        <div class="wk"><span class="n">7</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+        <div class="wk"><span class="n">8</span><span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+      </div>
+      <div class="bar"><b style="width:4%"></b></div>
+      <div class="barlab"><span>4 of 96 sets</span><span>4%</span></div>
+      <div class="days">
+        <div class="day next"><div class="tile">01</div><div class="t"><div>Upper body 1</div><div class="meta">45-60 min<span class="sep"></span>8 exercises</div></div><div class="end"><span class="chip red">Next</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></div></div>
+        <div class="day"><div class="tile">02</div><div class="t"><div>Lower body 1</div><div class="meta">50-65 min<span class="sep"></span>7 exercises</div></div><div class="end"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></div></div>
+        <div class="day"><div class="tile">03</div><div class="t"><div>Upper body 2</div><div class="meta">45-60 min<span class="sep"></span>8 exercises</div></div><div class="end"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></div></div>
+      </div>
+    </div>
+    <div class="nav"><a><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a class="on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><span>Train</span></a></div>
+    <div class="hi"></div>
+  </div></div>
+  <div class="spec">
+    <div class="pid">P04</div>
+    <div class="ptitle">Train feed</div>
+    <p class="psub">Main training hub. Pick a week, open a day. All 8 weeks fit on one row, so nothing scrolls sideways.</p>
+    <h4>Layout, top to bottom</h4>
+    <ul>
+      <li>Label "Your workouts", then the week number as a scoreboard numeral (Saira Condensed 700, 84px) with the phase name on the right.</li>
+      <li>Week row: 8 equal cells (grid, gap 5, 58px tall, radius 10). Current: solid <code>--red</code> fill, number and "Now" in white. Done: number in <code>--tx</code> and a check. Locked: <code>--tx3</code> with a 12px lock icon.</li>
+      <li>Week progress: 4px bar, red fill, then "4 of 96 sets" and the percentage.</li>
+      <li>Day rows: 76px, radius 16, <code>--s1</code>. 46px number tile (<code>--s2</code>; the next day's tile is solid red), title in Barlow 600 17, meta in <code>--tx2</code>, a "Next" chip and a chevron on the right.</li>
+    </ul>
+    <h4>States</h4>
+    <ul>
+      <li>Completed day: tile <code>--s3</code> with a check icon instead of the number, title stays <code>--tx</code>, meta shows "Logged".</li>
+      <li>Tapping a locked week shakes the cell 4px twice (200ms) and shows a toast: "Finish week 1 to unlock week 2."</li>
+    </ul>
+    <h4>Changed from current</h4>
+    <ul>
+      <li>"Hello, Mehdi" with the red-boxed name removed. The week number is now the headline.</li>
+      <li>Weeks 7 and 8 are visible (only 6 fitted before). Dumbbell emoji tiles replaced by day numbers.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ P05 ============================ -->
+<section class="page">
+  <div class="device"><div class="app p05">
+    <div class="sb"><span>9:41</span><span class="ic"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0M4 7a6 6 0 0 1 8 0"/><circle cx="8" cy="10" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="1.8" fill="currentColor"/><rect x="23.5" y="4" width="1.8" height="4" rx=".9" fill="currentColor" opacity=".45"/></svg></span></div>
+    <div class="top"><div class="iconbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></div><div class="ring"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" fill="none" stroke="#2C2A27" stroke-width="3"/><circle cx="14" cy="14" r="11" fill="none" stroke="#E8112D" stroke-width="3" stroke-linecap="round" stroke-dasharray="0 69.1" transform="rotate(-90 14 14)"/></svg><span>0 of 24 sets</span></div></div>
+    <div class="pad">
+      <div class="label">Week 1<span class="sep"></span>Day 1</div>
+      <h1>Upper body 1</h1>
+      <div class="sub"><span class="chip mute">Anatomical adaptation</span><span class="meta"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 45-60 min</span></div>
+      <div class="card ex">
+        <div class="head"><span class="idx">01</span><span class="name">Incline barbell bench</span></div>
+        <div class="meta">3 sets<span class="sep"></span>8-12 reps</div>
+        <div class="thumb"><img src="#" alt=""><div class="play"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="#111110"/></svg></div><div class="cap">Watch form</div></div>
+        <div class="sets">
+          <div class="hd"><span>Set</span><span>Target</span><span>Kg</span><span>Reps</span></div>
+          <div class="row done"><span class="i">1</span><span class="tg">40 × 10</span><span class="cell">40</span><span class="cell">10</span></div>
+          <div class="row"><span class="i">2</span><span class="tg">40 × 10</span><span class="cell focus"><span>40<span class="caret" style="height:22px"></span></span></span><span class="cell">10</span></div>
+          <div class="row"><span class="i">3</span><span class="tg">40 × 10</span><span class="cell ph">40</span><span class="cell ph">10</span></div>
+        </div>
+        <div class="btn btn-primary">Save sets</div>
+      </div>
+      <div class="collapsed">
+        <div class="crow"><span class="idx">02</span><div class="t">Dips<span>3 sets</span></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></div>
+      </div>
+    </div>
+    <div class="hi"></div>
+  </div></div>
+  <div class="spec">
+    <div class="pid">P05</div>
+    <div class="ptitle">Workout day</div>
+    <p class="psub">Logging sets, reps and kg. The target column shows what the progression engine set for this week, so the user sees the system working.</p>
+    <h4>Layout, top to bottom</h4>
+    <ul>
+      <li>Top bar: back button, and a 28px progress ring (3px stroke, <code>--s3</code> track, red arc) with "0 of 24 sets".</li>
+      <li>Label "Week 1 / Day 1", Display "Upper body 1" (36px), phase chip and duration.</li>
+      <li>Active exercise card: red index, name in Barlow 600 18, "3 sets / 8-12 reps", 150px video thumbnail (radius 12, dimmed, bone play button, "Watch form" tag).</li>
+      <li>Set table, columns <code>30px 1fr 86px 86px</code>: set number, target (from progression), kg and reps cells (48px, radius 10, Saira Condensed 600 24, tabular). Prefill both cells with the target in <code>--tx3</code> so one tap confirms.</li>
+      <li>"Save sets" primary button inside the card. Other exercises collapse into 60px rows below.</li>
+    </ul>
+    <h4>States</h4>
+    <ul>
+      <li>Cell focus: <code>--s1</code> fill, 1.5px red inset, red caret, numeric keypad (<code>inputmode="decimal"</code>).</li>
+      <li>Saved row: cells move to <code>--s3</code>, numbers to <code>--tx</code>. After "Save sets" the card collapses and the next exercise opens (240ms).</li>
+    </ul>
+    <h4>Note for engineering</h4>
+    <ul>
+      <li>This shows one row per set, which matches per-set progression (for example 20, 20, 15 kg). If the app stores a single kg and reps value per exercise, render one row with the same styles.</li>
+      <li>Target values come from the local progression engine. Week 1 shows the program's starting values. The thumbnail is a placeholder for each exercise's video frame.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ P06 ============================ -->
+<section class="page">
+  <div class="device"><div class="app p06">
+    <div class="bgshot" id="p06bg"></div>
+    <div class="scrim"></div>
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="label">Week 1 complete</div>
+      <div class="unlock"><span class="n">02</span><div class="t"><div>Week</div><div>Unlocked</div></div></div>
+      <p class="lead">Your loads and reps were updated from what you logged. Here is how the app decided.</p>
+      <div class="track"><i class="full"></i><i class="next"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="rules">
+        <div class="rule"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l6-6 4 4 6-6"/><path d="M15 8h5v5"/></svg><span>Hit the top of the rep range <em>and the weight goes up next week.</em></span></div>
+        <div class="rule"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg><span>Below it <em>you keep the weight and add one rep.</em></span></div>
+        <div class="rule"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg><span>Progress is saved <em>on this device.</em></span></div>
+      </div>
+      <div class="btn btn-primary">Continue to week 2 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="hi" style="z-index:9"></div>
+  </div></div>
+  <div class="spec">
+    <div class="pid">P06</div>
+    <div class="ptitle">Week unlocked</div>
+    <p class="psub">Shown when every day of a week is logged. A bottom sheet over the Train feed, instead of a centered emoji modal.</p>
+    <h4>Layout, top to bottom</h4>
+    <ul>
+      <li>Scrim <code>rgba(8,8,7,.72)</code> over P04. Sheet: <code>--s1</code>, top radius 28, padding 24, handle 38x4.</li>
+      <li>Label "Week 1 complete", then the new week number at 128px (Saira Condensed 700) beside "Week / Unlocked".</li>
+      <li>Lead sentence, then the 8-week track: finished weeks solid red, the new week outlined in red.</li>
+      <li>Rules panel (<code>--s2</code>, radius 14): three rows with line icons. The first words are <code>--tx</code>, the rest <code>--tx2</code>.</li>
+      <li>Primary "Continue to week 2" closes the sheet and selects week 2 on P04.</li>
+    </ul>
+    <h4>Motion</h4>
+    <ul>
+      <li>Sheet slides up 320ms with <code>cubic-bezier(.2,.8,.2,1)</code>. Then the week 1 segment fills (600ms) and the numeral counts from 01 to 02. Respect <code>prefers-reduced-motion</code>: no count, no slide, instant fade.</li>
+      <li>Light haptic on open where supported (<code>navigator.vibrate(12)</code>).</li>
+    </ul>
+    <h4>Changed from current</h4>
+    <ul>
+      <li>No tints anywhere: red is always the solid brand red, never a pink or transparent version.</li>
+      <li>Party emoji and bullet list removed. The rules read as plain sentences with icons. <span class="opt">Optional</span> add one line per lift that went up, for example "Incline bench 40 to 42.5 kg".</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ IMPLEMENTATION ============================ -->
+<section class="page wide sys">
+  <div class="pid">Implementation notes for Cursor</div>
+  <div class="ptitle">Tokens, fonts, motion, RTL</div>
+  <div class="cols2">
+    <div>
+<div class="codeblock"><span class="c">/* globals.css: replace the current theme variables */</span>
+:root {
+  --bg: #111110;  --s1: #1A1918;  --s2: #22201E;  --s3: #2C2A27;
+  --line: #2E2C29;  --line2: #3E3B37;
+  --tx: #F2EDE6;  --tx2: #A8A29A;  --tx3: #6F6A64;
+  --red: #E8112D;  --red-press: #C80E27;
+  --r-cell: 10px; --r-input: 12px; --r-btn: 14px;
+  --r-card: 18px; --r-sheet: 28px;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+<span class="c">/* tailwind.config: theme.extend */</span>
+colors: { bg:'var(--bg)', s1:'var(--s1)', s2:'var(--s2)',
+  s3:'var(--s3)', line:'var(--line)', tx:'var(--tx)',
+  tx2:'var(--tx2)', tx3:'var(--tx3)', red:'var(--red)' },
+fontFamily: { display:['"Saira Condensed"','sans-serif'],
+  ui:['Barlow','sans-serif'], ar:['Cairo','sans-serif'] },
+borderRadius: { cell:'10px', input:'12px', btn:'14px',
+  card:'18px', sheet:'28px' }
+
+<span class="c">/* fonts */</span>
+npm i @fontsource/saira-condensed @fontsource/barlow @fontsource/cairo
+import '@fontsource/saira-condensed/600.css'
+import '@fontsource/saira-condensed/700.css'
+import '@fontsource/barlow/400.css'
+import '@fontsource/barlow/500.css'
+import '@fontsource/barlow/600.css'</div>
+    </div>
+    <div>
+      <table class="mt">
+        <tr><th>Moment</th><th>Spec</th></tr>
+        <tr><td>Button press</td><td>scale .98, 120ms, primary to <b>--red-press</b></td></tr>
+        <tr><td>Screen push</td><td>24px slide plus fade, 240ms, <b>--ease</b></td></tr>
+        <tr><td>Set saved</td><td>cells to <b>--s3</b> 160ms, card collapses 240ms, next opens</td></tr>
+        <tr><td>Week unlocked</td><td>sheet up 320ms, segment fill 600ms, numeral count</td></tr>
+        <tr><td>Locked week tap</td><td>4px shake twice, 200ms, toast</td></tr>
+        <tr><td>Reduced motion</td><td>all of the above become 120ms fades</td></tr>
+      </table>
+      <table class="mt" style="margin-top:22px">
+        <tr><th>Rule</th><th>Detail</th></tr>
+        <tr><td>Red</td><td>Solid #E8112D only, never tinted or transparent. Used for the primary action, current week, progress fill, focused input and the "Next" label</td></tr>
+        <tr><td>Type</td><td>Upright only. Uppercase only for Display styles and 11px labels. UI text in sentence case</td></tr>
+        <tr><td>Icons</td><td>Line icons, 1.75 stroke, 24 grid, <b>currentColor</b>. No emoji anywhere</td></tr>
+        <tr><td>Numbers</td><td>Saira Condensed with <b>tabular-nums</b> for weeks, kg, reps, sets</td></tr>
+        <tr><td>Touch</td><td>Minimum 44px targets. Inputs 56px, set cells 48px</td></tr>
+        <tr><td>Arabic</td><td><b>dir="rtl"</b>, Cairo for Arabic text, mirror back arrow and chevrons, keep numerals Latin and tabular, keep the week row order 1 to 8 right to left</td></tr>
+        <tr><td>Assets</td><td>Use the existing Unbreakables mark (SVG) for the logo. Hero photo: the coach, 2x. Exercise thumbnails: a frame from each exercise video</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+// P06 background: a live copy of P04 (Train feed)
+(function(){
+  var src=document.getElementById('p04src');
+  var c=src.cloneNode(true); c.removeAttribute('id');
+  document.getElementById('p06bg').appendChild(c);
+  // cover thumbnails: copies of every screen
+  var names=['P01 Auth entry','P02 Login','P03 Home','P04 Train feed','P05 Workout day','P06 Week unlocked'];
+  var apps=document.querySelectorAll('.device > .app');
+  var box=document.getElementById('thumbs');
+  apps.forEach(function(a,i){
+    var w=document.createElement('div'); w.className='tw';
+    var clip=document.createElement('div'); clip.className='clip';
+    var cl=a.cloneNode(true); cl.removeAttribute('id');
+    cl.querySelectorAll('[id]').forEach(function(e){e.removeAttribute('id')});
+    clip.appendChild(cl); w.appendChild(clip);
+    var cap=document.createElement('div'); cap.className='cap2'; cap.textContent=names[i]||''; w.appendChild(cap);
+    box.appendChild(w);
+  });
+})();
+</script>
+</body>
+</html>

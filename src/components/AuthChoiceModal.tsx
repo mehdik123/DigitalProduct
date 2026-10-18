@@ -1,102 +1,106 @@
-import { X, UserPlus, LogIn, ShieldCheck } from 'lucide-react';
+import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Button, Eyebrow, StatStrip, IconButton, BrandMark } from './ui';
+import { Button, BrandMark, Eyebrow, IconButton } from './ui';
 import LanguageToggle from './LanguageToggle';
 
 interface AuthChoiceModalProps {
-    onClose: () => void;
-    onJoin: () => void;
-    onLogin: () => void;
-    /** When true, shows a close button (used as a dismissible modal). The
-     *  logged-out entry screen leaves this false — there's nothing to close. */
-    dismissible?: boolean;
+  onClose: () => void;
+  onJoin: () => void;
+  onLogin: () => void;
+  dismissible?: boolean;
 }
 
-export default function AuthChoiceModal({ onClose, onJoin, onLogin, dismissible = false }: AuthChoiceModalProps) {
-    const { t } = useLanguage();
+/** P01 — Auth entry: full-bleed coach photo, upright display, two CTAs. */
+export default function AuthChoiceModal({
+  onClose,
+  onJoin,
+  onLogin,
+  dismissible = false,
+}: AuthChoiceModalProps) {
+  const { t } = useLanguage();
 
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-hero fixed inset-0 z-[150] overflow-y-auto overflow-x-hidden"
-        >
-            {/* Ambient grid + diagonal speed streak (the brand signature). */}
-            <div className="ambient-grid pointer-events-none absolute inset-0 opacity-40" />
-            <div className="ambient-streak pointer-events-none absolute -left-[30%] -top-[10%] h-[46%] w-[160%]" />
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.35 }}
+      className="fixed inset-0 z-[150] overflow-hidden bg-bg"
+    >
+      {/* Full-bleed hero */}
+      <div className="absolute inset-x-0 top-0 h-[min(500px,62dvh)]">
+        <motion.img
+          src="/images/coach_hero.jpg"
+          alt=""
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="h-full w-full object-cover"
+          style={{
+            objectPosition: '50% 30%',
+            filter: 'saturate(0.82) contrast(1.06) brightness(0.88)',
+          }}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.display = 'none';
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg,rgba(17,17,16,.88) 0%,rgba(17,17,16,.5) 12%,rgba(17,17,16,0) 24%,rgba(17,17,16,0) 34%,rgba(17,17,16,.78) 56%,rgba(17,17,16,.96) 72%,#111110 86%)',
+          }}
+        />
+      </div>
 
-            <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-6 pt-[max(1rem,env(safe-area-inset-top))]">
-                {/* Top bar */}
-                <div className="flex animate-rise items-center justify-between opacity-0" style={{ animationDelay: '.05s' }}>
-                    <BrandMark />
-                    <div className="flex items-center gap-2">
-                        <LanguageToggle />
-                        {dismissible && (
-                            <IconButton aria-label="close" onClick={onClose}>
-                                <X className="h-4 w-4" />
-                            </IconButton>
-                        )}
-                    </div>
-                </div>
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-md flex-col">
+        <div className="flex items-center justify-between px-5 pt-[max(0.75rem,env(safe-area-inset-top))]">
+          <BrandMark />
+          <div className="flex items-center gap-3">
+            <LanguageToggle />
+            {dismissible && (
+              <IconButton aria-label="close" onClick={onClose}>
+                <X className="h-4 w-4" strokeWidth={1.75} />
+              </IconButton>
+            )}
+          </div>
+        </div>
 
-                {/* Hero — no flex-1 on mobile so content stays compact; CTAs sit just below. */}
-                <div className="flex flex-col py-2 sm:flex-1 sm:justify-center sm:py-6">
-                    <Eyebrow className="animate-rise opacity-0" style={{ animationDelay: '.1s' }}>
-                        {t('welcome.eyebrow')}
-                    </Eyebrow>
+        <div className="mt-auto px-6 pb-[max(2rem,env(safe-area-inset-bottom))]">
+          <Eyebrow>{t('welcome.eyebrow')}</Eyebrow>
 
-                    <h1 className="mt-4 font-display font-black uppercase italic tracking-tight">
-                        <span className="text-display-hero block animate-slide-in-italic text-txt-hi opacity-0" style={{ animationDelay: '.15s' }}>
-                            Hybrid
-                        </span>
-                        <span className="text-display-hero text-grad-coral block animate-slide-in-italic opacity-0" style={{ animationDelay: '.26s' }}>
-                            Athlete
-                        </span>
-                    </h1>
+          <h1 className="mt-3.5 font-display text-[clamp(3.5rem,14vw,4.5rem)] font-bold uppercase leading-[0.84] tracking-[-0.01em] text-txt-hi">
+            Hybrid
+            <br />
+            athlete
+          </h1>
 
-                    <p className="mt-3 max-w-[320px] animate-rise text-sm leading-relaxed text-txt-mid opacity-0 sm:text-[14.5px]" style={{ animationDelay: '.4s' }}>
-                        {t('welcome.tagline')}
-                    </p>
+          <p className="mt-4 max-w-[21rem] text-[15px] font-normal leading-[22px] text-txt-mid">
+            {t('welcome.tagline')}
+          </p>
 
-                    <StatStrip
-                        className="mt-4 animate-rise opacity-0 sm:mt-6"
-                        style={{ animationDelay: '.5s' }}
-                        items={[
-                            { value: '12', unit: 'wk', label: t('welcome.stat.program'), accent: true },
-                            { value: 'S+E', label: t('welcome.stat.focus') },
-                        ]}
-                    />
-                </div>
+          <div className="mt-[18px] flex items-center text-[11px] font-semibold uppercase tracking-[0.14em] text-txt-lo">
+            <span>{t('welcome.stat.program')}</span>
+            <span className="mx-3 inline-block h-[11px] w-px bg-hair-strong" aria-hidden />
+            <span>{t('welcome.stat.sessions')}</span>
+            <span className="mx-3 inline-block h-[11px] w-px bg-hair-strong" aria-hidden />
+            <span>{t('welcome.stat.focus')}</span>
+          </div>
 
-                {/* CTAs — mt-auto only on larger screens; on phones sit right under the stats. */}
-                <div className="mt-5 flex animate-rise flex-col gap-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] opacity-0 sm:mt-auto sm:gap-3" style={{ animationDelay: '.6s' }}>
-                    <Button
-                        variant="primary"
-                        fullWidth
-                        onClick={onJoin}
-                        icon={<UserPlus className="h-[22px] w-[22px]" />}
-                        subtitle={t('welcome.join.subtitle')}
-                    >
-                        {t('common.createAccount')}
-                    </Button>
+          <div className="mt-7 grid gap-2.5">
+            <Button variant="primary" size="lg" fullWidth onClick={onJoin} arrow>
+              {t('common.createAccount')}
+            </Button>
+            <Button variant="secondary" size="lg" fullWidth onClick={onLogin}>
+              {t('common.login')}
+            </Button>
+          </div>
 
-                    <Button
-                        variant="secondary"
-                        fullWidth
-                        onClick={onLogin}
-                        icon={<LogIn className="h-5 w-5" />}
-                        subtitle={t('welcome.login.subtitle')}
-                    >
-                        {t('common.login')}
-                    </Button>
-
-                    <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-txt-lo">
-                        <ShieldCheck className="h-[13px] w-[13px] text-emerald" />
-                        {t('welcome.trust')}
-                    </div>
-                </div>
-            </div>
-        </motion.div>
-    );
+          <p className="mt-[18px] text-center text-[12px] font-medium tracking-[0.02em] text-txt-lo">
+            {t('welcome.trust')}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
 }

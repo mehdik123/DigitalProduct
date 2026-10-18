@@ -1,6 +1,6 @@
 import { ProgressionType } from '../types/workout';
 
-export const TOTAL_WEEKS = 12;
+export const TOTAL_WEEKS = 8;
 
 export type PhaseId =
   | 'anatomical'
@@ -39,19 +39,16 @@ const make = (
   isRetest: opts.isRetest ?? false,
 });
 
+/** 8-week hybrid arc: build → grow → deload → strength → peak finish. */
 export const PHASE_MAP: Record<number, PhaseWeek> = {
   1: make(1, 'anatomical', [8, 12], 7, '7'),
   2: make(2, 'anatomical', [8, 12], 7, '7'),
   3: make(3, 'hypertrophy', [8, 10], 8, '8'),
   4: make(4, 'hypertrophy', [8, 10], 8, '8'),
-  5: make(5, 'hypertrophy', [8, 10], 8, '8'),
-  6: make(6, 'deload', [8, 10], 6, '6', { isDeload: true }),
+  5: make(5, 'deload', [8, 10], 6, '6', { isDeload: true }),
+  6: make(6, 'strength', [5, 7], 9, '8-9'),
   7: make(7, 'strength', [5, 7], 9, '8-9'),
-  8: make(8, 'strength', [5, 7], 9, '8-9'),
-  9: make(9, 'strength', [5, 7], 9, '8-9'),
-  10: make(10, 'peak', [3, 5], 9, '9'),
-  11: make(11, 'peak', [3, 5], 9, '9'),
-  12: make(12, 'retest', null, null, '-', { isDeload: true, isRetest: true }),
+  8: make(8, 'peak', [3, 5], 9, '9'),
 };
 
 export function getPhase(week: number): PhaseWeek {
@@ -69,7 +66,6 @@ export function isRetestWeek(week: number): boolean {
 /**
  * Default load increment (kg) applied by the double-progression engine
  * once the top of the rep range is hit across all working sets.
- * Editable defaults — keep in sync with the SQL engine (011_program_engine.sql).
  */
 export const INCREMENTS: Record<ProgressionType, number> = {
   barbell_compound: 5,
@@ -80,12 +76,12 @@ export const INCREMENTS: Record<ProgressionType, number> = {
   calisthenics: 2.5,
 };
 
-/** Deload overrides (week 6 and 12). */
+/** Deload week load multiplier (week 5). */
 export const DELOAD_LOAD_FACTOR = 0.6;
 export const DELOAD_SET_FACTOR = 0.5;
 
 /**
- * Key lifts measured at Week 0 baseline and re-tested at Week 12.
+ * Key lifts (used for coaching copy / future local features).
  * IDs must match exercise IDs in workoutData.ts.
  */
 export const KEY_LIFTS: string[] = [

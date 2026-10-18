@@ -5,19 +5,11 @@ import WorkoutCard from './components/WorkoutCard';
 import WeekSelector from './components/WeekSelector';
 import { getWorkoutSplit, DaysPerWeek } from './data/workoutData';
 import { WorkoutDay } from './types/workout';
-import { Info, Lock, Circle, Trophy } from 'lucide-react';
-import {
-  ensureProgramStarted,
-  fetchCloudProgram,
-  pushProgramToCloud,
-  ProgramState,
-  WeekStatus,
-} from './services/workoutService';
+import { Lock } from 'lucide-react';
+import { ProgramState, WeekStatus } from './services/workoutService';
 import {
   getLocalProgramState,
   isLocalDayComplete,
-  mergeCloudIntoLocal,
-  collectAllSets,
   ensureLocalProgram,
   getLocalDaysPerWeek,
 } from './services/localProgram';
@@ -25,20 +17,22 @@ import WelcomePortal from './components/WelcomePortal';
 import ProgramIntro from './components/ProgramIntro';
 import AuthChoiceModal from './components/AuthChoiceModal';
 import { hasSeenWorkoutCoach, hasDismissedWeek6Banner, dismissWeek6Banner } from './lib/onboarding';
-import { getWeekSetProgress, getNextWorkoutName } from './lib/weekProgress';
-import { getMilestoneProgress } from './lib/milestones';
+import {
+  getWeekSetProgress,
+  getNextWorkout,
+  getNextWorkoutDayIndex,
+} from './lib/weekProgress';
+import { getPhase } from './data/programConfig';
 import BottomNav from './components/BottomNav';
 import { useLanguage } from './contexts/LanguageContext';
 import { useAuth } from './contexts/AuthContext';
-import { isTimeoutError } from './lib/supabaseClient';
+import { isTimeoutError } from './lib/firebase';
 import { Button, ScreenTransition, WorkoutFeedSkeleton, Skeleton } from './components/ui';
 import { listVariants } from './design/motion';
 import { motion } from 'framer-motion';
 
 const WorkoutPageNew = lazy(() => import('./components/WorkoutPageNew'));
-const RetestScreen = lazy(() => import('./components/RetestScreen'));
 const SignupModal = lazy(() => import('./components/SignupModal'));
-const HowItWorksModal = lazy(() => import('./components/HowItWorksModal'));
 const WorkoutCoachModal = lazy(() => import('./components/WorkoutCoachModal'));
 const LockedWeekModal = lazy(() => import('./components/LockedWeekModal'));
 
@@ -50,13 +44,11 @@ function App() {
   const [currentWeek, setCurrentWeek] = useState(1);
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutDay | null>(null);
   const [view, setView] = useState<'welcome' | 'intro' | 'workouts'>('workouts');
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [showWorkoutCoach, setShowWorkoutCoach] = useState(false);
   const [showSignupForm, setShowSignupForm] = useState(false);
   const [showAuthChoice, setShowAuthChoice] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [programState, setProgramState] = useState<ProgramState | null>(null);
-  const [showRetest, setShowRetest] = useState(false);
   const [lockedWeekTarget, setLockedWeekTarget] = useState<number | null>(null);
   const [week6Dismissed, setWeek6Dismissed] = useState(() => hasDismissedWeek6Banner());
 
@@ -70,36 +62,11 @@ function App() {
 
   const loadProgram = () => {
     if (!user) return;
-    // Local-first: instant, always available. Seed with the user's program.
+    // Local-only: sets and progressive overload live in localStorage.
     ensureLocalProgram(user.id, profile?.daysPerWeek);
     const local = getLocalProgramState(user.id, profile?.daysPerWeek);
     setProgramState(local);
     setCurrentWeek(Math.max(1, local.currentWeek));
-
-    // Background: reconcile with the cloud so data restores across devices.
-    void syncWithCloud(user.id);
-  };
-
-  const syncWithCloud = async (userId: string) => {
-    try {
-      await ensureProgramStarted(userId);
-
-      // Pull anything logged on other devices and merge it in.
-      const cloud = await fetchCloudProgram(userId);
-      if (cloud) {
-        // Adopt the program the account was created with (irreversible).
-        ensureLocalProgram(userId, cloud.daysPerWeek ?? profile?.daysPerWeek);
-        const merged = mergeCloudIntoLocal(userId, { currentWeek: cloud.currentWeek, sets: cloud.sets });
-        setProgramState(merged);
-        setCurrentWeek(Math.max(1, merged.currentWeek));
-      }
-
-      // Push the reconciled state back up so this device's work is saved.
-      const state = getLocalProgramState(userId);
-      await pushProgramToCloud(userId, collectAllSets(userId), state.currentWeek, state.weeks);
-    } catch (err) {
-      console.warn('Cloud sync skipped (offline):', err);
-    }
   };
 
   useEffect(() => {
@@ -247,21 +214,6 @@ function App() {
     );
   }
 
-  // Week 12 retest & comparison screen
-  if (showRetest && user) {
-    return (
-      <>
-        <AppChrome showBack onBack={() => setShowRetest(false)} />
-        <div className="pt-chrome">
-          <Suspense fallback={<WorkoutFeedSkeleton />}>
-            <RetestScreen profileId={user.id} daysPerWeek={daysPerWeek} onBack={() => setShowRetest(false)} />
-          </Suspense>
-        </div>
-        <BottomNav activeView="workouts" onViewChange={setView} />
-      </>
-    );
-  }
-
   const isHome = view === 'welcome';
   const isIntro = view === 'intro';
   const isWorkouts = view === 'workouts';
@@ -269,7 +221,7 @@ function App() {
   // Show auth gate first if not logged in
   if (!user) {
     return (
-    <div className="min-h-screen bg-app selection:bg-red-500/30">
+    <div className="min-h-screen bg-app">
       {/* Show auth choice modal immediately for non-authenticated users */}
         <AuthChoiceModal
           onClose={() => { }} // Can't close - must authenticate
@@ -296,21 +248,35 @@ function App() {
   };
 
   return (
-    <div className="min-h-dvh bg-app selection:bg-red-500/30">
+    <div className="min-h-dvh bg-app">
       <AppChrome showBack={!isHome} onBack={handleChromeBack} />
 
-      <main className={`pt-chrome transition-all duration-500 ${selectedWorkout ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
+      <main className={`pt-chrome ${selectedWorkout ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
         <ScreenTransition screenKey={view}>
-        {/* Home / Welcome Portal - Only shown to authenticated users */}
-        {isHome && (
-          <WelcomePortal
+        {isHome && user && (() => {
+          const next = getNextWorkout(user.id, currentWeek, daysPerWeek);
+          const { done, total } = getWeekSetProgress(user.id, currentWeek, daysPerWeek);
+          const dayNum = getNextWorkoutDayIndex(user.id, currentWeek, daysPerWeek);
+          const phase = getPhase(currentWeek);
+          return (
+            <WelcomePortal
               onSelectTraining={() => setView('workouts')}
+              onStartWorkout={() => {
+                if (next) setSelectedWorkout(next);
+                else setView('workouts');
+              }}
               onSignup={() => setShowSignupForm(true)}
               userName={profile?.fullName || user?.user_metadata?.full_name || user?.email}
+              weekNumber={currentWeek}
+              dayNumber={dayNum}
+              nextWorkout={next}
+              setsDone={done}
+              setsTotal={total}
+              phaseLabel={t(phase.phaseLabelKey)}
             />
-        )}
+          );
+        })()}
 
-        {/* Program Intro */}
         {isIntro && (
           <ProgramIntro
               onStart={handleStartProgram}
@@ -318,171 +284,125 @@ function App() {
             />
         )}
 
-        {/* Workouts Feed - Authenticated users only */}
         {isWorkouts && (
-          <div className="relative mx-auto max-w-lg px-3 pb-nav-space pt-2 sm:max-w-7xl sm:px-6 sm:pt-4 md:pt-8">
-            {/* Subtle ambient on workouts feed */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-brand/[0.06] to-transparent" />
-
+          <div className="relative mx-auto max-w-lg px-5 pb-nav-space pt-3">
             {!user ? (
-              <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-8">
-                <div className="w-20 h-20 bg-brand-soft rounded-full flex items-center justify-center text-brand border border-brand/20">
-                  <Lock className="w-10 h-10" />
+              <div className="flex min-h-[50vh] flex-col items-center justify-center gap-5">
+                <Lock className="h-7 w-7 text-txt-lo" strokeWidth={1.75} />
+                <div className="space-y-2 text-center">
+                  <h2 className="font-display text-3xl font-semibold uppercase tracking-tight text-txt-hi">
+                    {t('app.accessLocked')}
+                  </h2>
+                  <p className="text-sm text-txt-mid">{t('app.authRequired')}</p>
                 </div>
-                <div className="text-center space-y-4">
-                  <h2 className="font-display text-3xl font-black uppercase italic tracking-tight text-txt-hi">{t('app.accessLocked')}</h2>
-                  <p className="text-txt-lo text-sm font-bold uppercase tracking-widest">{t('app.authRequired')}</p>
-                </div>
-                <Button variant="primary" size="lg" onClick={() => setShowAuthChoice(true)} className="px-10 tracking-[0.2em]">
+                <Button variant="primary" size="lg" onClick={() => setShowAuthChoice(true)}>
                   {t('app.enableAccess')}
                 </Button>
               </div>
             ) : (
-              <>
-                <div className="relative space-y-2.5 sm:space-y-6">
-                  {/* Compact header */}
-                  <div className="flex items-center justify-between gap-2 px-0.5">
-                    <div className="min-w-0 flex-1">
-                      <h2 className="font-display text-lg font-black italic uppercase leading-none tracking-tight text-txt-hi sm:text-display-lg">
-                        {t('app.hello')}{' '}
-                        <span className="text-brand">
-                          {(profile?.fullName || user?.user_metadata?.full_name || user?.email)?.split(' ')[0] || t('app.athlete')}
-                        </span>
-                      </h2>
-                      <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-txt-lo sm:text-[11px]">
-                        {t('workout.title')}
-                      </p>
+              <div className="relative space-y-5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-txt-lo">
+                  {t('home.yourWorkouts')}
+                </p>
+
+                <div className="flex items-end justify-between gap-3">
+                  <div className="flex items-end gap-2.5">
+                    <span className="font-display text-[84px] font-bold leading-[0.78] tracking-[-0.02em] tabular-nums text-txt-hi">
+                      {String(currentWeek).padStart(2, '0')}
+                    </span>
+                    <span className="pb-1.5 text-[13px] font-semibold uppercase tracking-[0.16em] text-txt-lo">
+                      {t('workout.week')}
+                    </span>
+                  </div>
+                  <div className="pb-1 text-right">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-txt-lo">
+                      {t('home.phase')}
                     </div>
+                    <div className="mt-2 text-[15px] font-semibold leading-snug text-txt-hi">
+                      {t(getPhase(currentWeek).phaseLabelKey)}
+                    </div>
+                  </div>
+                </div>
+
+                {!programState ? (
+                  <WorkoutFeedSkeleton />
+                ) : (
+                  <>
+                    <WeekSelector
+                      currentWeek={currentWeek}
+                      weeks={weekStatuses}
+                      onWeekSelect={handleWeekSelect}
+                      onLockedSelect={handleLockedWeek}
+                    />
+
+                    {(() => {
+                      const { done, total } = getWeekSetProgress(user.id, currentWeek, daysPerWeek);
+                      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+                      return (
+                        <div>
+                          <div className="mt-[18px] h-1 overflow-hidden rounded-sm bg-surface-3">
+                            <div
+                              className="h-full rounded-sm bg-brand transition-[width] duration-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <div className="mt-2.5 flex justify-between text-[13px] font-medium text-txt-mid">
+                            <span>
+                              {done} of {total} sets
+                            </span>
+                            <span className="text-txt-lo">{pct}%</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {currentWeek === 5 && !week6Dismissed && (
+                      <div className="flex items-start justify-between gap-3 rounded-[14px] bg-surface-1 px-3.5 py-3">
+                        <p className="text-sm leading-relaxed text-txt-mid">{t('feed.week6Banner')}</p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            dismissWeek6Banner();
+                            setWeek6Dismissed(true);
+                          }}
+                          className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-brand"
+                        >
+                          {t('common.gotIt')}
+                        </button>
+                      </div>
+                    )}
 
                     <motion.div
-                      className="flex shrink-0 items-center gap-1 rounded-full bg-grad-red px-2 py-1 shadow-red"
-                      animate={{ scale: [1, 1.03, 1] }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                      variants={listVariants}
+                      initial="hidden"
+                      animate="show"
+                      className="grid gap-2"
                     >
-                      <span className="h-1 w-1 rounded-full bg-white" />
-                      <span className="text-[8px] font-black uppercase tracking-widest text-white sm:text-[9px]">
-                        {t('workout.week')} {currentWeek}
-                      </span>
-                    </motion.div>
-                  </div>
-
-                  {!programState ? (
-                    <WorkoutFeedSkeleton />
-                  ) : (
-                    <>
-                      {/* Week Selector */}
-                      <div className="w-full flex justify-center md:justify-start">
-                        <WeekSelector
-                          currentWeek={currentWeek}
-                          weeks={weekStatuses}
-                          onWeekSelect={handleWeekSelect}
-                          onLockedSelect={handleLockedWeek}
-                        />
-                      </div>
-
-                      {user && (() => {
-                        const { done, total } = getWeekSetProgress(user.id, currentWeek, daysPerWeek);
-                        const nextWorkout = getNextWorkoutName(user.id, currentWeek, daysPerWeek, t);
-                        const milestones = getMilestoneProgress(user.id);
+                      {split.map((workout, i) => {
+                        const nextId = getNextWorkout(user.id, currentWeek, daysPerWeek)?.id;
                         return (
-                          <div className="space-y-1.5 px-0.5">
-                            <div className="flex items-center justify-between gap-2">
-                              <p className="text-[10px] font-bold uppercase tracking-wider text-txt-mid">
-                                {t('feed.setsProgress', { done, total })}
-                              </p>
-                              <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-brand">
-                                {t('milestone.feedLabel')} {milestones.done}/{milestones.total}
-                              </span>
-                            </div>
-                            {nextWorkout && (
-                              <p className="text-[10px] font-black uppercase tracking-wide text-brand">
-                                {t('feed.nextUp', { workout: nextWorkout })}
-                              </p>
-                            )}
-                          </div>
-                        );
-                      })()}
-
-                      {currentWeek === 6 && !week6Dismissed && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="flex items-start justify-between gap-2 rounded-2xl border border-brand/25 bg-brand/10 px-3 py-2.5"
-                        >
-                          <p className="text-[10px] leading-relaxed text-txt-mid sm:text-xs">
-                            {t('feed.week6Banner')}
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              dismissWeek6Banner();
-                              setWeek6Dismissed(true);
-                            }}
-                            className="shrink-0 text-[9px] font-black uppercase tracking-wider text-brand"
-                          >
-                            {t('common.gotIt')}
-                          </button>
-                        </motion.div>
-                      )}
-
-                      {currentWeek === 12 && (
-                        <motion.button
-                          type="button"
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => setShowRetest(true)}
-                          className="flex w-full items-center justify-between rounded-2xl border border-brand/30 bg-brand-soft/60 px-4 py-3 backdrop-blur-sm transition-colors hover:bg-brand/15"
-                        >
-                          <span className="flex items-center gap-3">
-                            <Trophy className="h-5 w-5 text-brand" />
-                            <span className="text-sm font-black uppercase tracking-widest text-txt-hi">
-                              {t('retest.open')}
-                            </span>
-                          </span>
-                          <span className="text-brand rtl:rotate-180">→</span>
-                        </motion.button>
-                      )}
-
-                      <motion.div
-                        variants={listVariants}
-                        initial="hidden"
-                        animate="show"
-                        className="flex flex-col gap-2 sm:grid sm:grid-cols-2 sm:gap-3 lg:grid-cols-3 lg:gap-4"
-                      >
-                        {split.map((workout) => (
                           <WorkoutCard
                             key={workout.id}
                             workout={workout}
-                            completed={
-                              user ? isLocalDayComplete(user.id, currentWeek, workout.id) : false
-                            }
+                            dayIndex={i + 1}
+                            isNext={workout.id === nextId}
+                            completed={isLocalDayComplete(user.id, currentWeek, workout.id)}
                             onClick={() => setSelectedWorkout(workout)}
                           />
-                        ))}
-                      </motion.div>
-                    </>
-                  )}
+                        );
+                      })}
+                    </motion.div>
 
-                  <div className="flex flex-col items-center gap-2 pt-2 sm:pt-6">
                     <button
                       type="button"
                       onClick={() => setShowWorkoutCoach(true)}
-                      className="text-[8px] font-black uppercase tracking-[0.25em] text-txt-lo transition-colors hover:text-brand"
+                      className="mx-auto block pt-1 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-txt-lo transition-colors hover:text-txt-hi"
                     >
                       {t('feed.howProgress')}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowHowItWorks(true)}
-                      className="flex items-center gap-1.5 rounded-full border border-hair bg-surface-2/50 px-3 py-1.5 text-[8px] font-black uppercase tracking-[0.3em] text-txt-lo transition-all hover:border-brand/30 hover:text-txt-hi active:scale-95"
-                    >
-                      <Circle className="w-3.5 h-3.5" />
-                      <Info className="w-3.5 h-3.5" />
-                      {t('app.systemSpec')}
-                    </button>
-                  </div>
-                </div>
-              </>
+                  </>
+                )}
+              </div>
             )}
           </div>
         )}
@@ -516,12 +436,6 @@ function App() {
             onSubmit={handleSignupSubmit}
             loading={isSubmitting}
           />
-        </Suspense>
-      )}
-
-      {showHowItWorks && (
-        <Suspense fallback={null}>
-          <HowItWorksModal onClose={() => setShowHowItWorks(false)} />
         </Suspense>
       )}
 

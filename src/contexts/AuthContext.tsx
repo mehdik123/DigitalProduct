@@ -1,330 +1,233 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session, AuthError } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabaseClient';
+import {
+  User as FirebaseUser,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  updateProfile as firebaseUpdateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
+import { auth, isTimeoutError } from '../lib/firebase';
+import { ensureProfileDoc, fetchProfileDoc, updateProfileDoc } from '../services/profileService';
 import { UserProfile } from '../types/workout';
 
+/** App-facing user shape (compatible with previous Supabase usage). */
+export interface AuthUser {
+  id: string;
+  email?: string | null;
+  user_metadata?: {
+    full_name?: string;
+    days_per_week?: number;
+  };
+}
+
+export interface AuthErrorLike {
+  message: string;
+  code?: string;
+}
+
 interface AuthContextType {
-    user: User | null;
-    profile: UserProfile | null;
-    session: Session | null;
-    loading: boolean;
-    signUp: (email: string, password: string, metadata?: any) => Promise<{ data: any; error: AuthError | null }>;
-    signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
-    signInWithGoogle: () => Promise<{ error: AuthError | null }>;
-    signOut: () => Promise<void>;
-    updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
+  user: AuthUser | null;
+  profile: UserProfile | null;
+  session: { user: AuthUser } | null;
+  loading: boolean;
+  signUp: (
+    email: string,
+    password: string,
+    metadata?: { full_name?: string; days_per_week?: number }
+  ) => Promise<{ data: { session: { user: AuthUser } | null; user: AuthUser | null }; error: AuthErrorLike | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthErrorLike | null }>;
+  signInWithGoogle: () => Promise<{ error: AuthErrorLike | null }>;
+  signOut: () => Promise<void>;
+  updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-/** How long to wait for auth init before continuing without the server. */
 const AUTH_INIT_TIMEOUT_MS = 8000;
 
-/**
- * Reads the session Supabase persisted in localStorage. Used only when the auth
- * server is unreachable, so an offline user keeps access to their local program
- * instead of being locked out behind the loading screen.
- */
-const readCachedSession = (): Session | null => {
-    if (typeof window === 'undefined') return null;
-    try {
-        for (const key of Object.keys(window.localStorage)) {
-            if (!key.startsWith('sb-') || !key.includes('auth-token')) continue;
-            const raw = window.localStorage.getItem(key);
-            if (!raw) continue;
-            const parsed = JSON.parse(raw);
-            const cached = parsed?.currentSession ?? parsed;
-            if (cached?.user?.id) return cached as Session;
-        }
-    } catch (error) {
-        console.warn('Could not read cached session:', error);
-    }
-    return null;
-};
+function toAuthUser(fb: FirebaseUser, meta?: { full_name?: string; days_per_week?: number }): AuthUser {
+  return {
+    id: fb.uid,
+    email: fb.email,
+    user_metadata: {
+      full_name: meta?.full_name || fb.displayName || undefined,
+      days_per_week: meta?.days_per_week,
+    },
+  };
+}
+
+function mapAuthError(err: unknown): AuthErrorLike {
+  const e = err as { code?: string; message?: string };
+  const code = e.code ?? '';
+  if (code === 'auth/email-already-in-use') {
+    return { message: 'User already registered', code };
+  }
+  if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+    return { message: 'Invalid email or password', code };
+  }
+  if (code === 'auth/weak-password') {
+    return { message: 'Password should be at least 6 characters', code };
+  }
+  if (code === 'auth/too-many-requests') {
+    return { message: 'Too many attempts. Try again later.', code };
+  }
+  return { message: e.message || 'Authentication failed', code };
+}
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within AuthProvider');
-    }
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
 };
 
 interface AuthProviderProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [profile, setProfile] = useState<UserProfile | null>(null);
-    const [session, setSession] = useState<Session | null>(null);
-    const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [session, setSession] = useState<{ user: AuthUser } | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    // Fetch user profile from database with recreation fallback
-    const fetchProfile = async (userId: string, userEmail?: string, metadata?: any) => {
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', userId)
-                .single();
+  const loadProfile = async (
+    fbUser: FirebaseUser,
+    meta?: { full_name?: string; days_per_week?: number }
+  ) => {
+    try {
+      const ensured = await ensureProfileDoc(fbUser.uid, {
+        email: fbUser.email,
+        fullName: meta?.full_name || fbUser.displayName || undefined,
+        daysPerWeek: meta?.days_per_week,
+      });
+      setProfile(ensured);
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      const fallback = await fetchProfileDoc(fbUser.uid).catch(() => null);
+      if (fallback) setProfile(fallback);
+    }
+  };
 
-            if (data) {
-                setProfile({
-                    id: data.id,
-                    email: data.email,
-                    username: data.username,
-                    fullName: data.full_name,
-                    createdAt: new Date(data.created_at),
-                    currentWeek: data.current_week,
-                    programStartDate: new Date(data.program_start_date || data.created_at),
-                    daysPerWeek: data.days_per_week ?? undefined
-                });
-            } else if (error && error.code === 'PGRST116') { // Record not found
-                // Profile missing, recreate it (logic from App.tsx)
-                console.log('Profile missing in AuthContext, creating new profile...');
-                const metaDays = Number(metadata?.days_per_week);
-                let payload: Record<string, unknown> = {
-                    id: userId,
-                    email: userEmail,
-                    full_name: metadata?.full_name || userEmail?.split('@')[0],
-                    current_week: 1,
-                    created_at: new Date().toISOString(),
-                    days_per_week: metaDays === 3 || metaDays === 4 || metaDays === 5 ? metaDays : 5
-                };
-
-                let inserted: any = null;
-                let insertError: any = null;
-
-                // A database that is behind on migrations may lack some of these
-                // columns. Drop whichever column PostgREST reports as unknown
-                // (PGRST204) and retry, so a profile always gets created.
-                for (let attempt = 0; attempt < 4; attempt++) {
-                    const res = await supabase.from('profiles').insert([payload]).select().single();
-                    inserted = res.data;
-                    insertError = res.error;
-                    if (!insertError) break;
-
-                    const missingColumn = insertError.message?.match(/'([^']+)' column/)?.[1];
-                    if (
-                        insertError.code === 'PGRST204' &&
-                        missingColumn &&
-                        missingColumn !== 'id' &&
-                        missingColumn in payload
-                    ) {
-                        console.warn(
-                            `profiles.${missingColumn} is missing — your database is behind on migrations ` +
-                            '(run supabase/migrations/015_repair_profiles.sql). Retrying without it.'
-                        );
-                        const { [missingColumn]: _dropped, ...rest } = payload;
-                        payload = rest;
-                        continue;
-                    }
-                    break;
-                }
-
-                if (inserted) {
-                    setProfile({
-                        id: inserted.id,
-                        email: inserted.email,
-                        username: inserted.username,
-                        fullName: inserted.full_name,
-                        createdAt: new Date(inserted.created_at),
-                        currentWeek: inserted.current_week,
-                        programStartDate: new Date(inserted.created_at),
-                        daysPerWeek: inserted.days_per_week ?? undefined
-                    });
-                } else if (insertError) {
-                    console.error('Error creating missing profile in AuthContext:', insertError);
-                }
-            } else if (error) {
-                throw error;
-            }
-        } catch (error) {
-            console.error('Error fetching profile:', error);
-        }
+  useEffect(() => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      setLoading(false);
     };
 
-    // Initialize auth state
-    useEffect(() => {
-        let settled = false;
+    const bailout = setTimeout(() => {
+      console.warn('Auth initialization timed out.');
+      finish();
+    }, AUTH_INIT_TIMEOUT_MS);
 
-        const finish = () => {
-            settled = true;
-            setLoading(false);
-        };
+    const unsub = onAuthStateChanged(auth, async (fbUser) => {
+      if (fbUser) {
+        const mapped = toAuthUser(fbUser);
+        setUser(mapped);
+        setSession({ user: mapped });
+        await loadProfile(fbUser);
+      } else {
+        setUser(null);
+        setSession(null);
+        setProfile(null);
+      }
+      finish();
+    });
 
-        // getSession() hits the network when the stored token needs refreshing.
-        // Offline that rejects, so recover the persisted session instead of
-        // leaving the whole app stuck on the loading skeleton.
-        supabase.auth
-            .getSession()
-            .then(({ data: { session } }) => {
-                setSession(session);
-                setUser(session?.user ?? null);
-                if (session?.user) {
-                    fetchProfile(session.user.id, session.user.email, session.user.user_metadata);
-                }
-                finish();
-            })
-            .catch((error) => {
-                console.warn('Could not reach auth server, falling back to cached session:', error);
-                const cached = readCachedSession();
-                if (cached) {
-                    setSession(cached);
-                    setUser(cached.user ?? null);
-                }
-                finish();
-            });
-
-        // Last-resort guard: never leave the user on a dead loading screen if
-        // getSession() neither resolves nor rejects (e.g. a hanging socket).
-        const bailout = setTimeout(() => {
-            if (settled) return;
-            console.warn('Auth initialization timed out, continuing with cached session.');
-            const cached = readCachedSession();
-            if (cached) {
-                setSession(cached);
-                setUser(cached.user ?? null);
-            }
-            finish();
-        }, AUTH_INIT_TIMEOUT_MS);
-
-        // Listen for auth changes
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                fetchProfile(session.user.id, session.user.email, session.user.user_metadata);
-            } else {
-                setProfile(null);
-            }
-            finish();
-        });
-
-        return () => {
-            clearTimeout(bailout);
-            subscription.unsubscribe();
-        };
-    }, []);
-
-    // Sign up with email and password
-    const signUp = async (email: string, password: string, metadata?: any) => {
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: metadata || {}
-            }
-        });
-        return { data, error };
+    return () => {
+      clearTimeout(bailout);
+      unsub();
     };
+  }, []);
 
-    // Sign in with email and password
-    const signIn = async (email: string, password: string) => {
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-        return { error };
-    };
+  const signUp = async (
+    email: string,
+    password: string,
+    metadata?: { full_name?: string; days_per_week?: number }
+  ) => {
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      if (metadata?.full_name) {
+        await firebaseUpdateProfile(cred.user, { displayName: metadata.full_name });
+      }
+      await ensureProfileDoc(cred.user.uid, {
+        email: cred.user.email,
+        fullName: metadata?.full_name,
+        daysPerWeek: metadata?.days_per_week,
+      });
+      const mapped = toAuthUser(cred.user, metadata);
+      setUser(mapped);
+      setSession({ user: mapped });
+      await loadProfile(cred.user, metadata);
+      return { data: { session: { user: mapped }, user: mapped }, error: null };
+    } catch (err) {
+      return { data: { session: null, user: null }, error: mapAuthError(err) };
+    }
+  };
 
-    // Sign in with Google
-    const signInWithGoogle = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin,
-            },
-        });
-        return { error };
-    };
+  const signIn = async (email: string, password: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      return { error: null };
+    } catch (err) {
+      return { error: mapAuthError(err) };
+    }
+  };
 
+  const signInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      return { error: null };
+    } catch (err) {
+      return { error: mapAuthError(err) };
+    }
+  };
 
+  const signOut = async () => {
+    try {
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      await firebaseSignOut(auth);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    } finally {
+      window.location.href = '/';
+    }
+  };
 
-    // Sign out
-    const signOut = async () => {
-        try {
-            console.log('Starting logout process...');
+  const updateProfile = async (updates: Partial<UserProfile>) => {
+    if (!user) return;
+    await updateProfileDoc(user.id, {
+      username: updates.username,
+      fullName: updates.fullName,
+      currentWeek: updates.currentWeek,
+      programStartDate: updates.programStartDate,
+    });
+    const refreshed = await fetchProfileDoc(user.id);
+    if (refreshed) setProfile(refreshed);
+  };
 
-            // Clear local state immediately
-            setUser(null);
-            setProfile(null);
-            setSession(null);
+  const value: AuthContextType = {
+    user,
+    profile,
+    session,
+    loading,
+    signUp,
+    signIn,
+    signInWithGoogle,
+    signOut,
+    updateProfile,
+  };
 
-            // Call signOut but don't wait for it (it might hang)
-            supabase.auth.signOut().then(({ error }) => {
-                if (error) {
-                    console.error('Supabase signOut error:', error);
-                }
-            }).catch(err => {
-                console.error('SignOut promise error:', err);
-            });
-
-            // Manually clear all Supabase auth tokens from localStorage immediately
-            setTimeout(() => {
-                const keys = Object.keys(localStorage);
-                keys.forEach(key => {
-                    if (key.startsWith('sb-') || key.includes('supabase')) {
-                        localStorage.removeItem(key);
-                        console.log('Removed localStorage key:', key);
-                    }
-                });
-
-                console.log('Logout complete, reloading page...');
-
-                // Force reload to clear all state
-                window.location.href = '/';
-            }, 300);
-
-        } catch (error) {
-            console.error('Error signing out:', error);
-            // Force reload anyway to clear state
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 300);
-        }
-    };
-
-
-
-    // Update user profile
-    const updateProfile = async (updates: Partial<UserProfile>) => {
-        if (!user) return;
-
-        try {
-            const { error } = await supabase
-                .from('profiles')
-                .update({
-                    username: updates.username,
-                    current_week: updates.currentWeek,
-                    program_start_date: updates.programStartDate,
-                })
-                .eq('id', user.id);
-
-            if (error) throw error;
-
-            // Refresh profile
-            await fetchProfile(user.id);
-        } catch (error) {
-            console.error('Error updating profile:', error);
-            throw error;
-        }
-    };
-
-    const value = {
-        user,
-        profile,
-        session,
-        loading,
-        signUp,
-        signIn,
-        signInWithGoogle,
-        signOut,
-        updateProfile,
-    };
-
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export { isTimeoutError };

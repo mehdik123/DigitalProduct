@@ -32,9 +32,9 @@ export const translations: Translations = {
         ar: 'مرحبا'
     },
     'welcome.subtitle': {
-        en: 'Build a better looking body, get stronger, and improve your endurance. One hybrid program for 12 weeks.',
-        ar: 'حسن الشكل ديال جسمك، زيد القوة، وحسن التحمل. برنامج هجين واحد لـ 12 سيمانة.',
-        fr: 'Un corps plus esthétique, plus de force et une meilleure endurance. Un programme hybride sur 12 semaines.',
+        en: 'Build a better looking body, get stronger, and improve your endurance. One hybrid program for 8 weeks.',
+        ar: 'حسن الشكل ديال جسمك، زيد القوة، وحسن التحمل. برنامج هجين واحد لـ 8 سيمانات.',
+        fr: 'Un corps plus esthétique, plus de force et une meilleure endurance. Un programme hybride sur 8 semaines.',
     },
     'welcome.training': {
         en: 'Training',
@@ -63,13 +63,102 @@ export const translations: Translations = {
     },
     // Welcome / Login entry screen
     'welcome.eyebrow': {
-        en: '12 Week Program',
-        ar: 'برنامج 12 أسبوعاً'
+        en: '8-week program',
+        ar: 'برنامج 8 أسابيع',
+        fr: 'Programme 8 semaines',
     },
     'welcome.tagline': {
-        en: 'Aesthetics, strength, and endurance. Train as a hybrid athlete for 12 weeks.',
-        ar: 'الشكل، القوة، والتحمل. تمرن بحال رياضي هجين لمدة 12 سيمانة.',
-        fr: 'Esthétique, force et endurance. Entraîne-toi comme un athlète hybride pendant 12 semaines.',
+        en: 'Aesthetics, strength and endurance in one plan. Your weights adjust every week from what you log.',
+        ar: 'الشكل، القوة والتحمل في برنامج واحد. الأثقال كتتعدّل كل سيمانة من اللي كتسجّل.',
+        fr: 'Esthétique, force et endurance dans un seul plan. Tes charges s’ajustent chaque semaine selon ce que tu enregistres.',
+    },
+    'welcome.trust': {
+        en: 'Coached by El Mehdi Kamal',
+        ar: 'بتأطير المهدي كمال',
+        fr: 'Coaché par El Mehdi Kamal',
+    },
+    'home.greet.morning': {
+        en: 'Good morning, {name}',
+        ar: 'صباح الخير، {name}',
+        fr: 'Bonjour, {name}',
+    },
+    'home.greet.afternoon': {
+        en: 'Good afternoon, {name}',
+        ar: 'مساء الخير، {name}',
+        fr: 'Bon après-midi, {name}',
+    },
+    'home.greet.evening': {
+        en: 'Good evening, {name}',
+        ar: 'مساء الخير، {name}',
+        fr: 'Bonsoir, {name}',
+    },
+    'home.ready': {
+        en: 'Ready to train',
+        ar: 'واجد باش تمرن',
+        fr: 'Prêt à t’entraîner',
+    },
+    'home.upNext': { en: 'Up next', ar: 'التالي', fr: 'À suivre' },
+    'home.day': { en: 'Day', ar: 'يوم', fr: 'Jour' },
+    'home.exercises': { en: 'exercises', ar: 'تمارين', fr: 'exercices' },
+    'home.sets': { en: 'sets', ar: 'مجموعات', fr: 'séries' },
+    'home.more': { en: 'more', ar: 'المزيد', fr: 'de plus' },
+    'home.startWorkout': {
+        en: 'Start workout',
+        ar: 'بدا التمرين',
+        fr: 'Démarrer la séance',
+    },
+    'home.program': { en: 'Program', ar: 'البرنامج', fr: 'Programme' },
+    'home.weekOf': {
+        en: 'Week {week} of {total}',
+        ar: 'سيمانة {week} من {total}',
+        fr: 'Semaine {week} sur {total}',
+    },
+    'home.setsThisWeek': {
+        en: '{done} of {total} sets this week',
+        ar: '{done} من {total} مجموعات هاد السيمانة',
+        fr: '{done} sur {total} séries cette semaine',
+    },
+    'home.yourWorkouts': {
+        en: 'Your workouts',
+        ar: 'تمارينك',
+        fr: 'Tes séances',
+    },
+    'home.phase': { en: 'Phase', ar: 'المرحلة', fr: 'Phase' },
+    'week.now': { en: 'Now', ar: 'الآن', fr: 'Actuel' },
+    'login.eyebrow': {
+        en: 'Welcome back',
+        ar: 'مرحبا بيك',
+        fr: 'Bon retour',
+    },
+    'login.lead': {
+        en: 'Pick up your 8 weeks where you left them.',
+        ar: 'كمّل 8 سيمانات من اللي وقفتي.',
+        fr: 'Reprends tes 8 semaines là où tu t’étais arrêté.',
+    },
+    'login.forgot': {
+        en: 'Forgot password?',
+        ar: 'نسيتي كلمة السر؟',
+        fr: 'Mot de passe oublié ?',
+    },
+    'login.error': {
+        en: 'Email or password is incorrect.',
+        ar: 'الإيميل أو كلمة السر غلط.',
+        fr: 'E-mail ou mot de passe incorrect.',
+    },
+    'login.emailRequired': {
+        en: 'Enter your email to reset the password.',
+        ar: 'دخل الإيميل باش تعاود كلمة السر.',
+        fr: 'Entre ton e-mail pour réinitialiser le mot de passe.',
+    },
+    'login.resetSent': {
+        en: 'Check your email for a reset link.',
+        ar: 'شوف الإيميل ديالك للرابط.',
+        fr: 'Vérifie ton e-mail pour le lien de réinitialisation.',
+    },
+    'login.newHere': {
+        en: 'New here?',
+        ar: 'جديد هنا؟',
+        fr: 'Nouveau ici ?',
     },
     'welcome.stat.program': {
         en: 'Aesthetics',
@@ -87,16 +176,12 @@ export const translations: Translations = {
         fr: 'Endurance',
     },
     'welcome.join.subtitle': {
-        en: 'Start your 12 weeks today',
-        ar: 'بدا 12 سيمانة ديالك اليوم'
+        en: 'Start your 8 weeks today',
+        ar: 'بدا 8 سيمانات ديالك اليوم'
     },
     'welcome.login.subtitle': {
         en: 'Already have an account?',
         ar: 'عندك حساب من قبل؟'
-    },
-    'welcome.trust': {
-        en: 'Secure sign-in · coached by El Mehdi',
-        ar: 'دخول آمن · مع تأطير المهدي'
     },
     'welcome.choosePath.line1': {
         en: 'Ready to',
@@ -115,8 +200,8 @@ export const translations: Translations = {
         ar: 'صاوب البرنامج ديالك'
     },
     'signup.description': {
-        en: 'Enter your details to get started with your personalized 12 week program',
-        ar: 'دخل المعلومات ديالك باش تبدا البرنامج الشخصي ديالك ديال 12 سيمانة'
+        en: 'Enter your details to get started with your personalized 8 week program',
+        ar: 'دخل المعلومات ديالك باش تبدا البرنامج الشخصي ديالك ديال 8 سيمانات'
     },
     'signup.fullName': {
         en: 'Full Name',
@@ -201,8 +286,8 @@ export const translations: Translations = {
         ar: 'المرحلة 3: تبّع تقدمك'
     },
     'howItWorks.step3.description': {
-        en: 'Log your workouts, track weights, and watch your progress over 12 weeks. Your data is saved automatically.',
-        ar: 'سجل التمارين ديالك، تبّع الأثقال، وشوف تقدمك على مدى 12 سيمانة. المعلومات ديالك كتسجل بوحدها.'
+        en: 'Log your workouts, track weights, and watch your progress over 8 weeks. Progress is saved on this device.',
+        ar: 'سجل التمارين ديالك، تبّع الأثقال، وشوف تقدمك على مدى 8 سيمانات. التقدم كيتسجل فهاد الجهاز.'
     },
     'howItWorks.important': {
         en: 'Important: This creates a personal copy of the program just for you. Your progress is private and saved to your account.',
@@ -281,9 +366,9 @@ export const translations: Translations = {
         fr: 'Comment progresser',
     },
     'feed.week6Banner': {
-        en: 'Halfway through the program. Week 6 is your deload phase. Stay consistent.',
-        ar: 'نص البرنامج. السيمانة 6 فاز ديلود. كمل بنفس الروتين.',
-        fr: 'Mi parcours. La semaine 6 est une phase de décharge. Reste régulier.',
+        en: 'Week 5 is your deload. Recover well, then strength weeks begin.',
+        ar: 'السيمانة 5 هي الديلود. استريح مزيان، من بعد كيدوز فاز القوة.',
+        fr: 'La semaine 5 est ta décharge. Récupère bien, puis viennent les semaines de force.',
     },
 
     'toast.firstSet': {
@@ -414,9 +499,9 @@ export const translations: Translations = {
         fr: 'Programme terminé',
     },
     'milestone.complete.body': {
-        en: 'Twelve weeks done. You built the habit and the numbers.',
-        ar: '12 سيمانة سالاو. صاوبتي العادة والأرقام.',
-        fr: 'Douze semaines terminées. Habitude et chiffres sont là.',
+        en: 'Eight weeks done. You built the habit and the numbers.',
+        ar: '8 سيمانات سالاو. صاوبتي العادة والأرقام.',
+        fr: 'Huit semaines terminées. Habitude et chiffres sont là.',
     },
     'milestone.feedLabel': {
         en: 'Milestones',
@@ -498,12 +583,14 @@ export const translations: Translations = {
         ar: 'خروج'
     },
     'common.login': {
-        en: 'Login',
-        ar: 'دخول'
+        en: 'Log in',
+        ar: 'دخول',
+        fr: 'Connexion',
     },
     'common.createAccount': {
-        en: 'Join Program',
-        ar: 'انضم للبرنامج'
+        en: 'Create account',
+        ar: 'إنشاء حساب',
+        fr: 'Créer un compte',
     },
     'common.alreadyHaveAccount': {
         en: 'Already Have Account?',
@@ -873,7 +960,7 @@ export const translations: Translations = {
         ar: 'ارتاح بين المجموعات باش ترجع الطاقة ديالك وتخدم السيت الجاي حسن.'
     },
 
-    // Phases (12-week periodization)
+    // Phases (8-week periodization)
     'phase.anatomical': { en: 'Anatomical Adaptation', ar: 'التأقلم' },
     'phase.hypertrophy': { en: 'Hypertrophy', ar: 'تكبير العضل' },
     'phase.deload': { en: 'Deload', ar: 'تخفيف الحمل' },
@@ -923,46 +1010,52 @@ export const translations: Translations = {
     // Week progress / unlock
     'progress.weekLabel': { en: 'Week progress', ar: 'تقدم السيمانة' },
     'progress.setsLogged': { en: '{done} of {total} sets logged', ar: 'تسجلو {done} من {total} مجموعة' },
-    'unlock.title': { en: 'Week Complete!', ar: 'كملتي السيمانة!' },
+    'unlock.title': { en: 'Week complete', ar: 'كملتي السيمانة', fr: 'Semaine terminée' },
+    'unlock.unlocked': { en: 'Unlocked', ar: 'تفتحات', fr: 'Débloquée' },
+    'unlock.finalLabel': { en: 'Complete', ar: 'انتهى', fr: 'Terminé' },
     'unlock.message': { en: 'Next week unlocked. New targets are ready.', ar: 'السيمانة الجاية تفتحات. الأهداف الجديدة واجدة.' },
     'unlock.weekReady': {
-        en: 'Nice work. Week {week} is now unlocked.',
-        ar: 'مبروك. السيمانة {week} تفتحات دابا.',
-        fr: 'Bien joué. La semaine {week} est maintenant débloquée.',
+        en: 'Your loads and reps were updated from what you logged. Week {week} is ready.',
+        ar: 'الأثقال والتكرارات تعدّلو من اللي سجّلتي. السيمانة {week} واجدة.',
+        fr: 'Tes charges et reps ont été mises à jour. La semaine {week} est prête.',
     },
     'unlock.whatChanged': { en: "What's new this week", ar: 'أشنو الجديد فهاد السيمانة' },
     'unlock.point1': {
-        en: 'Your targets went up: you will see more reps or a bit more weight than last week.',
-        ar: 'الأهداف ديالك زادو: غادي تلقا تكرارات كثر ولا ثقل شوية كثر من السيمانة اللي فاتت.'
+        en: 'Targets recalculated from last week’s logged sets',
+        ar: 'الأهداف تحسبو من مجموعات السيمانة اللي فاتت',
+        fr: 'Objectifs recalculés à partir des séries enregistrées',
     },
     'unlock.point2': {
-        en: 'That means a little more total volume, which is exactly what makes you stronger over time.',
-        ar: 'هادشي كيعني حجم تمرين شوية كثر، وهادا بالضبط اللي كيقويك مع الوقت.'
+        en: 'Same split, progressed loads where you earned them',
+        ar: 'نفس التقسيم، أثقال أعلى فين تستاهل',
+        fr: 'Même split, charges progressées là où tu les as méritées',
     },
     'unlock.point3': {
-        en: 'Finish every workout of this week and log your sets to unlock the next one.',
-        ar: 'كمل جميع تمارين هاد السيمانة وسجّل المجموعات ديالك باش تفتح اللي من بعد.'
+        en: 'Log every set this week to unlock the next',
+        ar: 'سجّل كل المجموعات باش تفتح اللي بعدها',
+        fr: 'Enregistre chaque série cette semaine pour débloquer la suivante',
     },
-    'unlock.finalTitle': { en: 'Program Complete!', ar: 'كملتي البرنامج!' },
+    'unlock.finalTitle': { en: 'Program done', ar: 'البرنامج سالا', fr: 'Programme terminé' },
     'unlock.finalMessage': {
-        en: 'You finished all 12 weeks. Time to retest and see how far you have come.',
-        ar: 'كملتي 12 سيمانة كاملين. دابا وقت إعادة الاختبار باش تشوف شحال تقدمتي.'
+        en: 'You finished all 8 weeks. Retest when you are ready for the next block.',
+        ar: 'كملتي 8 سيمانات. عاود الاختبار ملي تكون واجد للكتلة الجاية.',
+        fr: 'Tu as terminé les 8 semaines. Reteste quand tu es prêt pour le prochain bloc.',
     },
-    'unlock.continue': { en: 'Continue', ar: 'كمل' },
+    'unlock.continue': { en: 'Continue', ar: 'كمل', fr: 'Continuer' },
 
     // Baseline (Week 0)
     'baseline.title': { en: 'Set Your Baseline', ar: 'حدد نقطة البداية' },
     'baseline.subtitle': {
-        en: 'Enter your current working weight for the key lifts. We’ll build your 12 weeks from here.',
-        ar: 'دخل الثقل اللي كتخدم بيه دابا فالتمارين الأساسية. غادي نبنيو 12 سيمانة ديالك من هنا.'
+        en: 'Enter your current working weight for the key lifts. We’ll build your 8 weeks from here.',
+        ar: 'دخل الثقل اللي كتخدم بيه دابا فالتمارين الأساسية. غادي نبنيو 8 سيمانات ديالك من هنا.'
     },
     'baseline.weight': { en: 'Working weight (kg)', ar: 'ثقل الخدمة (كجم)' },
     'baseline.reps': { en: 'Reps', ar: 'التكرارات' },
     'baseline.submit': { en: 'Start Week 1', ar: 'بدا السيمانة 1' },
     'baseline.saving': { en: 'Setting up…', ar: 'كنوجدو…' },
 
-    // Retest (Week 12)
-    'retest.title': { en: 'Week 12 Retest', ar: 'إعادة اختبار السيمانة 12' },
+    // Retest (legacy keys — cloud retest removed)
+    'retest.title': { en: 'Program complete', ar: 'البرنامج سالا' },
     'retest.subtitle': {
         en: 'Retest your key lifts and see how far you’ve come.',
         ar: 'عاود اختبر التمارين الأساسية ديالك وشوف شحال تقدمتي.'
@@ -987,9 +1080,9 @@ export const translations: Translations = {
     'intro.backToPortal': { en: 'Back to Portal', ar: 'رجع للبورطال' },
     'intro.eyebrow': { en: 'Hybrid Athlete Program', ar: 'برنامج الرياضي الهجين', fr: 'Programme athlète hybride' },
     // Headline is split in three so each language can order the words itself.
-    'intro.headline.line1': { en: '12 Week', ar: 'برنامج' },
+    'intro.headline.line1': { en: '8 Week', ar: 'برنامج' },
     'intro.headline.accent': { en: 'Hybrid', ar: 'هجين' },
-    'intro.headline.line2': { en: 'Program', ar: '12 أسبوع' },
+    'intro.headline.line2': { en: 'Program', ar: '8 أسابيع' },
     'intro.tagline': {
         en: 'Simple progressive training to look better, get stronger, and last longer. Built for hybrid athletes.',
         ar: 'تدريب بسيط ومتدرج باش تحسن الشكل، تزيد القوة، وتدوم أكثر. مصمم للرياضي الهجين.',
@@ -1003,7 +1096,7 @@ export const translations: Translations = {
     'intro.spec.support.title': { en: 'Full Support', ar: 'دعم كامل' },
     'intro.spec.support.sub': { en: 'Video Drill Guides', ar: 'فيديوهات الشرح' },
     'intro.inside.title': { en: 'The Athlete Experience', ar: 'تجربة الرياضي' },
-    'intro.inside.microcycles': { en: 'Advanced 12 Week Microcycles', ar: 'دورات صغيرة متقدمة على 12 أسبوع' },
+    'intro.inside.microcycles': { en: 'Advanced 8 Week Microcycles', ar: 'دورات صغيرة متقدمة على 8 أسابيع' },
     'intro.inside.tracking': { en: 'Weight Tracking and Logging', ar: 'تتبع وتسجيل الأوزان' },
     'intro.inside.videos': { en: 'Exercise Video Demonstrations', ar: 'فيديوهات شرح التمارين' },
     'intro.inside.records': { en: 'Personal Record Dashboard', ar: 'لوحة الأرقام القياسية' },

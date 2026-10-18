@@ -1,29 +1,32 @@
-import { Zap } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface BrandMarkProps {
-  /** Hide the wordmark, showing just the logo tile. */
+  /** Hide the wordmark, showing just the logo mark. */
   iconOnly?: boolean;
-  /** Hide wordmark on small screens (logo tile only on mobile). */
+  /** Hide wordmark on small screens. */
   compact?: boolean;
   className?: string;
 }
 
-/** The Hybrid Athlete lockup: red-gradient tile + lightning + italic wordmark. */
+/** Redesign lockup: brand mark + upright Label-style wordmark. */
 export function BrandMark({ iconOnly, compact, className }: BrandMarkProps) {
   return (
-    <div className={cn('flex min-w-0 items-center gap-2', className)}>
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-grad-red shadow-red sm:h-9 sm:w-9 sm:rounded-[10px]">
-        <Zap className="h-4 w-4 fill-white text-white sm:h-[18px] sm:w-[18px]" />
-      </span>
+    <div className={cn('flex min-w-0 items-center gap-2.5', className)}>
+      <img
+        src="/images/brand_mark.png"
+        alt=""
+        width={22}
+        height={21}
+        className="h-[21px] w-[22px] shrink-0 object-contain"
+      />
       {!iconOnly && (
         <span
           className={cn(
-            'truncate font-display text-xs font-extrabold italic tracking-wide text-txt-hi sm:text-sm',
+            'truncate text-[12px] font-semibold uppercase tracking-[0.18em] text-txt-hi',
             compact && 'hidden sm:inline'
           )}
         >
-          HYBRID<span className="text-brand">·</span>ATHLETE
+          Hybrid Athlete
         </span>
       )}
     </div>

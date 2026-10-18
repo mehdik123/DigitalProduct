@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hybrid Athlete — Current App Screens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Saira+Condensed:ital,wght@1,800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #08090d;
+      --surface: #101218;
+      --surface2: #15171f;
+      --hair: rgba(255,255,255,0.1);
+      --txt: #f4f5fa;
+      --mid: #9ea3b2;
+      --lo: #646a7a;
+      --brand: #ff2d55;
+      --success: #34d399;
+      --grad: linear-gradient(135deg, #ff2d55, #e11d48);
+      --coral: linear-gradient(120deg, #ff8a5c, #ff2d55);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #111;
+      color: var(--txt);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 14mm 12mm 12mm;
+      page-break-after: always;
+      background: #0a0b10;
+      position: relative;
+    }
+    .page:last-child { page-break-after: auto; }
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10mm;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 4mm;
+    }
+    .meta h2 {
+      font-family: "Saira Condensed", sans-serif;
+      font-style: italic;
+      font-weight: 800;
+      font-size: 22px;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+    .meta .id {
+      font-size: 11px;
+      color: var(--brand);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .meta .note { font-size: 11px; color: var(--mid); max-width: 55%; text-align: right; }
+    .stage {
+      display: flex;
+      justify-content: center;
+      gap: 8mm;
+      align-items: flex-start;
+    }
+    .phone {
+      width: 390px;
+      height: 780px;
+      border-radius: 36px;
+      border: 2px solid rgba(255,255,255,0.12);
+      background: var(--bg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+      flex-shrink: 0;
+    }
+    .chrome {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8,9,13,0.9);
+      backdrop-filter: blur(12px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "Saira Condensed", sans-serif;
+      font-style: italic;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+    .logo {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--grad);
+      display: grid; place-items: center;
+      box-shadow: 0 8px 20px rgba(255,45,85,0.45);
+      font-size: 12px;
+    }
+    .lang {
+      display: flex; gap: 2px; padding: 3px;
+      border-radius: 999px; border: 1px solid var(--hair);
+      background: rgba(21,23,31,0.8); font-size: 9px; font-weight: 800;
+    }
+    .lang span { padding: 4px 7px; border-radius: 999px; color: var(--lo); }
+    .lang .on { background: var(--brand); color: #fff; }
+    .screen { height: calc(100% - 44px - 72px); overflow: hidden; position: relative; }
+    .screen.full { height: calc(100% - 44px); }
+    .nav {
+      position: absolute; left: 12px; right: 12px; bottom: 14px;
+      height: 56px; border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(16,18,24,0.92);
+      display: flex; gap: 4px; padding: 6px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .nav button {
+      flex: 1; border: 0; border-radius: 16px;
+      background: transparent; color: var(--lo);
+      font-size: 9px; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .nav .active { background: var(--grad); color: #fff; box-shadow: 0 10px 24px rgba(255,45,85,0.45); }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--hair); border-radius: 999px;
+      padding: 6px 12px; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--mid);
+      background: rgba(255,255,255,0.03);
+    }
+    .eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 8px var(--brand); }
+    .display {
+      font-family: "Saira Condensed", sans-serif;
+      font-style: italic; font-weight: 800;
+      text-transform: uppercase; letter-spacing: -0.02em;
+      line-height: 0.9;
+    }
+    .coral { background: var(--coral); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(120% 70% at 50% -10%, rgba(255,45,85,.28), transparent 55%),
+        radial-gradient(100% 50% at 50% 110%, rgba(255,45,85,.12), transparent 55%),
+        #08090d;
+    }
+    .grid {
+      position: absolute; inset: 0; opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 34px 34px;
+      -webkit-mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 75%);
+      mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 75%);
+    }
+    .pad { position: relative; z-index: 1; padding: 18px 18px 0; }
+    .cta {
+      width: 100%; border: 0; border-radius: 18px; padding: 16px;
+      background: var(--grad); color: #fff; font-weight: 800;
+      box-shadow: 0 14px 32px rgba(255,45,85,0.45);
+      text-align: left;
+    }
+    .cta.secondary {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: none; color: var(--txt);
+    }
+    .card {
+      border: 1px solid var(--hair);
+      background: rgba(16,18,24,0.9);
+      border-radius: 20px;
+      padding: 14px;
+    }
+    .week-row { display: flex; gap: 8px; overflow: hidden; }
+    .week {
+      width: 52px; height: 72px; border-radius: 16px;
+      border: 1px solid var(--hair); background: var(--surface2);
+      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 8px 4px; flex-shrink: 0;
+    }
+    .week.on { background: var(--grad); border-color: rgba(255,255,255,0.25); box-shadow: 0 8px 22px rgba(255,45,85,0.4); }
+    .week .n { font-family: "Saira Condensed", sans-serif; font-style: italic; font-weight: 800; font-size: 22px; }
+    .week .l { font-size: 8px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lo); }
+    .week.on .l { color: rgba(255,255,255,0.85); }
+    .workout {
+      display: flex; align-items: center; gap: 12px;
+      border: 1px solid var(--hair); background: rgba(16,18,24,0.9);
+      border-radius: 20px; padding: 14px; margin-bottom: 10px;
+    }
+    .tile {
+      width: 48px; height: 48px; border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255,45,85,0.35), rgba(255,45,85,0.05));
+      border: 1px solid rgba(255,45,85,0.3);
+      color: var(--brand); display: grid; place-items: center; font-size: 18px;
+    }
+    .arrow {
+      width: 36px; height: 36px; border-radius: 999px; background: var(--grad);
+      color: #fff; display: grid; place-items: center; font-size: 16px;
+      box-shadow: 0 8px 18px rgba(255,45,85,0.4);
+    }
+    .field {
+      border: 1px solid var(--hair); background: var(--surface2);
+      border-radius: 14px; padding: 12px 14px; margin-top: 8px;
+      color: var(--lo); font-size: 13px;
+    }
+    .label { font-size: 10px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--lo); }
+    .legend { font-size: 12px; color: var(--mid); line-height: 1.55; }
+    .legend li { margin: 6px 0; }
+    .cover-title {
+      font-family: "Saira Condensed", sans-serif;
+      font-style: italic; font-weight: 800;
+      font-size: 48px; text-transform: uppercase; line-height: 0.92;
+      margin-top: 40mm;
+    }
+    .instructions {
+      margin-top: 10mm; padding: 5mm; border: 1px solid rgba(255,45,85,0.3);
+      border-radius: 16px; background: rgba(255,45,85,0.08);
+      font-size: 12px; line-height: 1.55; color: var(--mid);
+    }
+    @media print {
+      body { background: #0a0b10; }
+      .page { margin: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER -->
+  <section class="page">
+    <div class="meta">
+      <div>
+        <div class="id">Hybrid Athlete · Design Hand-off</div>
+        <h2>Current App Screens</h2>
+      </div>
+      <div class="note">Share this PDF with your design agent. Keep page IDs. Return a redesigned PDF with the same pages.</div>
+    </div>
+    <div class="cover-title">Hybrid<br /><span class="coral">Athlete</span></div>
+    <p style="margin-top:16px;color:var(--mid);max-width:420px;line-height:1.6">
+      8-week hybrid training app. Auth via Firebase. Workouts + progressive overload stored on-device (localStorage). Nutrition removed.
+    </p>
+    <div class="instructions">
+      <strong style="color:var(--txt)">Instructions for design agent</strong><br />
+      1. Keep the same pages and page IDs (P01–P06).<br />
+      2. Redesign visuals only — do not invent new product flows unless labeled optional.<br />
+      3. Preserve: signup/login, home CTA → train, week selector, workout day logging (sets/reps/kg), bottom nav Home/Train.<br />
+      4. Mobile-first (~390×780). Dark athletic brand with red accent is current; you may change the visual system.<br />
+      5. Return a PDF with the same page order and IDs so engineering can implement 1:1.
+    </div>
+    <ol class="legend" style="margin-top:18px">
+      <li><strong style="color:var(--brand)">P01</strong> — Auth entry (create account / login)</li>
+      <li><strong style="color:var(--brand)">P02</strong> — Login form</li>
+      <li><strong style="color:var(--brand)">P03</strong> — Home (ready to train)</li>
+      <li><strong style="color:var(--brand)">P04</strong> — Train feed (weeks + days)</li>
+      <li><strong style="color:var(--brand)">P05</strong> — Workout day (exercise logging)</li>
+      <li><strong style="color:var(--brand)">P06</strong> — Week unlocked celebration</li>
+    </ol>
+  </section>
+
+  <!-- P01 AUTH -->
+  <section class="page">
+    <div class="meta">
+      <div>
+        <div class="id">P01 · Auth entry</div>
+        <h2>Create account / Login</h2>
+      </div>
+      <div class="note">First screen when logged out. Brand hero + two CTAs.</div>
+    </div>
+    <div class="stage">
+      <div class="phone">
+        <div class="chrome">
+          <div class="brand"><span class="logo">⚡</span> HYBRID·ATHLETE</div>
+          <div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div>
+        </div>
+        <div class="screen full">
+          <div class="hero-bg"></div>
+          <div class="grid"></div>
+          <div class="pad" style="display:flex;flex-direction:column;height:100%;padding-bottom:24px">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+              <span class="eyebrow"><i></i> 8 Week Program</span>
+              <div class="display" style="font-size:64px;margin-top:18px">Hybrid</div>
+              <div class="display coral" style="font-size:64px;margin-top:4px">Athlete</div>
+              <p style="margin-top:14px;color:var(--mid);font-size:14px;line-height:1.5;max-width:280px">
+                Aesthetics, strength, and endurance. Train as a hybrid athlete for 8 weeks.
+              </p>
+              <div style="margin-top:18px;display:flex;gap:18px;font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:var(--lo)">
+                <span style="color:var(--brand)">Aesthetics</span><span>Strength</span><span>Endurance</span>
+              </div>
+            </div>
+            <button class="cta" style="margin-bottom:10px">
+              <div style="font-family:Saira Condensed,sans-serif;font-style:italic;font-size:18px;text-transform:uppercase">Create Account</div>
+              <div style="font-size:11px;opacity:0.8;font-weight:600;margin-top:4px">Start your 8 weeks today</div>
+            </button>
+            <button class="cta secondary">
+              <div style="font-family:Saira Condensed,sans-serif;font-style:italic;font-size:18px;text-transform:uppercase">Login</div>
+              <div style="font-size:11px;color:var(--mid);font-weight:600;margin-top:4px">Already have an account?</div>
+            </button>
+            <p style="text-align:center;margin-top:12px;font-size:11px;color:var(--lo)">Secure sign-in · coached by El Mehdi</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P02 LOGIN -->
+  <section class="page">
+    <div class="meta">
+      <div>
+        <div class="id">P02 · Login</div>
+        <h2>Email + password</h2>
+      </div>
+      <div class="note">Returning users. Content starts at top (not vertically centered).</div>
+    </div>
+    <div class="stage">
+      <div class="phone">
+        <div class="screen full">
+          <div class="hero-bg"></div>
+          <div class="grid"></div>
+          <div class="pad">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px">
+              <div style="width:36px;height:36px;border-radius:999px;border:1px solid var(--hair);background:var(--surface2);display:grid;place-items:center">←</div>
+              <div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div>
+            </div>
+            <div style="text-align:center;margin-bottom:18px">
+              <div class="brand" style="justify-content:center"><span class="logo">⚡</span> HYBRID·ATHLETE</div>
+            </div>
+            <div style="text-align:center;margin-bottom:22px">
+              <span class="eyebrow"><i></i> 8 Week Program</span>
+              <div class="display" style="font-size:52px;margin-top:14px">Login</div>
+            </div>
+            <div class="card" style="padding:22px">
+              <div class="label">Email address</div>
+              <div class="field">name@example.com</div>
+              <div class="label" style="margin-top:14px">Password</div>
+              <div class="field">••••••••</div>
+              <button class="cta" style="margin-top:18px;text-align:center">Login</button>
+              <div style="text-align:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--hair);font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--lo)">← Back to home</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P03 HOME -->
+  <section class="page">
+    <div class="meta">
+      <div>
+        <div class="id">P03 · Home</div>
+        <h2>Ready to train</h2>
+      </div>
+      <div class="note">Logged-in home. One primary CTA into Train.</div>
+    </div>
+    <div class="stage">
+      <div class="phone">
+        <div class="chrome">
+          <div class="brand"><span class="logo">⚡</span> HYBRID·ATHLETE</div>
+          <div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div>
+        </div>
+        <div class="screen">
+          <div style="position:absolute;inset:0;background:url('../public/images/welcome_bg.jpg') center/cover;opacity:0.4"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,#08090d 15%,rgba(8,9,13,0.7) 55%,rgba(8,9,13,0.5))"></div>
+          <div class="hero-bg" style="opacity:0.65"></div>
+          <div class="grid"></div>
+          <div class="pad" style="display:flex;flex-direction:column;justify-content:flex-end;height:100%;padding-bottom:20px">
+            <span class="eyebrow"><i></i> Welcome, Mehdi</span>
+            <div class="display" style="font-size:56px;margin-top:16px">Ready to</div>
+            <div class="display coral" style="font-size:56px;margin-top:2px">train</div>
+            <p style="margin:14px 0 20px;color:var(--mid);font-size:13px;line-height:1.5;max-width:300px">
+              Train like a hybrid athlete. Build aesthetics, strength, and endurance in one plan.
+            </p>
+            <div class="card" style="background:rgba(16,18,24,0.45);backdrop-filter:blur(16px);border-color:rgba(255,255,255,0.12);display:flex;align-items:center;gap:14px">
+              <div class="logo" style="width:56px;height:56px;border-radius:16px;font-size:22px">⚡</div>
+              <div style="flex:1">
+                <div class="display" style="font-size:22px">Start Workout</div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--lo);margin-top:4px">Aesthetics · Strength · Endurance</div>
+              </div>
+              <div style="width:40px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,0.15);display:grid;place-items:center">→</div>
+            </div>
+          </div>
+        </div>
+        <div class="nav">
+          <button class="active">Home</button>
+          <button>Train</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P04 TRAIN -->
+  <section class="page">
+    <div class="meta">
+      <div>
+        <div class="id">P04 · Train feed</div>
+        <h2>Week selector + workout days</h2>
+      </div>
+      <div class="note">Main training hub. Pick week, open a day.</div>
+    </div>
+    <div class="stage">
+      <div class="phone">
+        <div class="chrome">
+          <div class="brand"><span class="logo">⚡</span> HYBRID·ATHLETE</div>
+          <div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div>
+        </div>
+        <div class="screen">
+          <div style="position:absolute;inset:0 0 auto 0;height:160px;background:linear-gradient(to bottom,rgba(255,45,85,0.12),transparent)"></div>
+          <div class="pad" style="padding-top:14px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px">
+              <div>
+                <div class="display" style="font-size:28px">Hello, <span class="coral">Mehdi</span></div>
+                <div style="margin-top:8px;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--lo)">Your workouts</div>
+              </div>
+              <div style="background:var(--grad);border-radius:999px;padding:6px 12px;font-size:9px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;box-shadow:0 8px 20px rgba(255,45,85,0.4)">● Week 1</div>
+            </div>
+            <div class="week-row" style="margin-bottom:14px">
+              <div class="week on"><span class="l">Wk</span><span class="n">1</span><span class="l">Now</span></div>
+              <div class="week"><span class="l">Wk</span><span class="n" style="color:var(--lo)">2</span><span class="l">Lock</span></div>
+              <div class="week"><span class="l">Wk</span><span class="n" style="color:var(--lo)">3</span><span class="l">Lock</span></div>
+              <div class="week"><span class="l">Wk</span><span class="n" style="color:var(--lo)">4</span><span class="l">Lock</span></div>
+              <div class="week"><span class="l">Wk</span><span class="n" style="color:var(--lo)">5</span><span class="l">Lock</span></div>
+              <div class="week"><span class="l">Wk</span><span class="n" style="color:var(--lo)">6</span><span class="l">Lock</span></div>
+            </div>
+            <div class="card" style="margin-bottom:12px;padding:12px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid)">
+                <span>Sets 4 / 96</span><span style="color:var(--brand)">4%</span>
+              </div>
+              <div style="height:6px;border-radius:999px;background:rgba(255,255,255,0.06);margin-top:8px;overflow:hidden">
+                <div style="width:8%;height:100%;background:var(--grad)"></div>
+              </div>
+              <div style="margin-top:10px;font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--brand)">Next: Upper Body 1</div>
+            </div>
+            <div class="workout">
+              <div class="tile">🏋</div>
+              <div style="flex:1;min-width:0">
+                <div class="display" style="font-size:18px">Upper Body 1</div>
+                <div style="margin-top:6px;font-size:10px;font-weight:700;color:var(--lo)">45–60 min · 8 drills</div>
+              </div>
+              <div class="arrow">→</div>
+            </div>
+            <div class="workout">
+              <div class="tile">🏋</div>
+              <div style="flex:1">
+                <div class="display" style="font-size:18px">Lower Body 1</div>
+                <div style="margin-top:6px;font-size:10px;font-weight:700;color:var(--lo)">50–65 min · 7 drills</div>
+              </div>
+              <div class="arrow">→</div>
+            </div>
+            <div class="workout" style="opacity:0.85">
+              <div class="tile">🏋</div>
+              <div style="flex:1">
+                <div class="display" style="font-size:18px">Upper Body 2</div>
+                <div style="margin-top:6px;font-size:10px;font-weight:700;color:var(--lo)">45–60 min · 8 drills</div>
+              </div>
+              <div class="arrow">→</div>
+            </div>
+          </div>
+        </div>
+        <div class="nav">
+          <button>Home</button>
+          <button class="active">Train</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P05 WORKOUT -->
+  <section class="page">
+    <div class="meta">
+      <div>
+        <div class="id">P05 · Workout day</div>
+        <h2>Log sets / reps / kg</h2>
+      </div>
+      <div class="note">Per-exercise logging. Progressive overload uses these values locally.</div>
+    </div>
+    <div class="stage">
+      <div class="phone">
+        <div class="chrome">
+          <div class="brand"><span style="width:28px;height:28px;border-radius:999px;border:1px solid var(--hair);display:grid;place-items:center;margin-right:6px">←</span> HYBRID·ATHLETE</div>
+          <div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div>
+        </div>
+        <div class="screen full">
+          <div style="border-bottom:1px solid var(--hair);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:rgba(8,9,13,0.9)">
+            <div>
+              <div class="display" style="font-size:20px">Upper Body 1</div>
+              <div style="margin-top:6px;font-size:10px;font-weight:700;color:var(--lo)"><span style="background:rgba(255,45,85,0.15);color:var(--brand);padding:3px 8px;border-radius:999px;margin-right:6px">Week 1</span> Anatomical</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--hair);border-radius:999px;padding:6px 10px;background:var(--surface2);font-size:11px;font-weight:700">0/24 <span style="width:28px;height:28px;border-radius:999px;border:3px solid rgba(255,45,85,0.25);display:inline-block"></span></div>
+          </div>
+          <div style="padding:12px 14px">
+            <div class="card" style="margin-bottom:10px;padding:0;overflow:hidden">
+              <div style="height:110px;background:linear-gradient(135deg,#1b1e28,#2a1018);display:grid;place-items:center;position:relative">
+                <div style="width:44px;height:44px;border-radius:999px;background:var(--grad);display:grid;place-items:center;box-shadow:0 10px 24px rgba(255,45,85,0.5)">▶</div>
+                <div style="position:absolute;left:10px;bottom:10px;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;background:rgba(0,0,0,0.55);padding:4px 8px;border-radius:8px">01</div>
+              </div>
+              <div style="padding:12px">
+                <div class="display" style="font-size:16px;line-height:1">Incline Barbell Bench</div>
+                <div style="margin-top:8px;font-size:10px;color:var(--lo);font-weight:700">Target 8–12 · 3 sets</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+                  <div><div class="label">Reps</div><div class="field" style="text-align:center;color:var(--txt)">10</div></div>
+                  <div><div class="label">Kg</div><div class="field" style="text-align:center;color:var(--txt)">40</div></div>
+                </div>
+                <button class="cta" style="margin-top:12px;text-align:center;padding:12px">Save sets</button>
+              </div>
+            </div>
+            <div class="card" style="opacity:0.75;padding:12px;display:flex;gap:10px;align-items:center">
+              <div style="width:56px;height:40px;border-radius:10px;background:#1b1e28"></div>
+              <div style="flex:1">
+                <div class="display" style="font-size:14px">Dips</div>
+                <div style="font-size:10px;color:var(--lo);margin-top:4px">3 sets</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P06 UNLOCK -->
+  <section class="page">
+    <div class="meta">
+      <div>
+        <div class="id">P06 · Week unlocked</div>
+        <h2>Celebration after completing a week</h2>
+      </div>
+      <div class="note">Modal overlay when all days of a week are logged.</div>
+    </div>
+    <div class="stage">
+      <div class="phone">
+        <div class="chrome">
+          <div class="brand"><span class="logo">⚡</span> HYBRID·ATHLETE</div>
+          <div class="lang"><span class="on">EN</span><span>AR</span><span>FR</span></div>
+        </div>
+        <div class="screen full" style="background:#05060a">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.75);display:grid;place-items:center;padding:24px">
+            <div style="width:100%;border-radius:28px;border:1px solid rgba(52,211,153,0.3);background:var(--surface2);padding:28px 22px;text-align:center">
+              <div style="width:64px;height:64px;border-radius:999px;margin:0 auto 16px;background:rgba(52,211,153,0.15);color:var(--success);display:grid;place-items:center;font-size:28px">🎉</div>
+              <div class="display" style="font-size:32px">Week unlocked</div>
+              <p style="margin-top:10px;color:var(--mid);font-size:13px;line-height:1.5">Week 2 is ready. Loads and reps updated from what you logged.</p>
+              <div style="margin-top:16px;text-align:left;border:1px solid var(--hair);border-radius:16px;padding:12px;background:var(--surface);font-size:12px;color:var(--mid);line-height:1.5">
+                • Hit top reps → weight goes up next week<br />
+                • Otherwise → +1 rep, same weight<br />
+                • Progress saved on this device
+              </div>
+              <button class="cta" style="margin-top:18px;text-align:center">Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

@@ -1,39 +1,32 @@
 /**
- * Centralized design tokens for the Training experience.
- * One source of truth: type scale, spacing, radii, near-black surfaces,
- * a single red accent, one success tone, and motion timings.
+ * Hybrid Athlete redesign v1 — warm graphite, bone type, one red signal.
+ * Source: design/Hybrid-Athlete-Redesign.html
  */
 
 export const colors = {
-  // Layered near-black surfaces (darkest -> lightest)
-  bg: '#08090d',
-  surface: '#101218',
-  surface2: '#15171f',
-  surface3: '#1b1e28',
-  border: 'rgba(255,255,255,0.08)',
-  borderStrong: 'rgba(255,255,255,0.12)',
+  bg: '#111110',
+  surface: '#1A1918',
+  surface2: '#22201E',
+  surface3: '#2C2A27',
+  border: '#2E2C29',
+  borderStrong: '#3E3B37',
 
-  // Text
-  text: '#f4f5fa',
-  textMuted: '#9ea3b2',
-  textFaint: '#646a7a',
+  text: '#F2EDE6',
+  textMuted: '#A8A29A',
+  textFaint: '#6F6A64',
 
-  // Single red accent
-  accent: '#ff2d55',
-  accentDeep: '#e11d48',
-  accentSoft: 'rgba(255,45,85,0.14)',
-  accentBorder: 'rgba(255,45,85,0.35)',
-  coral: '#ff6a55',
+  accent: '#E8112D',
+  accentDeep: '#C80E27',
+  accentSoft: 'rgba(232,17,45,0.14)',
+  accentBorder: 'rgba(232,17,45,0.35)',
+  coral: '#E8112D',
 
-  // One success tone
   success: '#34d399',
   successSoft: 'rgba(52,211,153,0.14)',
 
-  // Locked / disabled
-  locked: '#3f3f46',
+  locked: '#6F6A64',
 } as const;
 
-/** Type scale (px). */
 export const type = {
   xs: 12,
   sm: 14,
@@ -44,7 +37,6 @@ export const type = {
   '3xl': 64,
 } as const;
 
-/** 8px spacing system. */
 export const space = {
   0: 0,
   1: 4,
@@ -59,18 +51,17 @@ export const space = {
 
 export const radii = {
   sm: 10,
-  md: 16,
-  lg: 24,
-  xl: 32,
+  md: 14,
+  lg: 18,
+  xl: 28,
   full: 9999,
 } as const;
 
-/** Motion durations (seconds) and easings — used by framer-motion. */
 export const motion = {
   fast: 0.18,
   base: 0.28,
   slow: 0.45,
   celebrate: 0.9,
-  ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
-  easeOut: [0.22, 1, 0.36, 1] as [number, number, number, number],
+  ease: [0.2, 0.8, 0.2, 1] as [number, number, number, number],
+  easeOut: [0.2, 0.8, 0.2, 1] as [number, number, number, number],
 } as const;

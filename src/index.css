@@ -8,66 +8,62 @@
  * tailwind.config.js; these CSS vars exist for gradients / raw-CSS utilities.
  */
 :root {
-    /* layered surfaces */
-    --bg: #08090d;
-    --surface-1: #101218;
-    --surface-2: #15171f;
-    --surface-3: #1b1e28;
-    --glass: rgba(255, 255, 255, .05);
-    --glass-hi: rgba(255, 255, 255, .08);
-    --hair: rgba(255, 255, 255, .08);
-    --hair-strong: rgba(255, 255, 255, .12);
+    /* redesign v1 — warm graphite / bone / one red */
+    --bg: #111110;
+    --surface-1: #1a1918;
+    --surface-2: #22201e;
+    --surface-3: #2c2a27;
+    --glass: rgba(242, 237, 230, .04);
+    --glass-hi: rgba(242, 237, 230, .07);
+    --hair: #2e2c29;
+    --hair-strong: #3e3b37;
 
-    /* text */
-    --txt-hi: #f4f5fa;
-    --txt-mid: #9ea3b2;
-    --txt-lo: #646a7a;
+    --txt-hi: #f2ede6;
+    --txt-mid: #a8a29a;
+    --txt-lo: #6f6a64;
 
-    /* brand */
-    --red: #ff2d55;
-    --red-deep: #e11d48;
-    --coral: #ff6a55;
+    --red: #e8112d;
+    --red-deep: #c80e27;
+    --coral: #e8112d;
     --emerald: #34d399;
 
-    --grad-red: linear-gradient(135deg, #ff476a, #e11d48 55%, #c2123f);
-    --grad-coral: linear-gradient(120deg, #ff8a5c, #ff2d55);
+    --grad-red: #e8112d;
+    --grad-coral: #e8112d;
 
-    --r-lg: 24px;
+    --r-lg: 28px;
     --r-md: 18px;
-    --r-sm: 13px;
+    --r-sm: 12px;
 
-    --ease: cubic-bezier(.22, .61, .36, 1);
-    --spring: cubic-bezier(.34, 1.56, .64, 1);
+    --ease: cubic-bezier(.2, .8, .2, 1);
+    --spring: cubic-bezier(.2, .8, .2, 1);
 
-    /* kit aliases (design-system + skills reference these) */
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.14);
-    --crimson: #e11d48;
-    --gradient-brand: linear-gradient(135deg, #e11d48 0%, #ff6a55 100%);
-    --gradient-brand-soft: linear-gradient(135deg, rgba(225, 29, 72, 0.16) 0%, rgba(255, 106, 77, 0.16) 100%);
-    --text: #f4f5fa;
-    --text-2: #9ea3b2;
-    --text-3: #646a7a;
-    --font-display: 'Saira Condensed', system-ui, sans-serif;
-    --font-body: 'Inter', system-ui, sans-serif;
-    --font-stat: 'Space Grotesk', ui-monospace, sans-serif;
-    --glow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-    --glow-brand: 0 8px 28px rgba(225, 29, 72, 0.3);
-    --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --border: #2e2c29;
+    --border-strong: #3e3b37;
+    --crimson: #e8112d;
+    --gradient-brand: #e8112d;
+    --gradient-brand-soft: rgba(232, 17, 45, 0.14);
+    --text: #f2ede6;
+    --text-2: #a8a29a;
+    --text-3: #6f6a64;
+    --font-display: 'Saira Condensed', 'Arial Narrow', sans-serif;
+    --font-body: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
+    --font-stat: 'Saira Condensed', sans-serif;
+    --glow-sm: none;
+    --glow-brand: none;
+    --highlight-top: none;
     --safe-top: env(safe-area-inset-top, 0px);
-    --chrome-height: calc(2.75rem + var(--safe-top));
+    --chrome-height: calc(3.25rem + var(--safe-top));
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --kb: 0px;
 
-    /* legacy aliases (kept so older references keep resolving) */
-    --app-bg: #08090d;
-    --glass-bg: rgba(20, 20, 20, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --accent-red: #ff2d55;
-    --accent-grey: #1e1e1e;
-    --accent-light-grey: #a1a1aa;
+    --app-bg: #111110;
+    --glass-bg: rgba(26, 25, 24, 0.94);
+    --glass-border: #2e2c29;
+    --accent-red: #e8112d;
+    --accent-grey: #22201e;
+    --accent-light-grey: #a8a29a;
 }
 
 @layer base {
@@ -79,14 +75,30 @@
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
         overscroll-behavior-y: none;
+        caret-color: var(--red);
         @apply antialiased;
+    }
+
+    ::selection {
+        background: rgba(232, 17, 45, 0.28);
+        color: var(--txt-hi);
+    }
+
+    .stat,
+    [data-stat],
+    .font-display {
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
     }
 
     .stat,
     [data-stat] {
         font-family: var(--font-stat);
-        font-variant-numeric: tabular-nums;
         letter-spacing: -0.02em;
+    }
+
+    input, textarea {
+        caret-color: var(--red);
     }
 }
 
@@ -106,13 +118,8 @@
         box-shadow: 0 16px 36px -12px rgba(255, 45, 85, .65), inset 0 1px 0 rgba(255, 255, 255, .18);
     }
 
-    /* Clipped gradient text for the athletic lockup. */
     .text-grad-coral {
-        background: var(--grad-coral);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        filter: drop-shadow(0 6px 24px rgba(255, 45, 85, .35));
+        color: var(--coral);
     }
 
     .press {
@@ -127,18 +134,11 @@
 @layer components {
     /* The signature page background: layered dark + red ambient glow. */
     .bg-app {
-        background:
-            radial-gradient(900px 500px at 20% -8%, rgba(255, 45, 85, .16), transparent 60%),
-            radial-gradient(700px 500px at 100% 12%, rgba(91, 140, 255, .05), transparent 55%),
-            #05060a;
+        background: var(--bg);
     }
 
-    /* Tighter hero glow (top + bottom) — used on the welcome/login screen. */
     .bg-hero {
-        background:
-            radial-gradient(140% 70% at 50% -10%, rgba(255, 45, 85, .22), transparent 55%),
-            radial-gradient(120% 60% at 50% 115%, rgba(255, 45, 85, .10), transparent 60%),
-            var(--bg);
+        background: var(--bg);
     }
 
     /* Faint ambient grid (apply to an absolutely-positioned overlay element). */
@@ -181,12 +181,32 @@
         animation: shimmer 1.4s ease infinite;
     }
 
-    /* design-system skill — canonical card */
+    /* Quiet surface card — depth from tone step + hairline, never glow */
     .card {
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        border-radius: var(--r-lg);
-        box-shadow: var(--glow-sm), var(--highlight-top);
+        background: var(--surface-1);
+        border-radius: var(--r-md);
+        box-shadow: inset 0 0 0 1px var(--hair);
+    }
+
+    /* Program / week segment track */
+    .prog-track {
+        display: flex;
+        gap: 4px;
+    }
+    .prog-track > i {
+        position: relative;
+        flex: 1;
+        height: 6px;
+        overflow: hidden;
+        border-radius: 3px;
+        background: var(--surface-3);
+    }
+    .prog-track > i > b {
+        position: absolute;
+        inset: 0 auto 0 0;
+        border-radius: 3px;
+        background: var(--red);
+        transition: width 0.45s var(--ease);
     }
 
     .text-gradient {

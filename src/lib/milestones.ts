@@ -15,7 +15,6 @@ export type MilestoneId =
   | 'deload'
   | 'strength'
   | 'peak'
-  | 'retest'
   | 'complete';
 
 export interface MilestoneDef {
@@ -35,7 +34,6 @@ export const MILESTONES: MilestoneDef[] = [
   { id: 'deload', icon: 'shield', titleKey: 'milestone.deload.title', bodyKey: 'milestone.deload.body' },
   { id: 'strength', icon: 'star', titleKey: 'milestone.strength.title', bodyKey: 'milestone.strength.body' },
   { id: 'peak', icon: 'flag', titleKey: 'milestone.peak.title', bodyKey: 'milestone.peak.body' },
-  { id: 'retest', icon: 'trophy', titleKey: 'milestone.retest.title', bodyKey: 'milestone.retest.body' },
   { id: 'complete', icon: 'crown', titleKey: 'milestone.complete.title', bodyKey: 'milestone.complete.body' },
 ];
 
@@ -102,7 +100,7 @@ export interface MilestoneContext {
 
 /**
  * Evaluates progress and returns newly unlocked milestones (in display order).
- * Each milestone unlocks once per account on this device.
+ * Thresholds match the 8-week PHASE_MAP (deload 5, strength 6, peak 8).
  */
 export function evaluateMilestones(ctx: MilestoneContext): MilestoneDef[] {
   const unlocked = readUnlocked(ctx.userId);
@@ -119,11 +117,10 @@ export function evaluateMilestones(ctx: MilestoneContext): MilestoneDef[] {
     week2: currentWeek >= 2,
     three_days: distinctDays >= 3,
     week4: currentWeek >= 4,
-    deload: currentWeek >= 6,
-    strength: currentWeek >= 7,
-    peak: currentWeek >= 10,
-    retest: currentWeek >= 12,
-    complete: Boolean(ctx.programFinal) || state.weeks[12] === 'completed',
+    deload: currentWeek >= 5,
+    strength: currentWeek >= 6,
+    peak: currentWeek >= 8,
+    complete: Boolean(ctx.programFinal) || state.weeks[TOTAL_WEEKS] === 'completed',
   };
 
   const newly: MilestoneDef[] = [];

@@ -9,7 +9,7 @@ export const frenchTranslations: Record<string, string> = {
     // Welcome Portal
     'welcome.title': 'Bienvenue',
     'welcome.subtitle':
-        'Un corps plus esthétique, plus de force et une meilleure endurance. Un programme hybride sur 12 semaines.',
+        'Un corps plus esthétique, plus de force et une meilleure endurance. Un programme hybride sur 8 semaines.',
     'welcome.training': 'Entraînement',
     'welcome.training.description':
         'Entraîne-toi comme un athlète hybride. Esthétique, force et endurance dans un seul plan.',
@@ -18,22 +18,45 @@ export const frenchTranslations: Record<string, string> = {
         'Calcule tes macros, planifie tes repas et découvre des alternatives saines adaptées à tes objectifs.',
     'welcome.startWorkout': 'Commencer la séance',
     'welcome.openKitchen': 'Ouvrir la cuisine',
-    'welcome.eyebrow': 'Programme 12 semaines',
+    'welcome.eyebrow': 'Programme 8 semaines',
     'welcome.tagline':
-        'Esthétique, force et endurance. Entraîne-toi comme un athlète hybride pendant 12 semaines.',
+        'Esthétique, force et endurance dans un seul plan. Tes charges s’ajustent chaque semaine selon ce que tu enregistres.',
     'welcome.stat.program': 'Esthétique',
     'welcome.stat.sessions': 'Force',
     'welcome.stat.focus': 'Endurance',
-    'welcome.join.subtitle': "Commence tes 12 semaines aujourd'hui",
+    'welcome.join.subtitle': "Commence tes 8 semaines aujourd'hui",
     'welcome.login.subtitle': 'Tu as déjà un compte ?',
-    'welcome.trust': 'Connexion sécurisée · coaché par El Mehdi',
+    'welcome.trust': 'Coaché par El Mehdi Kamal',
+    'home.greet.morning': 'Bonjour, {name}',
+    'home.greet.afternoon': 'Bon après-midi, {name}',
+    'home.greet.evening': 'Bonsoir, {name}',
+    'home.ready': "Prêt à t'entraîner",
+    'home.upNext': 'À suivre',
+    'home.day': 'Jour',
+    'home.exercises': 'exercices',
+    'home.sets': 'séries',
+    'home.more': 'de plus',
+    'home.startWorkout': 'Démarrer la séance',
+    'home.program': 'Programme',
+    'home.weekOf': 'Semaine {week} sur {total}',
+    'home.setsThisWeek': '{done} sur {total} séries cette semaine',
+    'home.yourWorkouts': 'Tes séances',
+    'home.phase': 'Phase',
+    'week.now': 'Actuel',
+    'login.eyebrow': 'Bon retour',
+    'login.lead': "Reprends tes 8 semaines là où tu t'étais arrêté.",
+    'login.forgot': 'Mot de passe oublié ?',
+    'login.error': 'E-mail ou mot de passe incorrect.',
+    'login.emailRequired': 'Entre ton e-mail pour réinitialiser le mot de passe.',
+    'login.resetSent': 'Vérifie ton e-mail pour le lien de réinitialisation.',
+    'login.newHere': 'Nouveau ici ?',
     'welcome.choosePath.line1': 'Prêt à',
     'welcome.choosePath.line2': "t'entraîner",
 
     // Signup
     'signup.title': 'Crée ton programme',
     'signup.description':
-        'Saisis tes informations pour démarrer ton programme personnalisé de 12 semaines',
+        'Saisis tes informations pour démarrer ton programme personnalisé de 8 semaines',
     'signup.fullName': 'Nom complet',
     'signup.email': 'Adresse e-mail',
     'signup.emailNote': "Ton e-mail servira d'identifiant",
@@ -61,7 +84,7 @@ export const frenchTranslations: Record<string, string> = {
         'Utilise ton e-mail et le mot de passe que tu as créé pour te connecter à ton compte.',
     'howItWorks.step3.title': 'Étape 3 : suis ta progression',
     'howItWorks.step3.description':
-        'Enregistre tes séances, suis tes charges et observe ta progression sur 12 semaines. Tes données sont sauvegardées automatiquement.',
+        'Enregistre tes séances, suis tes charges et observe ta progression sur 8 semaines. La progression est sauvegardée sur cet appareil.',
     'howItWorks.important':
         'Important : ceci crée une copie personnelle du programme rien que pour toi. Ta progression est privée et enregistrée sur ton compte.',
     'howItWorks.gotIt': 'Compris !',
@@ -82,7 +105,8 @@ export const frenchTranslations: Record<string, string> = {
     'feed.setsProgress': '{done}/{total} séries enregistrées cette semaine',
     'feed.nextUp': 'Prochaine séance : {workout}',
     'feed.howProgress': 'Comment progresser',
-    'feed.week6Banner': 'Mi parcours. La semaine 6 est une phase de décharge. Reste régulier.',
+    'feed.week6Banner':
+        'La semaine 5 est ta décharge. Récupère bien, puis viennent les semaines de force.',
     'toast.firstSet': 'Première série enregistrée. Continue.',
     'toast.dayComplete': 'Séance du jour terminée. Beau travail.',
     'toast.emptySave': 'Saisis les reps et la charge réelles avant d\u2019enregistrer.',
@@ -109,7 +133,7 @@ export const frenchTranslations: Record<string, string> = {
     'milestone.retest.title': 'Semaine de retest',
     'milestone.retest.body': 'Mesure les lifts clés et vois le chemin parcouru.',
     'milestone.complete.title': 'Programme terminé',
-    'milestone.complete.body': 'Douze semaines terminées. Habitude et chiffres sont là.',
+    'milestone.complete.body': 'Huit semaines terminées. Habitude et chiffres sont là.',
     'milestone.feedLabel': 'Jalons',
 
     // Signup result
@@ -141,7 +165,7 @@ export const frenchTranslations: Record<string, string> = {
     'common.backToHome': "Retour à l'accueil",
     'common.logout': 'Déconnexion',
     'common.login': 'Connexion',
-    'common.createAccount': 'Rejoindre le programme',
+    'common.createAccount': 'Créer un compte',
     'common.alreadyHaveAccount': 'Tu as déjà un compte ?',
     'common.gotIt': 'Compris',
 
@@ -291,25 +315,25 @@ export const frenchTranslations: Record<string, string> = {
     'progress.setsLogged': '{done} séries sur {total} enregistrées',
 
     // Unlock
-    'unlock.title': 'Semaine terminée !',
+    'unlock.title': 'Semaine terminée',
+    'unlock.unlocked': 'Débloquée',
+    'unlock.finalLabel': 'Terminé',
     'unlock.message': 'Semaine suivante débloquée. De nouveaux objectifs sont prêts.',
-    'unlock.weekReady': 'Bien joué. La semaine {week} est maintenant débloquée.',
+    'unlock.weekReady':
+        'Tes charges et reps ont été mises à jour. La semaine {week} est prête.',
     'unlock.whatChanged': 'Ce qui change cette semaine',
-    'unlock.point1':
-        'Tes objectifs ont augmenté : tu verras plus de reps ou un peu plus de charge que la semaine dernière.',
-    'unlock.point2':
-        'Cela représente un peu plus de volume total, et c\u2019est exactement ce qui te rend plus fort sur la durée.',
-    'unlock.point3':
-        'Termine toutes les séances de cette semaine et enregistre tes séries pour débloquer la suivante.',
-    'unlock.finalTitle': 'Programme terminé !',
+    'unlock.point1': 'Objectifs recalculés à partir des séries enregistrées',
+    'unlock.point2': 'Même split, charges progressées là où tu les as méritées',
+    'unlock.point3': 'Enregistre chaque série cette semaine pour débloquer la suivante',
+    'unlock.finalTitle': 'Programme terminé',
     'unlock.finalMessage':
-        'Tu as terminé les 12 semaines. Il est temps de refaire les tests et de voir le chemin parcouru.',
+        'Tu as terminé les 8 semaines. Reteste quand tu es prêt pour le prochain bloc.',
     'unlock.continue': 'Continuer',
 
     // Baseline
     'baseline.title': 'Définis ta référence',
     'baseline.subtitle':
-        'Saisis ta charge de travail actuelle sur les mouvements clés. On construit tes 12 semaines à partir de là.',
+        'Saisis ta charge de travail actuelle sur les mouvements clés. On construit tes 8 semaines à partir de là.',
     'baseline.weight': 'Charge de travail (kg)',
     'baseline.reps': 'Reps',
     'baseline.submit': 'Commencer la semaine 1',
@@ -339,7 +363,7 @@ export const frenchTranslations: Record<string, string> = {
     'intro.eyebrow': 'Programme athlète hybride',
     'intro.headline.line1': 'Programme',
     'intro.headline.accent': 'Hybride',
-    'intro.headline.line2': '12 semaines',
+    'intro.headline.line2': '8 semaines',
     'intro.tagline':
         'Un entraînement simple et progressif pour mieux paraître, gagner en force et tenir plus longtemps. Fait pour les athlètes hybrides.',
     'intro.spec.splitDays': 'Split {days} jours',
@@ -350,7 +374,7 @@ export const frenchTranslations: Record<string, string> = {
     'intro.spec.support.title': 'Support complet',
     'intro.spec.support.sub': 'Vidéos de démonstration',
     'intro.inside.title': "L'expérience athlète",
-    'intro.inside.microcycles': 'Microcycles avancés sur 12 semaines',
+    'intro.inside.microcycles': 'Microcycles avancés sur 8 semaines',
     'intro.inside.tracking': 'Suivi et enregistrement des charges',
     'intro.inside.videos': 'Vidéos de démonstration des exercices',
     'intro.inside.records': 'Tableau de bord des records',

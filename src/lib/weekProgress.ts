@@ -14,19 +14,40 @@ export function getExpectedSetCountForWeek(week: number, daysPerWeek?: DaysPerWe
   );
 }
 
+export function getNextWorkout(
+  userId: string,
+  week: number,
+  daysPerWeek: DaysPerWeek | number | undefined
+) {
+  const split = getWorkoutSplit(daysPerWeek);
+  for (const day of split) {
+    if (!isLocalDayComplete(userId, week, day.id)) {
+      return day;
+    }
+  }
+  return null;
+}
+
 export function getNextWorkoutName(
   userId: string,
   week: number,
   daysPerWeek: DaysPerWeek | number | undefined,
   t: Translate
 ): string | null {
+  const day = getNextWorkout(userId, week, daysPerWeek);
+  return day ? dayName(t, day.name) : null;
+}
+
+export function getNextWorkoutDayIndex(
+  userId: string,
+  week: number,
+  daysPerWeek: DaysPerWeek | number | undefined
+): number {
   const split = getWorkoutSplit(daysPerWeek);
-  for (const day of split) {
-    if (!isLocalDayComplete(userId, week, day.id)) {
-      return dayName(t, day.name);
-    }
+  for (let i = 0; i < split.length; i++) {
+    if (!isLocalDayComplete(userId, week, split[i].id)) return i + 1;
   }
-  return null;
+  return 1;
 }
 
 export function getWeekSetProgress(
