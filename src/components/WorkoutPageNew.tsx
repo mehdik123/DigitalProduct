@@ -10,6 +10,7 @@ import {
   getLocalCompletedCount,
   saveLocalDaySets,
   isLocalDayComplete,
+  confirmLocalDayAtTargets,
 } from '../services/localProgram';
 import { hasLoggedFirstSet, markFirstSetLogged } from '../lib/onboarding';
 import {
@@ -49,9 +50,13 @@ export default function WorkoutPageNew({
   const [done, setDone] = useState(0);
   const [celebration, setCelebration] = useState<{ week: number; final: boolean } | null>(null);
   const [milestoneQueue, setMilestoneQueue] = useState<MilestoneDef[]>([]);
+  const [confirmingDay, setConfirmingDay] = useState(false);
   const activeMilestone = milestoneQueue[0] ?? null;
 
   const phase = getPhase(weekNumber);
+  const dayComplete = profile?.id
+    ? isLocalDayComplete(profile.id, weekNumber, workout.id)
+    : false;
 
   const expectedTotal = useMemo(() => {
     const deload = isDeloadWeek(weekNumber);
@@ -126,6 +131,45 @@ export default function WorkoutPageNew({
     if (celebration) celebrateWeekUnlock();
   }, [celebration]);
 
+  const handleConfirmDay = () => {
+    if (!profile?.id || confirmingDay || dayComplete) return;
+    setConfirmingDay(true);
+    try {
+      const dayWasComplete = isLocalDayComplete(profile.id, weekNumber, workout.id);
+      const setsBefore = getLocalCompletedCount(profile.id, weekNumber);
+      const local = confirmLocalDayAtTargets(profile.id, weekNumber, workout.id);
+      refreshSavedData();
+      setDone(local.completedCount);
+
+      const dayJustCompleted =
+        !dayWasComplete && isLocalDayComplete(profile.id, weekNumber, workout.id);
+
+      if (!hasLoggedFirstSet() && setsBefore === 0 && local.completedCount > 0) {
+        markFirstSetLogged();
+      }
+
+      const newly = evaluateMilestones({
+        userId: profile.id,
+        daysPerWeek,
+        dayJustCompleted,
+        setsLoggedThisWeek: local.completedCount,
+        unlockedWeek: local.unlockedWeek,
+        programFinal: local.final,
+      });
+      if (newly.length) {
+        setMilestoneQueue((q) => [...q, ...newly]);
+      } else if (dayJustCompleted) {
+        toast.success(t('toast.dayComplete'));
+      }
+
+      if (local.unlockedWeek || local.final) {
+        setCelebration({ week: local.unlockedWeek ?? weekNumber + 1, final: Boolean(local.final) });
+      }
+    } finally {
+      setConfirmingDay(false);
+    }
+  };
+
   const progress = expectedTotal > 0 ? Math.min(1, done / expectedTotal) : 0;
 
   return (
@@ -160,7 +204,32 @@ export default function WorkoutPageNew({
         </div>
       </div>
 
-      <div className="mx-auto max-w-lg space-y-3 px-5 pb-nav-space pt-2">
+      <div className="mx-auto max-w-lg space-y-3 px-5 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-2">
+        {!dayComplete && (
+          <div className="rounded-[18px] bg-surface-1 p-4">
+            <p className="text-[13px] leading-relaxed text-txt-mid">{t('log.confirmDayHint')}</p>
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              className="mt-3.5"
+              disabled={confirmingDay}
+              onClick={handleConfirmDay}
+            >
+              {confirmingDay ? t('log.saving') : t('log.confirmDay')}
+            </Button>
+          </div>
+        )}
+
+        {dayComplete && (
+          <div className="flex items-center gap-2 rounded-[18px] bg-surface-1 px-4 py-3.5 text-[13px] font-medium text-txt-mid">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand">
+              {t('workout.done')}
+            </span>
+            <span>{t('log.dayConfirmed')}</span>
+          </div>
+        )}
+
         <motion.div className="space-y-3" variants={listVariants} initial="hidden" animate="show">
           {workout.exercises.map((exercise, index) => (
             <ExerciseCardNew

@@ -9,22 +9,27 @@ interface WorkoutCardProps {
   workout: WorkoutDay;
   onClick: () => void;
   completed?: boolean;
+  /** Exercises fully logged / total (for partial tag). */
+  progress?: { done: number; total: number };
   /** 1-based day index for the tile numeral. */
   dayIndex?: number;
-  /** Highlight as the next session (red tile). */
-  isNext?: boolean;
 }
 
-/** P04 day row: 76px, numeral tile, meta, chevron. */
+/**
+ * Day row. Done tag = every exercise logged that week.
+ * Partial = "2/8" — no next-session guessing.
+ */
 export default function WorkoutCard({
   workout,
   onClick,
   completed = false,
+  progress,
   dayIndex,
-  isNext = false,
 }: WorkoutCardProps) {
   const { t } = useLanguage();
   const n = dayIndex ?? 1;
+  const partial =
+    !completed && progress && progress.done > 0 && progress.done < progress.total;
 
   return (
     <button
@@ -38,18 +43,28 @@ export default function WorkoutCard({
       <span
         className={cn(
           'grid h-[46px] w-[46px] shrink-0 place-items-center rounded-xl font-display text-xl font-semibold tabular-nums',
-          isNext && !completed
-            ? 'bg-brand text-white'
-            : completed
-              ? 'bg-surface-3 text-txt-hi'
-              : 'bg-surface-2 text-txt-mid'
+          completed ? 'bg-brand text-white' : 'bg-surface-2 text-txt-mid'
         )}
       >
         {completed ? <Check className="h-5 w-5" strokeWidth={2} /> : n}
       </span>
 
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[17px] font-semibold text-txt-hi">{dayName(t, workout.name)}</div>
+        <div className="flex items-center gap-2">
+          <div className="truncate text-[17px] font-semibold text-txt-hi">
+            {dayName(t, workout.name)}
+          </div>
+          {completed && (
+            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-brand">
+              {t('workout.done')}
+            </span>
+          )}
+          {partial && (
+            <span className="shrink-0 font-display text-[13px] font-semibold tabular-nums text-txt-lo">
+              {progress.done}/{progress.total}
+            </span>
+          )}
+        </div>
         <div className="mt-2 flex items-center gap-1.5 text-[13px] font-medium text-txt-mid">
           <Clock className="h-3.5 w-3.5 text-txt-lo" strokeWidth={2} />
           <span>{localizeMinutes(t, workout.duration)}</span>
@@ -61,14 +76,7 @@ export default function WorkoutCard({
         </div>
       </div>
 
-      <span className="flex shrink-0 items-center text-txt-lo">
-        {isNext && !completed && (
-          <span className="mr-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-brand">
-            {t('home.upNext')}
-          </span>
-        )}
-        <ChevronRight className="h-5 w-5 rtl:rotate-180" strokeWidth={1.75} />
-      </span>
+      <ChevronRight className="h-5 w-5 shrink-0 text-txt-lo rtl:rotate-180" strokeWidth={1.75} />
     </button>
   );
 }

@@ -10,6 +10,7 @@ import { ProgramState, WeekStatus } from './services/workoutService';
 import {
   getLocalProgramState,
   isLocalDayComplete,
+  getLocalDayExerciseProgress,
   ensureLocalProgram,
   getLocalDaysPerWeek,
 } from './services/localProgram';
@@ -17,11 +18,7 @@ import WelcomePortal from './components/WelcomePortal';
 import ProgramIntro from './components/ProgramIntro';
 import AuthChoiceModal from './components/AuthChoiceModal';
 import { hasSeenWorkoutCoach, hasDismissedWeek6Banner, dismissWeek6Banner } from './lib/onboarding';
-import {
-  getWeekSetProgress,
-  getNextWorkout,
-  getNextWorkoutDayIndex,
-} from './lib/weekProgress';
+import { getWeekSetProgress } from './lib/weekProgress';
 import { getPhase } from './data/programConfig';
 import BottomNav from './components/BottomNav';
 import { useLanguage } from './contexts/LanguageContext';
@@ -254,22 +251,14 @@ function App() {
       <main className={`pt-chrome ${selectedWorkout ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
         <ScreenTransition screenKey={view}>
         {isHome && user && (() => {
-          const next = getNextWorkout(user.id, currentWeek, daysPerWeek);
           const { done, total } = getWeekSetProgress(user.id, currentWeek, daysPerWeek);
-          const dayNum = getNextWorkoutDayIndex(user.id, currentWeek, daysPerWeek);
           const phase = getPhase(currentWeek);
           return (
             <WelcomePortal
               onSelectTraining={() => setView('workouts')}
-              onStartWorkout={() => {
-                if (next) setSelectedWorkout(next);
-                else setView('workouts');
-              }}
               onSignup={() => setShowSignupForm(true)}
               userName={profile?.fullName || user?.user_metadata?.full_name || user?.email}
               weekNumber={currentWeek}
-              dayNumber={dayNum}
-              nextWorkout={next}
               setsDone={done}
               setsTotal={total}
               phaseLabel={t(phase.phaseLabelKey)}
@@ -379,14 +368,19 @@ function App() {
                       className="grid gap-2"
                     >
                       {split.map((workout, i) => {
-                        const nextId = getNextWorkout(user.id, currentWeek, daysPerWeek)?.id;
+                        const completed = isLocalDayComplete(user.id, currentWeek, workout.id);
+                        const progress = getLocalDayExerciseProgress(
+                          user.id,
+                          currentWeek,
+                          workout.id
+                        );
                         return (
                           <WorkoutCard
                             key={workout.id}
                             workout={workout}
                             dayIndex={i + 1}
-                            isNext={workout.id === nextId}
-                            completed={isLocalDayComplete(user.id, currentWeek, workout.id)}
+                            completed={completed}
+                            progress={progress}
                             onClick={() => setSelectedWorkout(workout)}
                           />
                         );

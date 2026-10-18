@@ -1,9 +1,6 @@
 import { getWorkoutSplit, DaysPerWeek } from '../data/workoutData';
 import { isDeloadWeek } from '../data/programConfig';
-import { getLocalCompletedCount, isLocalDayComplete } from '../services/localProgram';
-import { dayName } from '../i18n/content';
-
-type Translate = (key: string, vars?: Record<string, string | number>) => string;
+import { getLocalCompletedCount } from '../services/localProgram';
 
 export function getExpectedSetCountForWeek(week: number, daysPerWeek?: DaysPerWeek | number): number {
   const deload = isDeloadWeek(week);
@@ -12,42 +9,6 @@ export function getExpectedSetCountForWeek(week: number, daysPerWeek?: DaysPerWe
       sum + day.exercises.reduce((s, e) => s + (deload ? Math.max(1, Math.floor(e.sets / 2)) : e.sets), 0),
     0
   );
-}
-
-export function getNextWorkout(
-  userId: string,
-  week: number,
-  daysPerWeek: DaysPerWeek | number | undefined
-) {
-  const split = getWorkoutSplit(daysPerWeek);
-  for (const day of split) {
-    if (!isLocalDayComplete(userId, week, day.id)) {
-      return day;
-    }
-  }
-  return null;
-}
-
-export function getNextWorkoutName(
-  userId: string,
-  week: number,
-  daysPerWeek: DaysPerWeek | number | undefined,
-  t: Translate
-): string | null {
-  const day = getNextWorkout(userId, week, daysPerWeek);
-  return day ? dayName(t, day.name) : null;
-}
-
-export function getNextWorkoutDayIndex(
-  userId: string,
-  week: number,
-  daysPerWeek: DaysPerWeek | number | undefined
-): number {
-  const split = getWorkoutSplit(daysPerWeek);
-  for (let i = 0; i < split.length; i++) {
-    if (!isLocalDayComplete(userId, week, split[i].id)) return i + 1;
-  }
-  return 1;
 }
 
 export function getWeekSetProgress(

@@ -244,6 +244,61 @@ export function isLocalDayComplete(userId: string, week: number, dayId: number):
   return true;
 }
 
+/**
+ * How many exercises in this day are fully logged.
+ * Used to tag Train rows — same rule every week (1…8).
+ */
+export function getLocalDayExerciseProgress(
+  userId: string,
+  week: number,
+  dayId: number
+): { done: number; total: number } {
+  const store = load(userId);
+  const day = splitOf(store).find((d) => d.id === dayId);
+  if (!day) return { done: 0, total: 0 };
+  const dayLogs = store.logs?.[week]?.[dayId];
+  let done = 0;
+  for (const ex of day.exercises) {
+    const need = expectedSets(ex, week);
+    const have = (dayLogs?.[ex.id] ?? []).filter((s) => s.logged).length;
+    if (have >= need) done += 1;
+  }
+  return { done, total: day.exercises.length };
+}
+
+/**
+ * Confirm the whole day at target values (no per-set edits required).
+ * Marks every unlogged set as logged using its target reps/weight.
+ * Same for week 1, week 2, … week 8 — progression still needs a confirm.
+ */
+export function confirmLocalDayAtTargets(
+  userId: string,
+  week: number,
+  dayId: number
+): LocalSaveResult {
+  const store = load(userId);
+  const day = splitOf(store).find((d) => d.id === dayId);
+  if (!day) {
+    return { completedCount: getLocalCompletedCount(userId, week) };
+  }
+
+  let last: LocalSaveResult = { completedCount: getLocalCompletedCount(userId, week) };
+  for (const ex of day.exercises) {
+    const sets = getLocalDaySets(userId, week, dayId, ex.id);
+    const need = expectedSets(ex, week);
+    const logged = sets.filter((s) => s.completed).length;
+    if (logged >= need) continue;
+    last = saveLocalDaySets(
+      userId,
+      week,
+      dayId,
+      ex,
+      sets.map((s) => ({ ...s, completed: true }))
+    );
+  }
+  return last;
+}
+
 function isWeekComplete(store: Store, week: number): boolean {
   const weekLogs = store.logs?.[week];
   if (!weekLogs) return false;

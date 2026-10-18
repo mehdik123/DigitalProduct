@@ -97,6 +97,12 @@ export const translations: Translations = {
         ar: 'واجد باش تمرن',
         fr: 'Prêt à t’entraîner',
     },
+    'home.thisWeek': { en: 'This week', ar: 'هاد السيمانة', fr: 'Cette semaine' },
+    'home.openWorkouts': {
+        en: 'Open workouts',
+        ar: 'فتح التمارين',
+        fr: 'Voir les séances',
+    },
     'home.upNext': { en: 'Up next', ar: 'التالي', fr: 'À suivre' },
     'home.day': { en: 'Day', ar: 'يوم', fr: 'Jour' },
     'home.exercises': { en: 'exercises', ar: 'تمارين', fr: 'exercices' },
@@ -614,7 +620,22 @@ export const translations: Translations = {
         en: 'Week',
         ar: 'السيمانة'
     },
-    'workout.done': { en: 'Done', ar: 'سالا' },
+    'workout.done': { en: 'Done', ar: 'سالا', fr: 'Fait' },
+    'log.confirmDay': {
+        en: 'Mark day done',
+        ar: 'علّم اليوم كسالا',
+        fr: 'Marquer le jour comme fait',
+    },
+    'log.confirmDayHint': {
+        en: 'Hit the targets as written? Confirm the day in one tap — no need to edit every set.',
+        ar: 'تبعتي الأهداف بلا تعديلات؟ أكّد اليوم بضغطة وحدة.',
+        fr: 'Tu as suivi les cibles telles quelles ? Confirme le jour en un tap.',
+    },
+    'log.dayConfirmed': {
+        en: 'This session is logged for the week.',
+        ar: 'هاد الجلسة تسجّلات فالسيمانة.',
+        fr: 'Cette séance est enregistrée pour la semaine.',
+    },
     'workout.start': { en: 'Start', ar: 'بدا' },
     'workout.review': { en: 'Review', ar: 'راجع' },
     'common.gotIt': { en: 'Got it', ar: 'فهمت' },
