@@ -119,9 +119,26 @@ function App() {
 
   // ... (rest of the component)
 
-  const handleSignupSubmit = async ({ fullName, email, password, daysPerWeek }: { fullName: string; email: string; password: string; daysPerWeek: DaysPerWeek }) => {
+  const handleSignupSubmit = async ({
+    fullName,
+    email,
+    password,
+    daysPerWeek,
+    accessCode,
+  }: {
+    fullName: string;
+    email: string;
+    password: string;
+    daysPerWeek: DaysPerWeek;
+    accessCode: string;
+  }) => {
     setIsSubmitting(true);
     try {
+      const { isAccessCodeValid } = await import('./lib/accessCode');
+      if (!isAccessCodeValid(accessCode)) {
+        throw new Error(t('signup.accessCode.invalid'));
+      }
+
       const { data, error } = await signUp(email, password, {
         full_name: fullName,
         days_per_week: daysPerWeek

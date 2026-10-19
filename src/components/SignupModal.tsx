@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Loader2, User, Mail, KeyRound, CalendarDays, Check, Lock } from 'lucide-react';
+import { X, Loader2, User, Mail, KeyRound, CalendarDays, Check, Lock, Ticket } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button, Input, Field, IconButton, BrandMark } from './ui';
 import { celebrateVariants } from '../design/motion';
 import { AVAILABLE_DAYS_PER_WEEK, DaysPerWeek } from '../data/workoutData';
+import { isAccessCodeConfigured, isAccessCodeValid } from '../lib/accessCode';
 
 interface SignupModalProps {
   onClose: () => void;
-  onSubmit: (data: { fullName: string; email: string; password: string; daysPerWeek: DaysPerWeek }) => Promise<void> | void;
+  onSubmit: (data: {
+    fullName: string;
+    email: string;
+    password: string;
+    daysPerWeek: DaysPerWeek;
+    accessCode: string;
+  }) => Promise<void> | void;
   loading?: boolean;
 }
 
@@ -20,6 +27,7 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [accessCode, setAccessCode] = useState('');
   const [daysPerWeek, setDaysPerWeek] = useState<DaysPerWeek | null>(
     AVAILABLE_DAYS_PER_WEEK.length === 1 ? AVAILABLE_DAYS_PER_WEEK[0] : null
   );
@@ -28,23 +36,41 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!isAccessCodeConfigured()) {
+      setError(t('signup.accessCode.notConfigured'));
+      return;
+    }
+    if (!accessCode.trim()) {
+      setError(t('signup.accessCode.required'));
+      return;
+    }
+    if (!isAccessCodeValid(accessCode)) {
+      setError(t('signup.accessCode.invalid'));
+      return;
+    }
     if (!fullName.trim() || !email.trim()) {
-      setError('Please fill in all fields');
+      setError(t('signup.error.fillAll'));
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError(t('signup.error.passwordLength'));
       return;
     }
     if (password !== confirm) {
-      setError('Passwords do not match');
+      setError(t('signup.error.passwordMatch'));
       return;
     }
     if (!daysPerWeek) {
       setError(t('signup.days.required'));
       return;
     }
-    onSubmit({ fullName: fullName.trim(), email: email.trim(), password, daysPerWeek });
+    onSubmit({
+      fullName: fullName.trim(),
+      email: email.trim(),
+      password,
+      daysPerWeek,
+      accessCode: accessCode.trim(),
+    });
   };
 
   return (
@@ -77,6 +103,20 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-left rtl:text-right">
+          <Field label={t('signup.accessCode.label')} htmlFor="signup-access">
+            <Input
+              id="signup-access"
+              type="text"
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value)}
+              placeholder={t('signup.accessCode.placeholder')}
+              icon={<Ticket className="h-4 w-4" />}
+              autoComplete="off"
+              required
+            />
+          </Field>
+          <p className="-mt-2 text-[12px] leading-relaxed text-txt-lo">{t('signup.accessCode.hint')}</p>
+
           <Field label={t('signup.fullName')} htmlFor="signup-name">
             <Input
               id="signup-name"
