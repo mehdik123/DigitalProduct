@@ -44,14 +44,6 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
 ```
 
-Also set a signup gate (give this only to paying clients):
-
-```env
-VITE_PROGRAM_ACCESS_CODE=your-secret-code
-```
-
-Add the same variable in Vercel → Project → Settings → Environment Variables, then redeploy.
-
 Restart `npm run dev`.
 
 ## 5. Authorized domains

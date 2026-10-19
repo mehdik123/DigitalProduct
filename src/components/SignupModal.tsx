@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Loader2, User, Mail, KeyRound, CalendarDays, Check, Lock, Ticket } from 'lucide-react';
+import { X, Loader2, User, Mail, KeyRound, CalendarDays, Check, Lock } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button, Input, Field, IconButton, BrandMark } from './ui';
 import { celebrateVariants } from '../design/motion';
 import { AVAILABLE_DAYS_PER_WEEK, DaysPerWeek } from '../data/workoutData';
-import { isAccessCodeConfigured, isAccessCodeValid } from '../lib/accessCode';
 
 interface SignupModalProps {
   onClose: () => void;
@@ -14,7 +13,6 @@ interface SignupModalProps {
     email: string;
     password: string;
     daysPerWeek: DaysPerWeek;
-    accessCode: string;
   }) => Promise<void> | void;
   loading?: boolean;
 }
@@ -27,7 +25,6 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
-  const [accessCode, setAccessCode] = useState('');
   const [daysPerWeek, setDaysPerWeek] = useState<DaysPerWeek | null>(
     AVAILABLE_DAYS_PER_WEEK.length === 1 ? AVAILABLE_DAYS_PER_WEEK[0] : null
   );
@@ -36,18 +33,6 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!isAccessCodeConfigured()) {
-      setError(t('signup.accessCode.notConfigured'));
-      return;
-    }
-    if (!accessCode.trim()) {
-      setError(t('signup.accessCode.required'));
-      return;
-    }
-    if (!isAccessCodeValid(accessCode)) {
-      setError(t('signup.accessCode.invalid'));
-      return;
-    }
     if (!fullName.trim() || !email.trim()) {
       setError(t('signup.error.fillAll'));
       return;
@@ -69,7 +54,6 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
       email: email.trim(),
       password,
       daysPerWeek,
-      accessCode: accessCode.trim(),
     });
   };
 
@@ -79,7 +63,6 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
       animate={{ opacity: 1 }}
       className="fixed inset-0 z-[200] flex items-end justify-center overflow-hidden bg-black/85 p-0 backdrop-blur-2xl sm:items-center sm:p-6"
     >
-      {/* Ambient grid behind the card. */}
       <div className="ambient-grid pointer-events-none absolute inset-0 opacity-30" />
       <div className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-soft blur-[120px]" />
 
@@ -103,20 +86,6 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-left rtl:text-right">
-          <Field label={t('signup.accessCode.label')} htmlFor="signup-access">
-            <Input
-              id="signup-access"
-              type="text"
-              value={accessCode}
-              onChange={(e) => setAccessCode(e.target.value)}
-              placeholder={t('signup.accessCode.placeholder')}
-              icon={<Ticket className="h-4 w-4" />}
-              autoComplete="off"
-              required
-            />
-          </Field>
-          <p className="-mt-2 text-[12px] leading-relaxed text-txt-lo">{t('signup.accessCode.hint')}</p>
-
           <Field label={t('signup.fullName')} htmlFor="signup-name">
             <Input
               id="signup-name"
@@ -184,9 +153,7 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
                       selected
                         ? 'border-brand bg-brand-soft shadow-red'
                         : 'border-hair bg-surface-2',
-                      available
-                        ? 'hover:border-brand/50'
-                        : 'cursor-not-allowed opacity-55',
+                      available ? 'hover:border-brand/50' : 'cursor-not-allowed opacity-55',
                     ].join(' ')}
                   >
                     {selected && (
@@ -197,7 +164,9 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
                     {!available && (
                       <Lock className="absolute right-1.5 top-1.5 h-3 w-3 text-txt-lo" />
                     )}
-                    <span className={`stat text-2xl font-black leading-none ${selected ? 'text-brand' : 'text-txt-hi'}`}>
+                    <span
+                      className={`stat text-2xl font-black leading-none ${selected ? 'text-brand' : 'text-txt-hi'}`}
+                    >
                       {d}
                     </span>
                     <span className="text-[8px] font-bold uppercase tracking-wider text-txt-lo">

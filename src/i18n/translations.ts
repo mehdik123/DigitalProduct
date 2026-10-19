@@ -201,36 +201,6 @@ export const translations: Translations = {
     },
 
     // Signup Flow
-    'signup.accessCode.label': {
-        en: 'Access code',
-        ar: 'رمز الدخول',
-        fr: 'Code d’accès',
-    },
-    'signup.accessCode.placeholder': {
-        en: 'Code from your coach',
-        ar: 'الرمز من المدرب',
-        fr: 'Code reçu de ton coach',
-    },
-    'signup.accessCode.hint': {
-        en: 'Given only to people enrolled in the program.',
-        ar: 'كتعطي غير للناس المسجلين ف البرنامج.',
-        fr: 'Remis uniquement aux personnes inscrites au programme.',
-    },
-    'signup.accessCode.required': {
-        en: 'Enter your access code.',
-        ar: 'دخل رمز الدخول.',
-        fr: 'Entre ton code d’accès.',
-    },
-    'signup.accessCode.invalid': {
-        en: 'That access code is not valid.',
-        ar: 'رمز الدخول غلط.',
-        fr: 'Ce code d’accès n’est pas valide.',
-    },
-    'signup.accessCode.notConfigured': {
-        en: 'Sign-up is temporarily closed. Contact your coach.',
-        ar: 'التسجيل مسدود دابا. تواصل مع المدرب.',
-        fr: 'Les inscriptions sont temporairement fermées. Contacte ton coach.',
-    },
     'signup.error.fillAll': {
         en: 'Please fill in all fields.',
         ar: 'عمر جميع الخانات.',

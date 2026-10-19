@@ -56,13 +56,6 @@ export const frenchTranslations: Record<string, string> = {
     'welcome.choosePath.line2': "t'entraîner",
 
     // Signup
-    'signup.accessCode.label': 'Code d’accès',
-    'signup.accessCode.placeholder': 'Code reçu de ton coach',
-    'signup.accessCode.hint': 'Remis uniquement aux personnes inscrites au programme.',
-    'signup.accessCode.required': 'Entre ton code d’accès.',
-    'signup.accessCode.invalid': 'Ce code d’accès n’est pas valide.',
-    'signup.accessCode.notConfigured':
-        'Les inscriptions sont temporairement fermées. Contacte ton coach.',
     'signup.error.fillAll': 'Remplis tous les champs.',
     'signup.error.passwordLength': 'Le mot de passe doit contenir au moins 6 caractères.',
     'signup.error.passwordMatch': 'Les mots de passe ne correspondent pas.',
