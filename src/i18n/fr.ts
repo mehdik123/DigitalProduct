@@ -274,7 +274,7 @@ export const frenchTranslations: Record<string, string> = {
         'RPE 10 : effort maximal. RPE 8 : tu pourrais faire 2 reps de plus. RPE 7 : exigeant mais fluide.',
     'workout.progressive_overload.title': 'Surcharge progressive',
     'workout.progressive_overload.description':
-        'Augmente progressivement les charges ou les reps chaque semaine pour continuer à prendre du muscle.',
+        'Aligne d’abord toutes les séries. Puis +2 reps (8→10→12→14). À 14, retour à 8 et ajoute le saut. Barres : total. Haltères : un côté.',
     'workout.rest.description': 'Repose-toi entre les séries pour récupérer ton énergie.',
 
     // Phases
@@ -314,6 +314,9 @@ export const frenchTranslations: Record<string, string> = {
     'log.saved': 'Enregistré',
     'log.update': 'Mettre à jour',
     'log.done': 'Fait',
+    'log.weightHint.barTotal': 'Saisis le poids total sur la barre (les deux côtés).',
+    'log.weightHint.dumbbellEach': 'Saisis le poids d’un haltère (un côté).',
+    'log.weightHint.bodyweight': '0 kg = poids du corps. Ajoute des kg seulement avec charge additionnelle.',
     'log.noData': 'Saisis des reps ou une charge avant d\u2019enregistrer.',
     'log.noReps': 'Saisis des reps avant d\u2019enregistrer.',
     'log.syncFailed':
@@ -333,7 +336,7 @@ export const frenchTranslations: Record<string, string> = {
         'Tes charges et reps ont été mises à jour. La semaine {week} est prête.',
     'unlock.whatChanged': 'Ce qui change cette semaine',
     'unlock.point1': 'Objectifs recalculés à partir des séries enregistrées',
-    'unlock.point2': 'Même split, charges progressées là où tu les as méritées',
+    'unlock.point2': 'Séries alignées : +2 reps (8→10→12→14), puis retour à 8 avec un saut de charge',
     'unlock.point3': 'Enregistre chaque série cette semaine pour débloquer la suivante',
     'unlock.finalTitle': 'Programme terminé',
     'unlock.finalMessage':

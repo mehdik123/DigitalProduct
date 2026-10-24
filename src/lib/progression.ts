@@ -1,5 +1,6 @@
-import { ProgressionType } from '../types/workout';
-import { INCREMENTS, getPhase, DELOAD_LOAD_FACTOR } from '../data/programConfig';
+import { Exercise, ProgressionType } from '../types/workout';
+import { getPhase } from '../data/programConfig';
+import { computeNextTarget, DEFAULT_DUMBBELL_JUMP } from '../data/exerciseProgression';
 
 export interface LoggedSet {
   actualReps: number;
@@ -13,46 +14,44 @@ export interface TargetPreview {
   rpeText: string;
 }
 
-const roundToHalf = (n: number) => Math.round(n * 2) / 2;
-
 /**
- * Pure TypeScript mirror of the server double-progression engine
- * (see 011_program_engine.sql). Used ONLY to preview the upcoming
- * week's target in the UI — the server remains the source of truth.
- *
- * Given the sets logged in `fromWeek`, returns the target for `fromWeek + 1`.
+ * Preview next-week targets from logged sets (mirrors localProgram engine).
+ * Prefer passing a real `exercise` when available so jumps / BW rules apply.
  */
 export function previewNextTarget(
   fromWeek: number,
   progressionType: ProgressionType,
-  lastSets: LoggedSet[]
+  lastSets: LoggedSet[],
+  exercise?: Exercise
 ): TargetPreview {
   const next = fromWeek + 1;
   const nextPhase = getPhase(next);
-  const [lo, hi] = nextPhase.repRange ?? [getPhase(fromWeek).repRange?.[0] ?? 5, getPhase(fromWeek).repRange?.[1] ?? 8];
-  const topThisWeek = getPhase(fromWeek).repRange?.[1] ?? hi;
-  const increment = INCREMENTS[progressionType];
 
-  const lastWeight = lastSets.length ? Math.max(...lastSets.map((s) => s.actualWeight || 0)) : 0;
-  const minReps = lastSets.length ? Math.min(...lastSets.map((s) => s.actualReps || 0)) : 0;
-  const allHitTop = lastSets.length > 0 && lastSets.every((s) => (s.actualReps || 0) >= topThisWeek);
+  const stub: Exercise =
+    exercise ??
+    ({
+      id: `preview-${progressionType}`,
+      name: 'Preview',
+      type: progressionType === 'calisthenics' ? 'calisthenics' : 'bodybuilding',
+      progressionType,
+      sets: Math.max(1, lastSets.length),
+      reps: '8',
+      rest: '2 min',
+    } satisfies Exercise);
 
-  let weight: number;
-  let reps: number;
+  const logged = lastSets.map((s) => ({
+    reps: s.actualReps,
+    weight: s.actualWeight,
+    logged: true,
+  }));
 
-  if (nextPhase.isDeload) {
-    weight = roundToHalf(lastWeight * DELOAD_LOAD_FACTOR);
-    reps = lo;
-  } else if (allHitTop) {
-    weight = roundToHalf(lastWeight + increment);
-    reps = lo;
-  } else {
-    weight = roundToHalf(lastWeight);
-    reps = Math.min(minReps + 1, hi);
-  }
+  const { reps, weight } = computeNextTarget(stub, logged, {
+    expectedSets: Math.max(1, lastSets.length),
+    dumbbellJump: DEFAULT_DUMBBELL_JUMP,
+  });
 
   return {
-    weight,
+    weight: weight ?? 0,
     reps,
     repRange: nextPhase.repRange,
     rpeText: nextPhase.rpeText,

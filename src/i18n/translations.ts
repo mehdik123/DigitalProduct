@@ -993,8 +993,9 @@ export const translations: Translations = {
         ar: 'الحمل التدريجي (Progression)'
     },
     'workout.progressive_overload.description': {
-        en: 'Gradually increase weights or reps every week to keep building muscle.',
-        ar: 'كل سيمانة زيد شوية فالثقل ولا فالمكررات باش العضلة ديما تزيد تكبر.'
+        en: 'Match all sets first. Then add 2 reps (8→10→12→14). At 14, reset to 8 and add the exercise jump. Barbells: total on the bar. Dumbbells: one side.',
+        ar: 'سالي كل السيت بنفس الثقل والتكرارات. من بعد زيد 2 تكرارات (8→10→12→14). من 14 رجع لـ 8 وزيد الثقل. البار: المجموع. الدامبل: جهة وحدة.',
+        fr: 'Aligne d’abord toutes les séries. Puis +2 reps (8→10→12→14). À 14, retour à 8 et ajoute le saut. Barres : total. Haltères : un côté.',
     },
     'workout.rest.description': {
         en: 'Rest between sets to recover your energy.',
@@ -1040,6 +1041,21 @@ export const translations: Translations = {
     'log.saved': { en: 'Saved', ar: 'تسجل' },
     'log.update': { en: 'Update', ar: 'حدّث' },
     'log.done': { en: 'Done', ar: 'سالا' },
+    'log.weightHint.barTotal': {
+        en: 'Enter the total weight on the bar (both sides).',
+        ar: 'دخل مجموع الثقل فالبار (الجيهتين).',
+        fr: 'Saisis le poids total sur la barre (les deux côtés).',
+    },
+    'log.weightHint.dumbbellEach': {
+        en: 'Enter the weight of one dumbbell (one side).',
+        ar: 'دخل ثقل دامبل واحد (جهة وحدة).',
+        fr: 'Saisis le poids d’un haltère (un côté).',
+    },
+    'log.weightHint.bodyweight': {
+        en: '0 kg = bodyweight. Add kg only if you use extra load.',
+        ar: '0 كغ = وزن الجسم. زيد الكيلو غير إلا زدتي حمل.',
+        fr: '0 kg = poids du corps. Ajoute des kg seulement avec charge additionnelle.',
+    },
     'log.noData': { en: 'Enter reps or weight before saving.', ar: 'دخل التكرارات ولا الثقل قبل ما تسجل.' },
     'log.noReps': { en: 'Enter reps before saving.', ar: 'دخل التكرارات قبل ما تسجل.' },
     'log.syncFailed': {
@@ -1067,9 +1083,9 @@ export const translations: Translations = {
         fr: 'Objectifs recalculés à partir des séries enregistrées',
     },
     'unlock.point2': {
-        en: 'Same split, progressed loads where you earned them',
-        ar: 'نفس التقسيم، أثقال أعلى فين تستاهل',
-        fr: 'Même split, charges progressées là où tu les as méritées',
+        en: 'Matched sets: +2 reps (8→10→12→14), then reset to 8 with a weight jump',
+        ar: 'إلا تطابقت السيت: +2 تكرارات (8→10→12→14)، من بعد رجوع لـ 8 مع زيادة الثقل',
+        fr: 'Séries alignées : +2 reps (8→10→12→14), puis retour à 8 avec un saut de charge',
     },
     'unlock.point3': {
         en: 'Log every set this week to unlock the next',

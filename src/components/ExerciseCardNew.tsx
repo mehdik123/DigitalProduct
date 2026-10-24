@@ -10,6 +10,7 @@ import { getYouTubeThumbnails } from '../lib/youtube';
 import { toast } from 'sonner';
 import { Button } from './ui';
 import { isDeloadWeek } from '../data/programConfig';
+import { allowsLoggedWeight, getWeightEntryMode } from '../data/exerciseProgression';
 
 interface ExerciseCardNewProps {
   exercise: Exercise;
@@ -32,6 +33,16 @@ export default function ExerciseCardNew({
   const { t } = useLanguage();
   const localizedName = exerciseName(t, exercise.name);
   const isCalisthenics = exercise.type === 'calisthenics';
+  const showWeight = allowsLoggedWeight(exercise);
+  const weightMode = getWeightEntryMode(exercise);
+  const weightHint =
+    weightMode === 'bar_total'
+      ? t('log.weightHint.barTotal')
+      : weightMode === 'dumbbell_each'
+        ? t('log.weightHint.dumbbellEach')
+        : weightMode === 'bodyweight'
+          ? t('log.weightHint.bodyweight')
+          : null;
 
   const expectedCount = isDeloadWeek(weekNumber)
     ? Math.max(1, Math.floor(exercise.sets / 2))
@@ -132,12 +143,12 @@ export default function ExerciseCardNew({
       </div>
 
       <div className="ml-[30px] mt-2 flex flex-wrap items-center gap-2 text-[13px] font-medium text-txt-mid">
-        {!isCalisthenics && targetWeight != null && (
+        {showWeight && targetWeight != null && targetWeight > 0 && (
           <span>
             {targetWeight} kg × {targetReps}
           </span>
         )}
-        {isCalisthenics && targetReps != null && <span>{targetReps} reps</span>}
+        {(!showWeight || !targetWeight) && targetReps != null && <span>{targetReps} reps</span>}
         {exercise.rest && (
           <span className="inline-flex items-center gap-1 text-txt-lo">
             <Timer className="h-3.5 w-3.5" strokeWidth={2} />
@@ -145,6 +156,9 @@ export default function ExerciseCardNew({
           </span>
         )}
       </div>
+      {weightHint && (
+        <p className="ml-[30px] mt-1.5 text-[12px] leading-snug text-txt-lo">{weightHint}</p>
+      )}
 
       {/* Thumb */}
       <div className="relative mt-3.5 h-[150px] overflow-hidden rounded-xl">
@@ -186,7 +200,7 @@ export default function ExerciseCardNew({
             {t('log.target')}
           </span>
           <span className="text-center text-[10px] font-semibold uppercase tracking-[0.14em] text-txt-lo">
-            {isCalisthenics ? t('log.reps') : 'kg'}
+            {showWeight ? 'kg' : t('log.reps')}
           </span>
           <span className="text-center text-[10px] font-semibold uppercase tracking-[0.14em] text-txt-lo">
             {t('log.reps')}
@@ -196,11 +210,13 @@ export default function ExerciseCardNew({
         {sets.map((set, i) => {
           const prev = prevSets?.find((p) => p.setNumber === set.setNumber);
           const tg =
-            set.targetWeight != null
+            set.targetWeight != null && set.targetWeight > 0
               ? `${set.targetWeight} × ${set.targetReps ?? targetReps}`
-              : prev
+              : prev && prev.weight > 0
                 ? `${prev.weight} × ${prev.reps}`
-                : `${targetWeight ?? '—'} × ${targetReps ?? '—'}`;
+                : showWeight && targetWeight
+                  ? `${targetWeight} × ${targetReps ?? '—'}`
+                  : `${targetReps ?? '—'} reps`;
           const weightEmpty = !set.weight;
           const repsEmpty = !set.reps;
 
@@ -215,16 +231,16 @@ export default function ExerciseCardNew({
               <span className="text-center font-display text-lg font-semibold tabular-nums text-txt-mid">
                 {set.setNumber}
               </span>
-              <span className="text-sm font-medium text-txt-mid">{isCalisthenics ? `${targetReps}` : tg}</span>
-              {!isCalisthenics ? (
+              <span className="text-sm font-medium text-txt-mid">{tg}</span>
+              {showWeight ? (
                 <Cell
                   value={set.weight || undefined}
-                  placeholder={String(set.targetWeight ?? targetWeight ?? 40)}
+                  placeholder={String(set.targetWeight ?? targetWeight ?? (isCalisthenics ? 0 : 40))}
                   empty={weightEmpty && !set.completed}
                   focused={focusCell?.row === i && focusCell.field === 'weight'}
                   done={set.completed}
                   onFocus={() => setFocusCell({ row: i, field: 'weight' })}
-                  onBump={(d) => bump(i, 'weight', d, 2.5)}
+                  onBump={(d) => bump(i, 'weight', d, weightMode === 'dumbbell_each' ? 2.5 : 2.5)}
                   onChange={(v) => updateSet(i, 'weight', v)}
                 />
               ) : (

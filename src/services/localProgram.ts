@@ -1,28 +1,28 @@
 import { ExerciseSet, Exercise, WorkoutDay } from '../types/workout';
 import { getWorkoutSplit, DaysPerWeek } from '../data/workoutData';
 import { getPhase, isDeloadWeek, TOTAL_WEEKS } from '../data/programConfig';
+import {
+  computeNextTarget,
+  DEFAULT_DUMBBELL_JUMP,
+  type DumbbellJumpKg,
+} from '../data/exerciseProgression';
 import type { WeekStatus, ProgramState, CloudSet } from './workoutService';
 
 /**
  * Offline-first program engine.
  *
  * The app stays fully usable without a network connection: every set the user
- * logs is written to localStorage instantly, week unlocking + double-progression
- * are computed on the device, and Supabase is treated as a best-effort backup
- * (see workoutService). localStorage is the source of truth on this device.
+ * logs is written to localStorage instantly, week unlocking + progressive
+ * overload are computed on the device. localStorage is the source of truth.
  *
- * Rules implemented (per product spec):
+ * Rules (progressive overload spec):
  *  - Week N+1 unlocks only when EVERY set of EVERY exercise across ALL days of
- *    week N has been logged. A logged set needs reps + weight; calisthenics
- *    only needs reps (weight optional).
- *  - 0 is a valid reps/weight value.
- *  - Week 1 reps are pre-populated with a value between 6 and 10 per exercise,
- *    deterministic per exercise id so every user (including future ones) sees a
- *    consistent starting target.
- *  - Load increases in 2.5 kg steps once the top of the rep range is reached.
+ *    week N has been logged.
+ *  - Per exercise (day-scoped): mismatched sets → copy best set; matched sets
+ *    climb 8→10→12→14 (+2), then reset to 8 and add the exercise jump.
+ *  - Barbell / Smith loads are total on the bar; dumbbells are one side.
  */
 
-const WEIGHT_INCREMENT = 2.5;
 const DELOAD_LOAD_FACTOR = 0.6;
 
 interface StoredSet {
@@ -42,6 +42,8 @@ interface Store {
   currentWeek: number;
   weeks: Record<number, WeekStatus>;
   logs: Record<number, WeekLogs>; // week -> day -> exercise -> sets
+  /** Optional override for dumbbell side jumps (default 2.5 kg). */
+  dumbbellJumpKg?: DumbbellJumpKg;
 }
 
 const DEFAULT_DAYS: DaysPerWeek = 5;
@@ -117,6 +119,19 @@ function createStore(daysPerWeek: DaysPerWeek = DEFAULT_DAYS): Store {
  * a store is created for this user; once set it is never changed here (the
  * choice is irreversible and owned by the profile).
  */
+/** Recompute unlogged next-week targets for every completed week (rule fixes). */
+function repairProgressionTargets(store: Store): boolean {
+  let changed = false;
+  for (let w = 1; w < TOTAL_WEEKS; w++) {
+    if (store.weeks?.[w] !== 'completed') continue;
+    if (!isWeekComplete(store, w)) continue;
+    const before = JSON.stringify(store.logs[w + 1] ?? null);
+    generateNextWeek(store, w);
+    if (JSON.stringify(store.logs[w + 1] ?? null) !== before) changed = true;
+  }
+  return changed;
+}
+
 function load(userId: string, daysPerWeek?: DaysPerWeek | number | null): Store {
   const days = normalizeDays(daysPerWeek);
   if (typeof window === 'undefined') return createStore(days);
@@ -128,13 +143,17 @@ function load(userId: string, daysPerWeek?: DaysPerWeek | number | null): Store 
       return fresh;
     }
     const parsed = JSON.parse(raw) as Store;
+    let dirty = false;
     if (!parsed.daysPerWeek) {
       parsed.daysPerWeek = days;
-      save(userId, parsed);
+      dirty = true;
     }
     if (!parsed?.logs?.[1]) {
       parsed.logs = { ...(parsed.logs ?? {}), 1: buildWeek1Targets(splitOf(parsed)) };
+      dirty = true;
     }
+    if (repairProgressionTargets(parsed)) dirty = true;
+    if (dirty) save(userId, parsed);
     return parsed;
   } catch {
     const fresh = createStore(days);
@@ -326,43 +345,47 @@ function isWeekComplete(store: Store, week: number): boolean {
   return true;
 }
 
-/** Double-progression: generate next week's targets from this week's logs. */
+/**
+ * Progressive overload: generate next week's targets from this week's logs.
+ * Leaves alone any next-week exercise that already has logged sets.
+ */
 function generateNextWeek(store: Store, week: number): void {
   const next = week + 1;
   if (next > TOTAL_WEEKS) return;
 
-  const phaseNext = getPhase(next);
-  const lo = phaseNext.repRange?.[0] ?? 8;
-  const hi = phaseNext.repRange?.[1] ?? 12;
-  const topN = getPhase(week).repRange?.[1] ?? hi;
   const deload = isDeloadWeek(next);
-
+  const dumbbellJump = store.dumbbellJumpKg ?? DEFAULT_DUMBBELL_JUMP;
+  const prevNext = store.logs[next] ?? {};
   const nextLogs: WeekLogs = {};
 
   for (const day of splitOf(store)) {
     nextLogs[day.id] = {};
     for (const ex of day.exercises) {
-      const cali = isCalisthenics(ex);
-      const done = (store.logs?.[week]?.[day.id]?.[ex.id] ?? []).filter((s) => s.logged);
+      const existing = prevNext[day.id]?.[ex.id] ?? [];
+      if (existing.some((s) => s.logged)) {
+        nextLogs[day.id][ex.id] = existing;
+        continue;
+      }
 
-      const weights = done.map((s) => s.weight ?? 0);
-      const reps = done.map((s) => s.reps ?? 0);
-      const lastWeight = weights.length ? Math.max(...weights) : 0;
-      const minReps = reps.length ? Math.min(...reps) : lo;
-      const allTop = reps.length > 0 && reps.every((r) => r >= topN);
+      const countThis = expectedSets(ex, week);
+      const raw = store.logs?.[week]?.[day.id]?.[ex.id] ?? [];
+      const loggedSets = Array.from({ length: countThis }, (_, i) => {
+        const s = raw[i];
+        return {
+          reps: s?.reps ?? 0,
+          weight: s?.weight ?? 0,
+          logged: Boolean(s?.logged),
+        };
+      });
 
-      let nextReps: number;
-      let nextWeight: number | null;
+      let { reps: nextReps, weight: nextWeight } = computeNextTarget(ex, loggedSets, {
+        expectedSets: countThis,
+        dumbbellJump,
+      });
 
-      if (deload) {
-        nextReps = lo;
-        nextWeight = cali ? (lastWeight > 0 ? round(lastWeight) : null) : round(lastWeight * DELOAD_LOAD_FACTOR);
-      } else if (allTop) {
-        nextReps = lo;
-        nextWeight = cali ? (lastWeight > 0 ? round(lastWeight) : null) : round(lastWeight + WEIGHT_INCREMENT);
-      } else {
-        nextReps = Math.min(minReps + 1, hi);
-        nextWeight = cali ? (lastWeight > 0 ? round(lastWeight) : null) : round(lastWeight);
+      if (deload && nextWeight != null && nextWeight > 0) {
+        nextWeight = round(nextWeight * DELOAD_LOAD_FACTOR);
+        nextReps = 8;
       }
 
       const count = expectedSets(ex, next);
@@ -423,16 +446,21 @@ export function saveLocalDaySets(
   let result: LocalSaveResult = { completedCount: 0 };
 
   const alreadyCompleted = store.weeks[week] === 'completed';
-  if (!alreadyCompleted && isWeekComplete(store, week)) {
-    store.weeks[week] = 'completed';
-    if (week >= TOTAL_WEEKS) {
-      store.currentWeek = TOTAL_WEEKS;
-      result.final = true;
-    } else {
+  if (isWeekComplete(store, week)) {
+    if (!alreadyCompleted) {
+      store.weeks[week] = 'completed';
+      if (week >= TOTAL_WEEKS) {
+        store.currentWeek = TOTAL_WEEKS;
+        result.final = true;
+      } else {
+        store.weeks[week + 1] = 'active';
+        store.currentWeek = week + 1;
+        result.unlockedWeek = week + 1;
+      }
+    }
+    // Fresh unlock or re-save after a rule fix: refresh unlogged next-week targets.
+    if (week < TOTAL_WEEKS) {
       generateNextWeek(store, week);
-      store.weeks[week + 1] = 'active';
-      store.currentWeek = week + 1;
-      result.unlockedWeek = week + 1;
     }
   }
 

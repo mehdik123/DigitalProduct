@@ -38,7 +38,8 @@ function App() {
   const { user, profile, signUp, loading } = useAuth();
   const { t } = useLanguage();
 
-  const [currentWeek, setCurrentWeek] = useState(1);
+  /** Week the user is browsing (may be a completed past week). */
+  const [viewingWeek, setViewingWeek] = useState(1);
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutDay | null>(null);
   const [view, setView] = useState<'welcome' | 'intro' | 'workouts'>('workouts');
   const [showWorkoutCoach, setShowWorkoutCoach] = useState(false);
@@ -63,7 +64,7 @@ function App() {
     ensureLocalProgram(user.id, profile?.daysPerWeek);
     const local = getLocalProgramState(user.id, profile?.daysPerWeek);
     setProgramState(local);
-    setCurrentWeek(Math.max(1, local.currentWeek));
+    setViewingWeek(Math.max(1, local.currentWeek));
   };
 
   useEffect(() => {
@@ -82,11 +83,13 @@ function App() {
   }, [user?.id, profile?.daysPerWeek]);
 
   const weekStatuses: Record<number, WeekStatus> = programState?.weeks ?? {};
+  /** True program progress week — drives Now / Done badges. */
+  const activeWeek = Math.max(1, programState?.currentWeek ?? 1);
 
   // Auto-redirect for authenticated users
   useEffect(() => {
     if (profile?.currentWeek && profile.currentWeek >= 1 && view === 'welcome') {
-      setCurrentWeek(profile.currentWeek);
+      setViewingWeek(profile.currentWeek);
     }
   }, [profile, view]);
 
@@ -187,7 +190,7 @@ function App() {
     const status = weekStatuses[week] ?? 'locked';
     if (status === 'locked') return;
     setLockedWeekTarget(null);
-    setCurrentWeek(week);
+    setViewingWeek(week);
   };
 
   const handleLockedWeek = (week: number) => {
@@ -208,7 +211,7 @@ function App() {
           <Suspense fallback={<WorkoutFeedSkeleton />}>
             <WorkoutPageNew
               workout={selectedWorkout}
-              weekNumber={currentWeek}
+              weekNumber={viewingWeek}
               onBack={() => setSelectedWorkout(null)}
               profile={profile || { id: user.id }}
               daysPerWeek={daysPerWeek}
@@ -261,14 +264,14 @@ function App() {
       <main className={`pt-chrome ${selectedWorkout ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
         <ScreenTransition screenKey={view}>
         {isHome && user && (() => {
-          const { done, total } = getWeekSetProgress(user.id, currentWeek, daysPerWeek);
-          const phase = getPhase(currentWeek);
+          const { done, total } = getWeekSetProgress(user.id, activeWeek, daysPerWeek);
+          const phase = getPhase(activeWeek);
           return (
             <WelcomePortal
               onSelectTraining={() => setView('workouts')}
               onSignup={() => setShowSignupForm(true)}
               userName={profile?.fullName || user?.user_metadata?.full_name || user?.email}
-              weekNumber={currentWeek}
+              weekNumber={activeWeek}
               setsDone={done}
               setsTotal={total}
               phaseLabel={t(phase.phaseLabelKey)}
@@ -307,7 +310,7 @@ function App() {
                 <div className="flex items-end justify-between gap-3">
                   <div className="flex items-end gap-2.5">
                     <span className="font-display text-[84px] font-bold leading-[0.78] tracking-[-0.02em] tabular-nums text-txt-hi">
-                      {String(currentWeek).padStart(2, '0')}
+                      {String(viewingWeek).padStart(2, '0')}
                     </span>
                     <span className="pb-1.5 text-[13px] font-semibold uppercase tracking-[0.16em] text-txt-lo">
                       {t('workout.week')}
@@ -318,7 +321,7 @@ function App() {
                       {t('home.phase')}
                     </div>
                     <div className="mt-2 text-[15px] font-semibold leading-snug text-txt-hi">
-                      {t(getPhase(currentWeek).phaseLabelKey)}
+                      {t(getPhase(viewingWeek).phaseLabelKey)}
                     </div>
                   </div>
                 </div>
@@ -328,14 +331,15 @@ function App() {
                 ) : (
                   <>
                     <WeekSelector
-                      currentWeek={currentWeek}
+                      activeWeek={activeWeek}
+                      selectedWeek={viewingWeek}
                       weeks={weekStatuses}
                       onWeekSelect={handleWeekSelect}
                       onLockedSelect={handleLockedWeek}
                     />
 
                     {(() => {
-                      const { done, total } = getWeekSetProgress(user.id, currentWeek, daysPerWeek);
+                      const { done, total } = getWeekSetProgress(user.id, viewingWeek, daysPerWeek);
                       const pct = total > 0 ? Math.round((done / total) * 100) : 0;
                       return (
                         <div>
@@ -355,7 +359,7 @@ function App() {
                       );
                     })()}
 
-                    {currentWeek === 5 && !week6Dismissed && (
+                    {viewingWeek === 5 && !week6Dismissed && (
                       <div className="flex items-start justify-between gap-3 rounded-[14px] bg-surface-1 px-3.5 py-3">
                         <p className="text-sm leading-relaxed text-txt-mid">{t('feed.week6Banner')}</p>
                         <button
@@ -378,10 +382,10 @@ function App() {
                       className="grid gap-2"
                     >
                       {split.map((workout, i) => {
-                        const completed = isLocalDayComplete(user.id, currentWeek, workout.id);
+                        const completed = isLocalDayComplete(user.id, viewingWeek, workout.id);
                         const progress = getLocalDayExerciseProgress(
                           user.id,
-                          currentWeek,
+                          viewingWeek,
                           workout.id
                         );
                         return (

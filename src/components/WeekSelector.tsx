@@ -6,15 +6,19 @@ import { haptic } from '../lib/haptics';
 import { cn } from '../lib/utils';
 
 interface WeekSelectorProps {
-  currentWeek: number;
+  /** Program progress week (shows Now). Independent of which week the user is browsing. */
+  activeWeek: number;
+  /** Week whose workouts are currently listed. */
+  selectedWeek: number;
   weeks: Record<number, WeekStatus>;
   onWeekSelect: (week: number) => void;
   onLockedSelect?: (week: number) => void;
 }
 
-/** P04 week grid: 8 equal cells — now / done / locked. */
+/** P04 week grid: 8 equal cells — now / done / locked. Status follows program progress, not browse. */
 export default function WeekSelector({
-  currentWeek,
+  activeWeek,
+  selectedWeek,
   weeks,
   onWeekSelect,
   onLockedSelect,
@@ -28,8 +32,9 @@ export default function WeekSelector({
     <div className="grid grid-cols-8 gap-[5px]">
       {list.map((week) => {
         const status = statusOf(week);
-        const isNow = week === currentWeek;
-        const isDone = status === 'completed' && !isNow;
+        const isNow = week === activeWeek;
+        const isSelected = week === selectedWeek;
+        const isDone = status === 'completed';
         const isLocked = status === 'locked';
 
         return (
@@ -42,11 +47,12 @@ export default function WeekSelector({
               else onWeekSelect(week);
             }}
             aria-disabled={isLocked}
-            aria-current={isNow ? 'true' : undefined}
+            aria-current={isSelected ? 'true' : undefined}
             className={cn(
               'flex h-[58px] flex-col items-center justify-center gap-1.5 rounded-[10px] transition-colors',
               isNow && 'bg-brand',
-              !isNow && 'bg-surface-1',
+              !isNow && isSelected && 'bg-surface-2 ring-1 ring-inset ring-brand/40',
+              !isNow && !isSelected && 'bg-surface-1',
               isLocked && 'opacity-90'
             )}
           >
