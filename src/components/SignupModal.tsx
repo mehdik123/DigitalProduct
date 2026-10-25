@@ -30,7 +30,7 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
   );
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!fullName.trim() || !email.trim()) {
@@ -49,12 +49,17 @@ export default function SignupModal({ onClose, onSubmit, loading }: SignupModalP
       setError(t('signup.days.required'));
       return;
     }
-    onSubmit({
-      fullName: fullName.trim(),
-      email: email.trim(),
-      password,
-      daysPerWeek,
-    });
+    try {
+      await onSubmit({
+        fullName: fullName.trim(),
+        email: email.trim(),
+        password,
+        daysPerWeek,
+      });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '';
+      if (message) setError(message);
+    }
   };
 
   return (

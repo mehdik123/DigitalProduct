@@ -168,12 +168,33 @@ function load(userId: string, daysPerWeek?: DaysPerWeek | number | null): Store 
   }
 }
 
+/** True if the user has logged any set on this device. */
+function hasAnyLoggedSets(store: Store): boolean {
+  for (const week of Object.values(store.logs ?? {})) {
+    for (const day of Object.values(week ?? {})) {
+      for (const sets of Object.values(day ?? {})) {
+        if ((sets ?? []).some((s) => s.logged)) return true;
+      }
+    }
+  }
+  return false;
+}
+
 /**
  * Ensures a local store exists for this user, seeded with their chosen program.
- * Safe to call repeatedly; never overwrites an already-chosen program.
+ * If the profile days-per-week differs and nothing has been logged yet, rebuilds
+ * the store so a signup race (default 5) cannot stick forever.
  */
 export function ensureLocalProgram(userId: string, daysPerWeek?: DaysPerWeek | number | null): DaysPerWeek {
-  const store = load(userId, daysPerWeek);
+  const desired = daysPerWeek != null ? normalizeDays(daysPerWeek) : null;
+  const store = load(userId, desired ?? undefined);
+
+  if (desired && store.daysPerWeek !== desired && !hasAnyLoggedSets(store)) {
+    const fresh = createStore(desired);
+    save(userId, fresh);
+    return desired;
+  }
+
   return store.daysPerWeek;
 }
 

@@ -42,13 +42,27 @@ export async function ensureProfileDoc(
     daysPerWeek?: number;
   }
 ): Promise<UserProfile> {
-  const existing = await fetchProfileDoc(userId);
-  if (existing) return existing;
-
-  const days =
+  const seededDays =
     seed.daysPerWeek === 3 || seed.daysPerWeek === 4 || seed.daysPerWeek === 5
       ? seed.daysPerWeek
-      : 5;
+      : undefined;
+
+  const existing = await fetchProfileDoc(userId);
+  if (existing) {
+    // Signup can race with onAuthStateChanged, which may create the doc with
+    // default 5 days before the chosen 3/4/5 is written. Apply an explicit seed.
+    if (seededDays != null && existing.daysPerWeek !== seededDays) {
+      await updateDoc(doc(db, 'profiles', userId), {
+        days_per_week: seededDays,
+        ...(seed.fullName ? { full_name: seed.fullName } : {}),
+        updated_at: serverTimestamp(),
+      });
+      return { ...existing, daysPerWeek: seededDays, fullName: seed.fullName ?? existing.fullName };
+    }
+    return existing;
+  }
+
+  const days = seededDays ?? 5;
   const now = new Date().toISOString();
   const payload: ProfileDoc = {
     email: seed.email ?? undefined,

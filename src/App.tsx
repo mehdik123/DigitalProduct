@@ -72,8 +72,15 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
+  // Close signup/auth gates once the user is actually signed in.
+  useEffect(() => {
+    if (!user) return;
+    setShowSignupForm(false);
+    setShowAuthChoice(false);
+  }, [user?.id]);
+
   // Once the profile (with its days-per-week) arrives, re-seed the local
-  // program so a fresh device builds the right split.
+  // program so a fresh device builds the right split (fixes signup race → 5).
   useEffect(() => {
     if (user && profile?.daysPerWeek) {
       ensureLocalProgram(user.id, profile.daysPerWeek);
@@ -137,20 +144,23 @@ function App() {
     try {
       const { data, error } = await signUp(email, password, {
         full_name: fullName,
-        days_per_week: daysPerWeek
+        days_per_week: daysPerWeek,
       });
 
       if (error) throw error;
 
-      // Handle success
-      if (data?.session) {
-        // Logged in immediately
-        setShowSignupForm(false);
-        // useEffect will handle redirection to 'workouts' view
-      } else {
-        // Account created but no session (e.g. email confirmation enabled).
+      const newUserId = data?.user?.id;
+      if (newUserId) {
+        ensureLocalProgram(newUserId, daysPerWeek);
+        setProgramState(getLocalProgramState(newUserId, daysPerWeek));
+      }
+
+      setShowSignupForm(false);
+      setShowAuthChoice(false);
+      setView('workouts');
+
+      if (!data?.session) {
         alert(t('signup.success.message'));
-        setShowSignupForm(false);
         navigate('/login/returning');
       }
     } catch (err: any) {
@@ -162,8 +172,6 @@ function App() {
         setShowSignupForm(false);
         navigate('/login/returning');
       } else if (isTimeoutError(err)) {
-        // The request may well have succeeded server-side; send them to login
-        // rather than showing a raw abort error.
         alert(t('signup.timeoutRedirect'));
         setShowSignupForm(false);
         navigate('/login/returning');
