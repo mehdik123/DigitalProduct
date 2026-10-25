@@ -58,13 +58,17 @@ function splitOf(store: Store): WorkoutDay[] {
   return getWorkoutSplit(store.daysPerWeek);
 }
 
-/** Deterministic pseudo-random reps in [6, 10] seeded by the exercise id. */
+/**
+ * Deterministic week-1 target reps seeded by exercise id (base range 6–10).
+ * 7 and 9 are snapped to 8 so starters land on the 8→10→12→14 ladder.
+ */
 export function seedReps(exerciseId: string): number {
   let h = 0;
   for (let i = 0; i < exerciseId.length; i++) {
     h = (h * 31 + exerciseId.charCodeAt(i)) >>> 0;
   }
-  return 6 + (h % 5); // 6..10 inclusive
+  const raw = 6 + (h % 5); // 6..10 inclusive
+  return raw === 7 || raw === 9 ? 8 : raw;
 }
 
 function expectedSets(exercise: Exercise, week: number): number {

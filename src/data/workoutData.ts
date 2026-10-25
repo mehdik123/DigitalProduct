@@ -94,7 +94,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         id: 'straight-bar-bicep-curls',
         name: 'Straight Bar Bicep Curls',
         progressionType: 'isolation',
-        sets: 3,
+        sets: 4,
         reps: '10',
         rest: '2 min',
         type: 'bodybuilding',
@@ -155,7 +155,7 @@ export const fiveDaySplit: WorkoutDay[] = [
         id: 'leg-press',
         name: 'Leg Press',
         progressionType: 'machine',
-        sets: 3,
+        sets: 2,
         reps: '12',
         rest: '3 min',
         type: 'bodybuilding',
@@ -370,18 +370,6 @@ export const fiveDaySplit: WorkoutDay[] = [
         imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
       },
       {
-        id: 'deadlifts',
-        name: 'Deadlifts',
-        progressionType: 'barbell_compound',
-        sets: 3,
-        reps: '14',
-        rest: '3 min',
-        type: 'bodybuilding',
-        notes: 'King of compounds - neutral spine, drive through heels',
-        videoUrl: 'https://www.youtube.com/watch?v=3P8iTOXwqXU',
-        imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
-      },
-      {
         id: 'prone-leg-curls-day4',
         name: 'Prone Leg Curls',
         progressionType: 'machine',
@@ -556,10 +544,8 @@ function fiveDay(id: number): WorkoutDay {
 export const fourDaySplit: WorkoutDay[] = [fiveDay(1), fiveDay(2), fiveDay(3), fiveDay(4)];
 
 /**
- * Lower Body 1 for the 3-day split. This keeps the original 8-exercise version
- * (Smith front squats + dumbbell lunges) rather than the trimmed 7-exercise day
- * used by the 4- and 5-day programs, since the lower frequency allows the extra
- * volume in a single leg session.
+ * Lower Body 1 for the 3-day split. Keeps Smith front squats + dumbbell lunges
+ * (no leg press) for extra variety at lower weekly frequency.
  */
 const threeDayLowerBody1: WorkoutDay = {
   id: 2,
@@ -594,18 +580,6 @@ const threeDayLowerBody1: WorkoutDay = {
       type: 'bodybuilding',
       notes: 'Quad emphasis - keep torso upright, elbows high',
       videoUrl: 'https://www.youtube.com/watch?v=MXm6PuRB3mk',
-      imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
-    },
-    {
-      id: 'leg-press',
-      name: 'Leg Press',
-      progressionType: 'machine',
-      sets: 3,
-      reps: '12',
-      rest: '3 min',
-      type: 'bodybuilding',
-      notes: 'Full range of motion, feet shoulder-width apart',
-      videoUrl: 'https://www.youtube.com/watch?v=L_bJce83XBQ',
       imageUrl: 'https://images.unsplash.com/photo-1574680096141-1c5e8e125795?w=800&q=80'
     },
     {
@@ -673,7 +647,7 @@ const threeDayLowerBody1: WorkoutDay = {
 
 /**
  * The 3-day split: Upper 1, Lower 1 and Upper 2. Upper days are shared with the
- * 5-day program; the leg day uses the fuller 8-exercise version above.
+ * 5-day program; the leg day uses the fuller version above (no leg press).
  */
 export const threeDaySplit: WorkoutDay[] = [fiveDay(1), threeDayLowerBody1, fiveDay(3)];
 

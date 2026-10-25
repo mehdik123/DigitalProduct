@@ -66,7 +66,6 @@ const RULES: Record<string, ExerciseRule> = {
   'front-squats-smith': { jumpKg: 10, bodyweight: false, neverAddLoad: false, weightEntry: 'bar_total' },
   'front-squats-smith-day4': { jumpKg: 10, bodyweight: false, neverAddLoad: false, weightEntry: 'bar_total' },
   'jump-squats': { jumpKg: 2.5, bodyweight: true, neverAddLoad: false, weightEntry: 'bodyweight' },
-  deadlifts: { jumpKg: 10, bodyweight: false, neverAddLoad: false, weightEntry: 'bar_total' },
   'adductor-machine': { jumpKg: 5, bodyweight: false, neverAddLoad: false, weightEntry: 'machine' },
   'incline-db-bench': { jumpKg: 2.5, bodyweight: false, neverAddLoad: false, weightEntry: 'dumbbell_each' },
   'push-ups': { jumpKg: 5, bodyweight: true, neverAddLoad: false, weightEntry: 'bodyweight' },
