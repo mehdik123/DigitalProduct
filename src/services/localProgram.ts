@@ -60,7 +60,7 @@ function splitOf(store: Store): WorkoutDay[] {
 
 /**
  * Deterministic week-1 target reps seeded by exercise id (base range 6–10).
- * 7 and 9 are snapped to 8 so starters land on the 8→10→12→14 ladder.
+ * 7 → 8 and 9 → 10; 6, 8, and 10 stay as-is.
  */
 export function seedReps(exerciseId: string): number {
   let h = 0;
@@ -68,7 +68,9 @@ export function seedReps(exerciseId: string): number {
     h = (h * 31 + exerciseId.charCodeAt(i)) >>> 0;
   }
   const raw = 6 + (h % 5); // 6..10 inclusive
-  return raw === 7 || raw === 9 ? 8 : raw;
+  if (raw === 7) return 8;
+  if (raw === 9) return 10;
+  return raw;
 }
 
 function expectedSets(exercise: Exercise, week: number): number {
