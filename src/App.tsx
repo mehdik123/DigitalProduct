@@ -49,28 +49,36 @@ function App() {
   const [programState, setProgramState] = useState<ProgramState | null>(null);
   const [lockedWeekTarget, setLockedWeekTarget] = useState<number | null>(null);
   const [week6Dismissed, setWeek6Dismissed] = useState(() => hasDismissedWeek6Banner());
+  /** Days chosen on the signup form — used until profile/local catch up (avoids 5-day flash). */
+  const [signupDaysPerWeek, setSignupDaysPerWeek] = useState<DaysPerWeek | null>(null);
 
-  // The program a user is enrolled in (chosen once at signup, irreversible).
-  // Falls back to the value this device recorded, so an offline user who cannot
-  // load their profile still gets their own split rather than the 5-day default.
+  const pickDays = (value: unknown): DaysPerWeek | undefined =>
+    value === 3 || value === 4 || value === 5 ? value : undefined;
+
+  // Never fall through to getWorkoutSplit(undefined) → 5-day default while profile loads.
   const daysPerWeek =
-    (profile?.daysPerWeek as DaysPerWeek | undefined) ??
-    (user ? getLocalDaysPerWeek(user.id) : undefined);
-  const split = getWorkoutSplit(daysPerWeek);
+    pickDays(profile?.daysPerWeek) ??
+    pickDays(user?.user_metadata?.days_per_week) ??
+    pickDays(signupDaysPerWeek) ??
+    (user ? pickDays(getLocalDaysPerWeek(user.id)) : undefined);
 
-  const loadProgram = () => {
+  const split = daysPerWeek ? getWorkoutSplit(daysPerWeek) : [];
+  const programReady = Boolean(user && daysPerWeek);
+
+  const loadProgram = (days?: DaysPerWeek) => {
     if (!user) return;
-    // Local-only: sets and progressive overload live in localStorage.
-    ensureLocalProgram(user.id, profile?.daysPerWeek);
-    const local = getLocalProgramState(user.id, profile?.daysPerWeek);
+    const resolved = days ?? daysPerWeek;
+    if (!resolved) return;
+    ensureLocalProgram(user.id, resolved);
+    const local = getLocalProgramState(user.id, resolved);
     setProgramState(local);
     setViewingWeek(Math.max(1, local.currentWeek));
   };
 
   useEffect(() => {
-    if (user) loadProgram();
+    if (user && daysPerWeek) loadProgram(daysPerWeek);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+  }, [user?.id, daysPerWeek]);
 
   // Close signup/auth gates once the user is actually signed in.
   useEffect(() => {
@@ -78,16 +86,6 @@ function App() {
     setShowSignupForm(false);
     setShowAuthChoice(false);
   }, [user?.id]);
-
-  // Once the profile (with its days-per-week) arrives, re-seed the local
-  // program so a fresh device builds the right split (fixes signup race → 5).
-  useEffect(() => {
-    if (user && profile?.daysPerWeek) {
-      ensureLocalProgram(user.id, profile.daysPerWeek);
-      setProgramState(getLocalProgramState(user.id, profile.daysPerWeek));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, profile?.daysPerWeek]);
 
   const weekStatuses: Record<number, WeekStatus> = programState?.weeks ?? {};
   /** True program progress week — drives Now / Done badges. */
@@ -108,10 +106,10 @@ function App() {
   }, [user, view]);
 
   useEffect(() => {
-    if (!selectedWorkout && user) {
-      setProgramState(getLocalProgramState(user.id, profile?.daysPerWeek));
+    if (!selectedWorkout && user && daysPerWeek) {
+      setProgramState(getLocalProgramState(user.id, daysPerWeek));
     }
-  }, [selectedWorkout, user?.id, profile?.daysPerWeek]);
+  }, [selectedWorkout, user?.id, daysPerWeek]);
 
   // Show loading spinner while checking auth session
   if (loading) {
@@ -142,6 +140,8 @@ function App() {
   }) => {
     setIsSubmitting(true);
     try {
+      setSignupDaysPerWeek(daysPerWeek);
+
       const { data, error } = await signUp(email, password, {
         full_name: fullName,
         days_per_week: daysPerWeek,
@@ -334,7 +334,7 @@ function App() {
                   </div>
                 </div>
 
-                {!programState ? (
+                {!programReady || !programState ? (
                   <WorkoutFeedSkeleton />
                 ) : (
                   <>

@@ -128,10 +128,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
-        const mapped = toAuthUser(fbUser);
-        setUser(mapped);
-        setSession({ user: mapped });
-        await loadProfile(fbUser);
+        // Load profile first so days_per_week is known before the app renders workouts.
+        // Re-fetch after ensure so a parallel signup write (3/4 days) isn't clobbered.
+        try {
+          await ensureProfileDoc(fbUser.uid, {
+            email: fbUser.email,
+            fullName: fbUser.displayName || undefined,
+          });
+          const fresh = (await fetchProfileDoc(fbUser.uid)) ?? null;
+          if (fresh) setProfile(fresh);
+          const mapped = toAuthUser(fbUser, {
+            full_name: fresh?.fullName,
+            days_per_week: fresh?.daysPerWeek,
+          });
+          setUser(mapped);
+          setSession({ user: mapped });
+        } catch (error) {
+          console.error('Error loading profile:', error);
+          const mapped = toAuthUser(fbUser);
+          setUser(mapped);
+          setSession({ user: mapped });
+          await loadProfile(fbUser);
+        }
       } else {
         setUser(null);
         setSession(null);
@@ -156,15 +174,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (metadata?.full_name) {
         await firebaseUpdateProfile(cred.user, { displayName: metadata.full_name });
       }
-      await ensureProfileDoc(cred.user.uid, {
+      // Profile (with days_per_week) must be set before user, or the UI flashes the 5-day default.
+      const ensured = await ensureProfileDoc(cred.user.uid, {
         email: cred.user.email,
         fullName: metadata?.full_name,
         daysPerWeek: metadata?.days_per_week,
       });
-      const mapped = toAuthUser(cred.user, metadata);
+      setProfile(ensured);
+      const mapped = toAuthUser(cred.user, {
+        full_name: metadata?.full_name ?? ensured.fullName,
+        days_per_week: ensured.daysPerWeek ?? metadata?.days_per_week,
+      });
       setUser(mapped);
       setSession({ user: mapped });
-      await loadProfile(cred.user, metadata);
       return { data: { session: { user: mapped }, user: mapped }, error: null };
     } catch (err) {
       return { data: { session: null, user: null }, error: mapAuthError(err) };
